@@ -4,16 +4,18 @@ CXX = g++
 
 CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
 
-.PHONY: clean format
+.PHONY: run clean format
 
+run: hello
+	./hello
 clean:
 	- rm hello all.h.gch
 format:
 	clang-format -i *.cpp *.h
 
-hello: main.cpp all.h.gch
-	$(CXX) -include all.h -o $@ $<
+hello: main.cpp all.h all.h.gch
+	$(CXX) $(CXXFLAGS) -include all.h $< -o $@
 #	$(CXX) $(CXXFLAGS) -include all.h -o $@ $<
 
 all.h.gch: all.h
-	$(CXX) -x c++-header -o $@ $^
+	$(CXX) $(CXXFLAGS) -x c++-header -o $@ $<
