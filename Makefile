@@ -7,11 +7,11 @@ CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
 .PHONY: clean format
 
 clean:
-	- rm hello 
+	- rm hello all.h.gch
 format:
 	clang-format -i *.cpp *.h
 
-hello: hello.cpp all.h.gch
+hello: main.cpp all.h.gch
 	$(CXX) -include all.h -o $@ $<
 #	$(CXX) $(CXXFLAGS) -include all.h -o $@ $<
 
