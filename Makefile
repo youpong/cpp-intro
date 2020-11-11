@@ -1,6 +1,6 @@
 #CXX = g++
 CXX = clang++
-CPPFLAGS = -std=c++17 -Wall --pedantic-errors
+CPPFLAGS = -include all.h -std=c++17 -Wall --pedantic-errors
 
 .PHONY: clean format
 
