@@ -1,3 +1,25 @@
+auto f = []() {
+  std::cout << 1 ;
+ };
+
 int main() {
-  std::cout << "hello";
+  f() ;
+
+  auto f = []() {
+    std::cout << 2 ;
+  };
+
+  f() ;
+
+  {
+    f() ;
+    auto f = []() {
+      std::cout << 3 ;
+    };
+    f();
+  }
+
+  f();
+
+  return 0;
 }

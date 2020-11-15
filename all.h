@@ -2,7 +2,9 @@
 #include <cerrno>
 #include <cfloat>
 #include <climits>
+#if __has_include(<cstdalign>)
 #include <cstdalign>
+#endif
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
