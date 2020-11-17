@@ -88,9 +88,9 @@ struct array {
 };
 
 template <typename Array>
-struct array_iterator_int_begin {
+struct array_iterator_begin {
   Array &a;
-  array_iterator_int_begin(Array &a) : a(a) {
+  array_iterator_begin(Array &a) : a(a) {
   }
 
   typename Array::reference operator*() {
@@ -133,6 +133,6 @@ void foo2() {
 
 int main() {
   array<int, 5> a = {1, 2, 3, 4, 5};
-  array_iterator_int_begin iter(a);
+  array_iterator_begin iter(a);
   std::cout << *iter;
 }
