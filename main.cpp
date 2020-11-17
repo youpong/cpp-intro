@@ -53,13 +53,17 @@ struct array {
     return storage[i];
   }
 
+  const_reference operator[](size_type i) const {
+    return storage[i];
+  }
+
   void fill(const_reference u) {
     for (size_type i = 0; i != N; ++i) {
       storage[i] = u;
     }
   }
 
-  size_type size() {
+  size_type size() const {
     return N;
   }
 };
@@ -79,7 +83,10 @@ int main() {
   auto ref = a[0];
   auto size = a.size(); // 5
   //  std::cout << a.size() << "\n"s;
+  print(a);
+  std::cout << "\n"s;
 
   std::array<int, 5> a2 = {1, 2, 3, 4, 5};
   print(a2);
+  std::cout << "\n"s;
 }
