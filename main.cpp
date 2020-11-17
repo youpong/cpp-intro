@@ -38,15 +38,23 @@ void foo() {
   std::cout << "hello";
 }
 
-template <typename T, std::size_t N> struct array {
-  T storage[N];
+template <typename T, std::size_t N>
+struct array {
 
-  T &operator[](std::size_t i) {
+  using value_type = T;
+  using reference = T &;
+  using const_reference = T const &;
+
+  using size_type = std::size_t;
+
+  value_type storage[N];
+
+  reference operator[](size_type i) {
     return storage[i];
   }
 
-  void fill(T const &u) {
-    for (std::size_t i = 0; i != N; ++i) {
+  void fill(const_reference u) {
+    for (size_type i = 0; i != N; ++i) {
       storage[i] = u;
     }
   }
