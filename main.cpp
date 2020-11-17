@@ -57,6 +57,19 @@ struct array {
     return storage[i];
   }
 
+  reference front() {
+    return storage[0];
+  }
+  const_reference front() const {
+    return storage[0];
+  }
+  reference back() {
+    return storage[N - 1];
+  }
+  const_reference back() const {
+    return storage[N - 1];
+  }
+
   void fill(const_reference u) {
     for (size_type i = 0; i != N; ++i) {
       storage[i] = u;
@@ -83,10 +96,14 @@ int main() {
   auto ref = a[0];
   auto size = a.size(); // 5
   //  std::cout << a.size() << "\n"s;
+  int &f = a.front();
+  std::cout << f << "\n"s;
   print(a);
   std::cout << "\n"s;
 
   std::array<int, 5> a2 = {1, 2, 3, 4, 5};
+  int &f2 = a2.front();
+  std::cout << f2 << "\n"s;
   print(a2);
   std::cout << "\n"s;
 }
