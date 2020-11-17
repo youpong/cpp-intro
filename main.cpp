@@ -58,7 +58,18 @@ struct array {
       storage[i] = u;
     }
   }
+
+  size_type size() {
+    return N;
+  }
 };
+
+template <typename Array>
+void print(Array const &c) {
+  for (std::size_t i = 0; i != c.size(); ++i) {
+    std::cout << c[i];
+  }
+}
 
 struct array_iterator {};
 
@@ -66,4 +77,9 @@ int main() {
   using array_type = array<int, 5>;
   array_type a = {1, 2, 3, 4, 5};
   auto ref = a[0];
+  auto size = a.size(); // 5
+  //  std::cout << a.size() << "\n"s;
+
+  std::array<int, 5> a2 = {1, 2, 3, 4, 5};
+  print(a2);
 }
