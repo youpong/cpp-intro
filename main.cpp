@@ -87,12 +87,20 @@ struct array {
   }
 };
 
-struct array_iterator_int_5_begin {
-  array<int, 5> &a;
-  array_iterator_int_5_begin(array<int, 5> &a) : a(a) {
+template <typename Array>
+struct array_iterator_int_begin {
+  Array &a;
+  array_iterator_int_begin(Array &a) : a(a) {
   }
 
-  array<int, 5>::reference operator*() {
+  /*
+   * main.cpp:96:3: error: need ‘typename’ before ‘Array::reference’
+   * because ‘Array’ is a dependent scope
+   * 96 |   Array::reference operator*() {
+   *    |   ^~~~~
+   *    |   typename
+   */
+  Array::reference operator*() {
     return a[0];
   }
 };
@@ -132,6 +140,6 @@ void foo2() {
 
 int main() {
   array<int, 5> a = {1, 2, 3, 4, 5};
-  array_iterator_int_5_begin iter(a);
+  array_iterator_int_begin iter(a);
   std::cout << *iter;
 }
