@@ -65,6 +65,5 @@ struct array_iterator {};
 int main() {
   using array_type = array<int, 5>;
   array_type a = {1, 2, 3, 4, 5};
-  array_type::value_type x = 0;
-  array_type::reference ref = a[0];
+  auto ref = a[0];
 }
