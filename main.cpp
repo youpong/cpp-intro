@@ -100,7 +100,10 @@ int main() {
   std::cout << f << "\n"s;
   print(a);
   std::cout << "\n"s;
-
+  a.fill(0);
+  print(a);
+  std::cout << "\n"s;  
+  
   std::array<int, 5> a2 = {1, 2, 3, 4, 5};
   int &f2 = a2.front();
   std::cout << f2 << "\n"s;
