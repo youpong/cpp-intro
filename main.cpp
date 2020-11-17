@@ -52,9 +52,9 @@ struct array {
 
   value_type storage[N];
 
-  iterator begin() ;
+  iterator begin();
   iterator end();
-    
+
   reference operator[](size_type i) {
     return storage[i];
   }
@@ -87,6 +87,16 @@ struct array {
   }
 };
 
+struct array_iterator_int_5_begin {
+  array<int, 5> &a;
+  array_iterator_int_5_begin(array<int, 5> &a) : a(a) {
+  }
+
+  array<int, 5>::reference operator*() {
+    return a[0];
+  }
+};
+
 template <typename Array>
 void print(Array const &c) {
   for (std::size_t i = 0; i != c.size(); ++i) {
@@ -94,9 +104,7 @@ void print(Array const &c) {
   }
 }
 
-
-
-int main() {
+void foo2() {
   using array_type = array<int, 5>;
   array_type a = {1, 2, 3, 4, 5};
   //  auto ref = a[0];
@@ -108,8 +116,8 @@ int main() {
   std::cout << "\n"s;
   a.fill(0);
   print(a);
-  std::cout << "\n"s;  
-  
+  std::cout << "\n"s;
+
   std::array<int, 5> a2 = {1, 2, 3, 4, 5};
   int &f2 = a2.front();
   std::cout << f2 << "\n"s;
@@ -120,4 +128,10 @@ int main() {
   std::cout << *iter;
   *++iter = 0;
   std::cout << a2[1];
+}
+
+int main() {
+  array<int, 5> a = {1, 2, 3, 4, 5};
+  array_iterator_int_5_begin iter(a);
+  std::cout << *iter;
 }
