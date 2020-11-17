@@ -38,9 +38,12 @@ void foo() {
   std::cout << "hello";
 }
 
+struct array_iterator {};
+
 template <typename T, std::size_t N>
 struct array {
 
+  using iterator = array_iterator;
   using value_type = T;
   using reference = T &;
   using const_reference = T const &;
@@ -49,6 +52,9 @@ struct array {
 
   value_type storage[N];
 
+  iterator begin() ;
+  iterator end();
+    
   reference operator[](size_type i) {
     return storage[i];
   }
@@ -88,13 +94,13 @@ void print(Array const &c) {
   }
 }
 
-struct array_iterator {};
+
 
 int main() {
   using array_type = array<int, 5>;
   array_type a = {1, 2, 3, 4, 5};
-  auto ref = a[0];
-  auto size = a.size(); // 5
+  //  auto ref = a[0];
+  //  auto size = a.size(); // 5
   //  std::cout << a.size() << "\n"s;
   int &f = a.front();
   std::cout << f << "\n"s;
@@ -109,4 +115,9 @@ int main() {
   std::cout << f2 << "\n"s;
   print(a2);
   std::cout << "\n"s;
+  //  auto first = std::begin(a2);
+  auto iter = a2.begin();
+  std::cout << *iter;
+  *++iter = 0;
+  std::cout << a2[1];
 }
