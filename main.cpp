@@ -1,21 +1,35 @@
-auto f = []() { std::cout << 1; };
+/*
+noreturn void error(char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  fprintf(stderr, "\n");
+  exit(1);
+}
+*/
 
-int name_scope() {
-  f();
+void expect(int line, int expected, int actual) {
+  if (expected == actual)
+    return;
 
-  auto f = []() { std::cout << 2; };
+  //  error("%d: %d expected, but got %d", line, expected, actual);
+  std::cerr << line << ": "s << expected << " expected, but got "s << actual
+            << "\n";
+}
 
-  f();
+auto f = []() { return 1; };
 
+void name_scope() {
+  expect(__LINE__, 1, f());
+  auto f = []() { return 2; };
+  expect(__LINE__, 2, f());
   {
-    f();
-    auto f = []() { std::cout << 3; };
-    f();
+    expect(__LINE__, 2, f());
+    auto f = []() { return 3; };
+    expect(__LINE__, 3, f());
   }
 
-  f();
-
-  return 0;
+  expect(__LINE__, 2, f());
 }
 
 void foo() {
@@ -68,6 +82,14 @@ struct array_iterator {
 
   typename Array::reference operator*() {
     return a[i];
+  }
+
+  bool operator==(array_iterator const &right) {
+    return i == right.i;
+  }
+
+  bool operator!=(array_iterator const &right) {
+    return !(*this == right);
   }
 };
 
@@ -170,11 +192,21 @@ void foo3() {
   std::cout << *iter2;
 }
 
-int main() {
+void foo4() {
   array<int, 5> a = {1, 2, 3, 4, 5};
 
   auto i = a.begin();
   auto j = a.begin();
 
   std::cout << std::boolalpha << (i == j);
+  std::cout << std::boolalpha << (i != ++j);
+}
+
+void foo5() {
+  array<int, 5> a = {1, 2, 3, 4, 5};
+  std::for_each(std::begin(a), std::end(a), [](auto x) { std::cout << x; });
+}
+
+int main() {
+  name_scope();
 }
