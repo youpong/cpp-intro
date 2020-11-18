@@ -154,19 +154,19 @@ void myarray() {
          equal(std::begin(a), std::end(a), std::begin(a1), std::end(a1)));
 }
 
-void foo3() {
+void test_array_iterator() {
   array<int, 5> a = {1, 2, 3, 4, 5};
+
   auto iter = a.begin();
-  std::cout << *iter;
-  std::cout << *++iter;
-  std::cout << *iter++;
-  std::cout << *iter;
+  expect(__LINE__, 1, *iter);
+  expect(__LINE__, 2, *++iter); // pre-inc
+  expect(__LINE__, 2, *iter++); // post-inc
+  expect(__LINE__, 3, *iter);   // post-inc side-effect
 
   auto iter2 = a.end();
-
-  std::cout << *--iter2;
-  std::cout << *iter2--;
-  std::cout << *iter2;
+  expect(__LINE__, 5, *--iter2); // pre-dec
+  expect(__LINE__, 5, *iter2--); // post-dec
+  expect(__LINE__, 4, *iter2);   // post-dec side-effect
 }
 
 void foo4() {
@@ -207,4 +207,5 @@ int main() {
   name_scope();
   lambda_expr();
   myarray();
+  test_array_iterator();
 }
