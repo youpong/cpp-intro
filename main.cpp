@@ -155,7 +155,7 @@ void foo2() {
   std::cout << a2[1];
 }
 
-int main() {
+void foo3() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   auto iter = a.begin();
   std::cout << *iter;
@@ -168,4 +168,13 @@ int main() {
   std::cout << *--iter2;
   std::cout << *iter2--;
   std::cout << *iter2;
+}
+
+int main() {
+  array<int, 5> a = {1, 2, 3, 4, 5};
+
+  auto i = a.begin();
+  auto j = a.begin();
+
+  std::cout << std::boolalpha << (i == j);
 }
