@@ -1,14 +1,18 @@
-/*
-noreturn void error(char *fmt, ...) {
-  va_list ap;
-  va_start(ap, fmt);
-  vfprintf(stderr, fmt, ap);
-  fprintf(stderr, "\n");
-  exit(1);
-}
-*/
-
 void expect(int line, int expected, int actual);
+
+auto distance = [](auto first, auto last) { return last - first; };
+
+auto equal = [](auto first1, auto last1, auto first2, auto last2) {
+  // std::distance()
+  if (distance(first1, last1) != distance(first2, last2))
+    return false;
+
+  for (auto i = first1, j = first2; i != last1; ++i, ++j)
+    if (*i != *j)
+      return false;
+
+  return true;
+};
 
 auto f = []() { return 1; };
 
@@ -35,6 +39,10 @@ struct array_iterator {
   std::size_t i;
 
   array_iterator(Array &a, std::size_t i) : a(a), i(i) {
+  }
+
+  long long operator-(array_iterator const &iter) const {
+    return i - iter.i;
   }
 
   array_iterator &operator++() {
@@ -139,9 +147,9 @@ void myarray() {
   expect(__LINE__, 1, f);
 
   std::array<int, 5> a_ = {1, 2, 3, 4, 5};
-  //  expect(__LINE__, false,
-  //  std::equal(std::begin(a), std::end(a), std::begin(a_), std::end(a_));
-  std::equal(std::begin(a_), std::end(a_), std::begin(a_), std::end(a_));
+  // std::equal()
+  expect(__LINE__, true,
+         equal(std::begin(a), std::end(a), std::begin(a_), std::end(a_)));
 
   print(a);
   std::cout << "\n"s;
@@ -199,6 +207,16 @@ void expect(int line, int expected, int actual) {
   std::cerr << line << ": "s << expected << " expected, but got "s << actual
             << "\n";
 }
+
+/*
+noreturn void error(char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  fprintf(stderr, "\n");
+  exit(1);
+}
+*/
 
 int main() {
   name_scope();
