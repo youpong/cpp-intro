@@ -119,9 +119,7 @@ struct array {
   }
 
   void fill(const_reference u) {
-    for (size_type i = 0; i != N; ++i) {
-      storage[i] = u;
-    }
+    std::fill(begin(), end(), u);
   }
 
   size_type size() const {
@@ -140,22 +138,20 @@ void myarray() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   auto ref = a[0];
   expect(__LINE__, 1, ref);
-  auto size = a.size(); // 5
+  auto size = a.size();
   expect(__LINE__, 5, size);
-
   int &f = a.front();
   expect(__LINE__, 1, f);
 
-  std::array<int, 5> a_ = {1, 2, 3, 4, 5};
+  std::array<int, 5> a0 = {1, 2, 3, 4, 5};
   // std::equal()
   expect(__LINE__, true,
-         equal(std::begin(a), std::end(a), std::begin(a_), std::end(a_)));
+         equal(std::begin(a), std::end(a), std::begin(a0), std::end(a0)));
 
-  print(a);
-  std::cout << "\n"s;
   a.fill(0);
-  print(a);
-  std::cout << "\n"s;
+  std::array<int, 5> a1 = {0, 0, 0, 0, 0};
+  expect(__LINE__, true,
+         equal(std::begin(a), std::end(a), std::begin(a1), std::end(a1)));
 
   std::array<int, 5> a2 = {1, 2, 3, 4, 5};
   int &f2 = a2.front();
