@@ -32,24 +32,8 @@ void name_scope() {
   expect(__LINE__, 2, f());
 }
 
-void foo() {
-  [](auto x) { std::cout << x; }("hello"s);
-
-  auto answer = 42;
-  auto question = "Life, The Universe, and Everything."s;
-
-  auto print = [](auto x) { std::cout << x; };
-  print(question);
-  print(answer);
-  std::cout << "\n";
-
-  for (auto a = 1; a < 10; a++) {
-    for (auto b = 1; b < 10; b++)
-      std::cout << "\t" << a * b;
-    std::cout << "\n"s;
-  }
-
-  std::cout << "hello";
+void lambda_expr() {
+  expect(__LINE__, 43, [](auto x) { return x + 1; }(42));
 }
 
 template <typename Array>
@@ -209,4 +193,5 @@ void foo5() {
 
 int main() {
   name_scope();
+  lambda_expr();
 }
