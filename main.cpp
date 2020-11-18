@@ -135,14 +135,21 @@ void print(Array const &c) {
   }
 }
 
-void foo2() {
-  using array_type = array<int, 5>;
-  array_type a = {1, 2, 3, 4, 5};
-  //  auto ref = a[0];
-  //  auto size = a.size(); // 5
-  //  std::cout << a.size() << "\n"s;
+void myarray() {
+  array<int, 5> a = {1, 2, 3, 4, 5};
+  auto ref = a[0];
+  expect(__LINE__, 1, ref);
+  auto size = a.size(); // 5
+  expect(__LINE__, 5, size);
+
   int &f = a.front();
-  std::cout << f << "\n"s;
+  expect(__LINE__, 1, f);
+
+  std::array<int, 5> a_ = {1, 2, 3, 4, 5};
+  //  expect(__LINE__, false,
+  //  std::equal(std::begin(a), std::end(a), std::begin(a_), std::end(a_));
+  std::equal(std::begin(a_), std::end(a_), std::begin(a_), std::end(a_));
+
   print(a);
   std::cout << "\n"s;
   a.fill(0);
@@ -194,4 +201,5 @@ void foo5() {
 int main() {
   name_scope();
   lambda_expr();
+  myarray();
 }
