@@ -152,17 +152,6 @@ void myarray() {
   std::array<int, 5> a1 = {0, 0, 0, 0, 0};
   expect(__LINE__, true,
          equal(std::begin(a), std::end(a), std::begin(a1), std::end(a1)));
-
-  std::array<int, 5> a2 = {1, 2, 3, 4, 5};
-  int &f2 = a2.front();
-  std::cout << f2 << "\n"s;
-  print(a2);
-  std::cout << "\n"s;
-  //  auto first = std::begin(a2);
-  auto iter = a2.begin();
-  std::cout << *iter;
-  *++iter = 0;
-  std::cout << a2[1];
 }
 
 void foo3() {
