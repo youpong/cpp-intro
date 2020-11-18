@@ -8,14 +8,7 @@ noreturn void error(char *fmt, ...) {
 }
 */
 
-void expect(int line, int expected, int actual) {
-  if (expected == actual)
-    return;
-
-  //  error("%d: %d expected, but got %d", line, expected, actual);
-  std::cerr << line << ": "s << expected << " expected, but got "s << actual
-            << "\n";
-}
+void expect(int line, int expected, int actual);
 
 auto f = []() { return 1; };
 
@@ -196,6 +189,15 @@ void foo4() {
 void foo5() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   std::for_each(std::begin(a), std::end(a), [](auto x) { std::cout << x; });
+}
+
+void expect(int line, int expected, int actual) {
+  if (expected == actual)
+    return;
+
+  //  error("%d: %d expected, but got %d", line, expected, actual);
+  std::cerr << line << ": "s << expected << " expected, but got "s << actual
+            << "\n";
 }
 
 int main() {
