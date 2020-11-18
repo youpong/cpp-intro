@@ -50,9 +50,20 @@ struct array_iterator {
     ++i;
     return *this;
   }
+  array_iterator operator++(int) {
+    array_iterator copy = *this;
+    ++*this;
+    return copy;
+  }
+
   array_iterator &operator--() {
     --i;
     return *this;
+  }
+  array_iterator operator--(int) {
+    array_iterator copy = *this;
+    --*this;
+    return copy;
   }
 
   typename Array::reference operator*() {
@@ -149,4 +160,12 @@ int main() {
   auto iter = a.begin();
   std::cout << *iter;
   std::cout << *++iter;
+  std::cout << *iter++;
+  std::cout << *iter;
+
+  auto iter2 = a.end();
+
+  std::cout << *--iter2;
+  std::cout << *iter2--;
+  std::cout << *iter2;
 }
