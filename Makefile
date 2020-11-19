@@ -8,6 +8,8 @@ CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
 
 run: hello
 	./hello
+check: hello
+	./hello
 clean:
 	- rm hello all.h.gch
 format:
@@ -17,7 +19,7 @@ tags:
 
 hello: main.cpp all.h all.h.gch
 	$(CXX) $(CXXFLAGS) -include all.h $< -o $@
-#	$(CXX) $(CXXFLAGS) -include all.h -o $@ $<
+#	$(CXX) -include all.h $< -o $@
 
 all.h.gch: all.h
 	$(CXX) $(CXXFLAGS) -x c++-header -o $@ $<

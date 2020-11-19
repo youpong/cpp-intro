@@ -209,4 +209,5 @@ int main() {
   myarray();
   test_array_iterator();
   test_for_each();
+  return EXIT_SUCCESS;
 }
