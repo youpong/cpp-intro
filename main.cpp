@@ -175,9 +175,13 @@ void test_array_iterator() {
   expect(__LINE__, true, iter == iter2);
 }
 
-void foo5() {
+void test_for_each() {
   array<int, 5> a = {1, 2, 3, 4, 5};
-  std::for_each(std::begin(a), std::end(a), [](auto x) { std::cout << x; });
+  std::for_each(std::begin(a), std::end(a), [](auto &x) { ++x; });
+
+  std::array<int, 5> a0 = {2, 3, 4, 5, 6};
+  expect(__LINE__, true,
+         equal(std::begin(a), std::end(a), std::begin(a0), std::end(a0)));
 }
 
 void expect(int line, int expected, int actual) {
@@ -204,4 +208,5 @@ int main() {
   lambda_expr();
   myarray();
   test_array_iterator();
+  test_for_each();
 }
