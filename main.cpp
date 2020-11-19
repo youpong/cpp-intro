@@ -167,16 +167,12 @@ void test_array_iterator() {
   expect(__LINE__, 5, *--iter2); // pre-dec
   expect(__LINE__, 5, *iter2--); // post-dec
   expect(__LINE__, 4, *iter2);   // post-dec side-effect
-}
 
-void foo4() {
-  array<int, 5> a = {1, 2, 3, 4, 5};
-
-  auto i = a.begin();
-  auto j = a.begin();
-
-  std::cout << std::boolalpha << (i == j);
-  std::cout << std::boolalpha << (i != ++j);
+  // operator==, operator!=
+  expect(__LINE__, false, iter == iter2);
+  expect(__LINE__, true, iter != iter2);
+  --iter2;
+  expect(__LINE__, true, iter == iter2);
 }
 
 void foo5() {
