@@ -93,6 +93,7 @@ struct array {
   iterator begin() {
     return iterator(*this, 0);
   }
+
   iterator end() {
     return iterator(*this, N);
   }
@@ -126,13 +127,6 @@ struct array {
     return N;
   }
 };
-
-template <typename Array>
-void print(Array const &c) {
-  for (std::size_t i = 0; i != c.size(); ++i) {
-    std::cout << c[i];
-  }
-}
 
 void myarray() {
   array<int, 5> a = {1, 2, 3, 4, 5};
@@ -193,6 +187,35 @@ void expect(int line, int expected, int actual) {
             << "\n";
 }
 
+template <typename Array>
+void print(Array const &c) {
+  // TODO: implement other way.
+  // implements 1:
+  // std::for_each(std::begin(c), std::end(c),
+  //		[](auto &x) { std::cout << x; });
+
+  // implements 2:
+  // for (auto iter = c.begin(); iter != c.end(); ++iter)
+  //    std::cout << *iter;
+
+  for (std::size_t i = 0; i != c.size(); ++i)
+    std::cout << c[i];
+}
+
+template <typename Array>
+void copy(Array &dst, Array const &src) {
+  for (std::size_t i = 0; i != src.size(); ++i)
+    dst[i] = src[i];
+}
+
+void test_copy() {
+  array<int, 5> a = {1, 2, 3, 4, 5};
+  array<int, 5> a_;
+  copy(a_, a);
+  expect(__LINE__, true,
+         equal(std::begin(a), std::end(a), std::begin(a_), std::end(a_)));
+}
+
 /*
 noreturn void error(char *fmt, ...) {
   va_list ap;
@@ -209,5 +232,6 @@ int main() {
   myarray();
   test_array_iterator();
   test_for_each();
+  test_copy();
   return EXIT_SUCCESS;
 }
