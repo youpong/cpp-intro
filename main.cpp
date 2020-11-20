@@ -40,7 +40,9 @@ struct array_iterator {
 
   array_iterator(Array &a, std::size_t i) : a(a), i(i) {}
 
-  long long operator-(array_iterator const &iter) const { return i - iter.i; }
+  long long operator-(array_iterator const &iter) const {
+    return i - iter.i;
+  }
 
   array_iterator &operator++() {
     ++i;
@@ -66,7 +68,9 @@ struct array_iterator {
 
   bool operator==(array_iterator const &right) { return i == right.i; }
 
-  bool operator!=(array_iterator const &right) { return !(*this == right); }
+  bool operator!=(array_iterator const &right) {
+    return !(*this == right);
+  }
 };
 
 template <typename T, std::size_t N>
@@ -154,8 +158,8 @@ void expect(int line, int expected, int actual) {
     return;
 
   //  error("%d: %d expected, but got %d", line, expected, actual);
-  std::cerr << line << ": "s << expected << " expected, but got "s << actual
-            << "\n";
+  std::cerr << line << ": "s << expected << " expected, but got "s
+            << actual << "\n";
 }
 
 template <typename Array>
@@ -235,6 +239,7 @@ void test_const() {
 
   s.get() = 3;
   expect(__LINE__, 3, s.data);
+  expect(__LINE__, 2, cs.get()); // ? get() returns constant ref of int
   // error: assignment of read-only location ‘cs.S::get()’
   // cs.get() = 4;
 }
