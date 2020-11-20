@@ -1,5 +1,5 @@
 ---
 AlwaysBreakTemplateDeclarations: Yes
-AllowShortFunctionsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: true
 BasedOnStyle: LLVM
 ColumnLimit: 80

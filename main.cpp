@@ -38,12 +38,9 @@ struct array_iterator {
   Array &a;
   std::size_t i;
 
-  array_iterator(Array &a, std::size_t i) : a(a), i(i) {
-  }
+  array_iterator(Array &a, std::size_t i) : a(a), i(i) {}
 
-  long long operator-(array_iterator const &iter) const {
-    return i - iter.i;
-  }
+  long long operator-(array_iterator const &iter) const { return i - iter.i; }
 
   array_iterator &operator++() {
     ++i;
@@ -65,17 +62,11 @@ struct array_iterator {
     return copy;
   }
 
-  typename Array::reference operator*() {
-    return a[i];
-  }
+  typename Array::reference operator*() { return a[i]; }
 
-  bool operator==(array_iterator const &right) {
-    return i == right.i;
-  }
+  bool operator==(array_iterator const &right) { return i == right.i; }
 
-  bool operator!=(array_iterator const &right) {
-    return !(*this == right);
-  }
+  bool operator!=(array_iterator const &right) { return !(*this == right); }
 };
 
 template <typename T, std::size_t N>
@@ -90,42 +81,22 @@ struct array {
 
   value_type storage[N];
 
-  iterator begin() {
-    return iterator(*this, 0);
-  }
+  iterator begin() { return iterator(*this, 0); }
 
-  iterator end() {
-    return iterator(*this, N);
-  }
+  iterator end() { return iterator(*this, N); }
 
-  reference operator[](size_type i) {
-    return storage[i];
-  }
+  reference operator[](size_type i) { return storage[i]; }
 
-  const_reference operator[](size_type i) const {
-    return storage[i];
-  }
+  const_reference operator[](size_type i) const { return storage[i]; }
 
-  reference front() {
-    return storage[0];
-  }
-  const_reference front() const {
-    return storage[0];
-  }
-  reference back() {
-    return storage[N - 1];
-  }
-  const_reference back() const {
-    return storage[N - 1];
-  }
+  reference front() { return storage[0]; }
+  const_reference front() const { return storage[0]; }
+  reference back() { return storage[N - 1]; }
+  const_reference back() const { return storage[N - 1]; }
 
-  void fill(const_reference u) {
-    std::fill(begin(), end(), u);
-  }
+  void fill(const_reference u) { std::fill(begin(), end(), u); }
 
-  size_type size() const {
-    return N;
-  }
+  size_type size() const { return N; }
 };
 
 void myarray() {
@@ -234,12 +205,18 @@ noreturn void error(char *fmt, ...) {
 struct S {
   int data{};
 
-  S(int d) : data(d) {}  
+  S(int d) : data(d) {}
   void f() {}
   int g() { return data + 100; }
   // error: assignment of member ‘S::data’ in read-only object
   // void g() const { data = 42;};
   int g() const { return data + 200; }
+
+  int &get() { return data; }
+  // error: binding reference of type ‘int&’ to ‘const int’
+  // discards qualifiers
+  //  int & get() const { return data; }
+  int const &get() const { return data; }
 };
 
 void test_const() {
@@ -252,9 +229,14 @@ void test_const() {
   S const cs(2);
   // error: passing ‘const S’ as ‘this’ argument discards qualifiers
   // [-fpermissive]
-  //  cs.f();
+  // cs.f();
   expect(__LINE__, 101, s.g());  //  s.g() call S::g()
   expect(__LINE__, 202, cs.g()); // cs.g() call S::g() const
+
+  s.get() = 3;
+  expect(__LINE__, 3, s.data);
+  // error: assignment of read-only location ‘cs.S::get()’
+  // cs.get() = 4;
 }
 
 int main() {
