@@ -103,16 +103,36 @@ struct array {
   size_type size() const { return N; }
 };
 
-void myarray() {
+void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
-  auto ref = a[0];
-  expect(__LINE__, 1, ref);
+  const array<int, 5> ca = {1, 2, 3, 4, 5};
+
+  auto aref = a[0];
+  expect(__LINE__, 2, ++aref);
+  expect(__LINE__, 1, a[0]);
+
+  auto acref = ca[0];
+  expect(__LINE__, 2, ++acref);
+  expect(__LINE__, 1, ca[0]);
+
+  int &ref = a[0];
+  expect(__LINE__, 2, ++ref);
+  expect(__LINE__, 2, a[0]);
+
+  int const &cref = ca[0];
+  // error: increment of read-only reference ‘cref’
+  // expect(__LINE__, 2, ++cref);
+  expect(__LINE__, 1, cref);
+
   auto size = a.size();
   expect(__LINE__, 5, size);
-  int &f = a.front();
-  expect(__LINE__, 1, f);
+  expect(__LINE__, 5, ca.size());
+  int &f = a.front(); // equivalent to ref to a[0]
+  expect(__LINE__, 2, f);
+  f++;
+  expect(__LINE__, 3, a[0]);
 
-  std::array<int, 5> a0 = {1, 2, 3, 4, 5};
+  std::array<int, 5> a0 = {3, 2, 3, 4, 5};
   // std::equal()
   expect(__LINE__, true,
          equal(std::begin(a), std::end(a), std::begin(a0), std::end(a0)));
@@ -247,7 +267,7 @@ void test_const() {
 int main() {
   name_scope();
   lambda_expr();
-  myarray();
+  test_array();
   test_array_iterator();
   test_for_each();
   test_copy();
