@@ -189,10 +189,14 @@ void expect(int line, int expected, int actual) {
 
 template <typename Array>
 void print(Array const &c) {
-  // TODO: implement other way.
+  // void print(Array &c) {
+  // TODO: implement other way. MUST learn pointer?
   // implements 1:
-  // std::for_each(std::begin(c), std::end(c),
-  //		[](auto &x) { std::cout << x; });
+  //  std::for_each(std::begin(c), std::end(c),
+  //		[](auto const &x) { std::cout << x; });
+  // std::begin(c): error
+  // c.begin(): error
+  // array_iterator<Array>(c, 0): error
 
   // implements 2:
   // for (auto iter = c.begin(); iter != c.end(); ++iter)
@@ -214,6 +218,7 @@ void test_copy() {
   copy(a_, a);
   expect(__LINE__, true,
          equal(std::begin(a), std::end(a), std::begin(a_), std::end(a_)));
+  print(a);
 }
 
 /*
@@ -226,6 +231,32 @@ noreturn void error(char *fmt, ...) {
 }
 */
 
+struct S {
+  // S(int d) : data(d) {}
+  int data{};
+
+  void f() {
+  }
+  void g(){};
+  // error: assignment of member ‘S::data’ in read-only object
+  // void g() const { data = 42;};
+  void g() const {};
+};
+
+void test_const() {
+  int const cx = 1;
+  expect(__LINE__, 1, cx);
+  // error: assignment of read-only variable ‘cx’
+  //  cx = 0:
+
+  S s;
+  S const cs;
+  // error: passing ‘const S’ as ‘this’ argument discards qualifiers
+  // [-fpermissive]
+  //  cs.f();
+  cs.g();
+}
+
 int main() {
   name_scope();
   lambda_expr();
@@ -233,5 +264,7 @@ int main() {
   test_array_iterator();
   test_for_each();
   test_copy();
+  test_const();
+
   return EXIT_SUCCESS;
 }
