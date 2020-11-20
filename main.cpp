@@ -232,15 +232,14 @@ noreturn void error(char *fmt, ...) {
 */
 
 struct S {
-  // S(int d) : data(d) {}
   int data{};
 
-  void f() {
-  }
-  void g(){};
+  S(int d) : data(d) {}  
+  void f() {}
+  int g() { return data + 100; }
   // error: assignment of member ‘S::data’ in read-only object
   // void g() const { data = 42;};
-  void g() const {};
+  int g() const { return data + 200; }
 };
 
 void test_const() {
@@ -249,12 +248,13 @@ void test_const() {
   // error: assignment of read-only variable ‘cx’
   //  cx = 0:
 
-  S s;
-  S const cs;
+  S s(1);
+  S const cs(2);
   // error: passing ‘const S’ as ‘this’ argument discards qualifiers
   // [-fpermissive]
   //  cs.f();
-  cs.g();
+  expect(__LINE__, 101, s.g());  //  s.g() call S::g()
+  expect(__LINE__, 202, cs.g()); // cs.g() call S::g() const
 }
 
 int main() {
