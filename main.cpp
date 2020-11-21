@@ -107,29 +107,30 @@ void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
 
-  auto aref = a[0];
-  expect(__LINE__, 2, ++aref);
-  expect(__LINE__, 1, a[0]);
-
-  auto acref = ca[0];
-  expect(__LINE__, 2, ++acref);
-  expect(__LINE__, 1, ca[0]);
-
-  int &ref = a[0];
-  expect(__LINE__, 2, ++ref);
+  auto &refa = a[0];
+  ++refa;
   expect(__LINE__, 2, a[0]);
 
-  int const &cref = ca[0];
-  // error: increment of read-only reference ‘cref’
-  // expect(__LINE__, 2, ++cref);
-  expect(__LINE__, 1, cref);
+  auto &refca = ca[0];
+  // error: increment of read-only reference ‘refca’
+  // ++refca;
+  expect(__LINE__, 1, refca);
 
-  auto size = a.size();
-  expect(__LINE__, 5, size);
+  auto const &crefa = a[1];
+  // error:increment of read-only reference ‘crefa’
+  // ++crefa;
+  expect(__LINE__, 2, crefa);
+
+  auto const &crefca = ca[1];
+  // error: increment of read-only reference ‘crefca’
+  // ++crefca;
+  expect(__LINE__, 2, crefca);
+
+  expect(__LINE__, 5, a.size());
   expect(__LINE__, 5, ca.size());
-  int &f = a.front(); // equivalent to ref to a[0]
-  expect(__LINE__, 2, f);
-  f++;
+
+  auto &f = a.front(); // equivalent to a[0]
+  expect(__LINE__, 2, f++);
   expect(__LINE__, 3, a[0]);
 
   std::array<int, 5> a0 = {3, 2, 3, 4, 5};
