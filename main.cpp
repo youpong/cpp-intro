@@ -98,7 +98,9 @@ struct array {
   reference back() { return storage[N - 1]; }
   const_reference back() const { return storage[N - 1]; }
 
-  void fill(const_reference u) { std::fill(begin(), end(), u); }
+  void fill(const_reference u) {
+    std::fill(std::begin(*this), std::end(*this), u);
+  }
 
   size_type size() const { return N; }
 };
