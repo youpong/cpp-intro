@@ -107,28 +107,28 @@ void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
 
-  auto &refa = a[1];
+  auto &refa = a[1]; // auto = int
   refa += 2;
   expect(__LINE__, 4, a[1]);
   refa = a[2]; // equivalent to a[1] = a[2]
                // refa is reference to a[1]
   expect(__LINE__, 3, a[1]);
 
-  auto &refca = ca[1];
+  auto &refca = ca[1]; // auto = int const
   expect(__LINE__, 2, refca);
   // error: increment of read-only reference ‘refca’
   // ++refca;
   // error: assignment of read-only reference ‘refca’
   // refca = ca[2];
 
-  auto const &crefa = a[2];
+  auto const &crefa = a[2]; // auto = int
   expect(__LINE__, 3, crefa);
   // error:increment of read-only reference ‘crefa’
   // ++crefa;
   // error: assignment of read-only reference ‘crefa
   // crefa = a[3];
 
-  auto const &crefca = ca[2];
+  auto const &crefca = ca[2]; // auto = int
   expect(__LINE__, 3, crefca);
   // error: increment of read-only reference ‘crefca’
   // ++crefca;
@@ -136,27 +136,28 @@ void test_array() {
 
   int &irefa = a[3];
   expect(__LINE__, 5, ++irefa);
-  int const &icrefa = a[4];
-  expect(__LINE__, 5, icrefa);
   // error: binding reference of type ‘int&’ to ‘const int’ discards
   // qualifiers
   // int &irefca = ca[3];
+  int const &icrefa = a[4];
+  expect(__LINE__, 5, icrefa);
   int const &icrefca = ca[3];
   expect(__LINE__, 4, icrefca);
 
   expect(__LINE__, 5, a.size());
   expect(__LINE__, 5, ca.size());
 
-  auto &f = a.front(); // equivalent to a[0]
-  expect(__LINE__, 1, f++);
+  expect(__LINE__, 1, a.front()++);
   expect(__LINE__, 2, a[0]);
 
-  ca.front();
+  expect(__LINE__, 1, ca.front());
 
-  a.back();
-  ca.back();
+  expect(__LINE__, 5, a.back()++);
+  expect(__LINE__, 6, a[4]);
 
-  std::array<int, 5> a0 = {2, 3, 3, 5, 5};
+  expect(__LINE__, 5, ca.back());
+
+  std::array<int, 5> a0 = {2, 3, 3, 5, 6};
   // std::equal()
   expect(__LINE__, true,
          equal(std::begin(a), std::end(a), std::begin(a0), std::end(a0)));
