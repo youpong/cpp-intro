@@ -383,8 +383,22 @@ void test() {
   Array::const_iterator ci = std::cbegin(a);
   const Array::const_iterator c_ci = std::cbegin(a);
 
-  a.cbegin();
-  std::cbegin(a);
+  expect(__LINE__, true, i == c_i);
+  expect(__LINE__, true, ci == c_ci);
+}
+
+void test2() {
+  using Array = std::array<int, 5>;
+  Array a = {1, 2, 3, 4, 5};
+  const Array ca = {1, 2, 3, 4, 5};
+
+  Array::const_iterator i = std::begin(a);
+  // error: assignment of read-only location ‘* i’
+  // *i = 2;
+  Array::const_iterator ci = std::begin(ca);
+  // error: assignment of read-only location ‘* ci’
+  //*ci = 2;
+  expect(__LINE__, false, i == ci);
 }
 
 int main() {
@@ -398,6 +412,7 @@ int main() {
   test_array_iterator_index();
   test_array_iterator_comparison();
   test();
+  test2();
 
   return EXIT_SUCCESS;
 }
