@@ -91,6 +91,12 @@ struct array_iterator {
   long long operator-(array_iterator const &iter) const {
     return i - iter.i;
   }
+  
+  array_iterator operator-(std::size_t n) const {
+    array_iterator copy = *this;
+    copy.i -= n;
+    return copy;
+  }
 
   array_iterator operator+(std::size_t n) const {
     array_iterator copy = *this;
@@ -335,6 +341,8 @@ void test() {
   expect(__LINE__, 3, *iter);
   iter = iter + 2;
   expect(__LINE__, 5, *iter);
+
+  expect(__LINE__, 4, *(iter - 1));
 }
 
 int main() {
