@@ -117,6 +117,11 @@ struct array_iterator {
   bool operator!=(array_iterator const &right) {
     return !(*this == right);
   }
+
+  bool operator<(array_iterator const &right) { return i < right.i; }
+  bool operator<=(array_iterator const &right) { return i <= right.i; }
+  bool operator>(array_iterator const &right) { return i > right.i; }
+  bool operator>=(array_iterator const &right) { return i >= right.i; }
 };
 
 template <typename T, std::size_t N>
@@ -337,7 +342,7 @@ void test_const() {
   // cs.get() = 4;
 }
 
-void test() {
+void test_array_iterator_index() {
   array<int, 5> a = {1, 2, 3, 4, 5};
 
   auto iter = std::begin(a);
@@ -351,6 +356,18 @@ void test() {
   expect(__LINE__, 3, iter[-2]);
 }
 
+void test_array_iterator_comparison() {
+  array<int, 5> ar = {1, 2, 3, 4, 5};
+
+  auto a = std::begin(ar);
+  auto b = a + 1;
+
+  expect(__LINE__, true, a < b);
+  expect(__LINE__, true, a <= b);
+  expect(__LINE__, false, a > b);
+  expect(__LINE__, false, a >= b);
+}
+
 int main() {
   name_scope();
   lambda_expr();
@@ -359,7 +376,8 @@ int main() {
   test_for_each();
   test_copy();
   test_const();
-  test();
+  test_array_iterator_index();
+  test_array_iterator_comparison();
 
   return EXIT_SUCCESS;
 }
