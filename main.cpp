@@ -387,18 +387,22 @@ void test() {
   expect(__LINE__, true, ci == c_ci);
 }
 
-void test2() {
+void const_iterator() {
   using Array = std::array<int, 5>;
   Array a = {1, 2, 3, 4, 5};
   const Array ca = {1, 2, 3, 4, 5};
 
-  auto i = std::cbegin(a);
+  auto ci_a = std::cbegin(a);
   // error: assignment of read-only location ‘* i’
-  // *i = 2;
-  auto ci = std::begin(ca);
+  // *ci_a = 2;
+  auto ci_ca = std::begin(ca);
   // error: assignment of read-only location ‘* ci’
-  // *ci = 2;
-  expect(__LINE__, false, i == ci);
+  // *ci_ca = 2;
+  auto i_a = std::begin(a);
+  Array::const_iterator ci_a2 = i_a;
+
+  expect(__LINE__, true, ci_a == ci_a2);
+  expect(__LINE__, false, ci_a == ci_ca);
 }
 
 int main() {
@@ -412,7 +416,7 @@ int main() {
   test_array_iterator_index();
   test_array_iterator_comparison();
   test();
-  test2();
+  const_iterator();
 
   return EXIT_SUCCESS;
 }
