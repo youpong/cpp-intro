@@ -44,6 +44,10 @@ struct array_iterator {
 
   typename Array::reference operator*() { return a[i]; }
 
+  typename Array::reference operator[](std::size_t n) const {
+    return *(*this + n);
+  }
+
   //
   // assignment operators
   //
@@ -91,7 +95,7 @@ struct array_iterator {
   long long operator-(array_iterator const &iter) const {
     return i - iter.i;
   }
-  
+
   array_iterator operator-(std::size_t n) const {
     array_iterator copy = *this;
     copy.i -= n;
@@ -343,6 +347,8 @@ void test() {
   expect(__LINE__, 5, *iter);
 
   expect(__LINE__, 4, *(iter - 1));
+
+  expect(__LINE__, 3, iter[-2]);
 }
 
 int main() {
