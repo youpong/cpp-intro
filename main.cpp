@@ -392,7 +392,7 @@ void test2() {
   Array a = {1, 2, 3, 4, 5};
   const Array ca = {1, 2, 3, 4, 5};
 
-  Array::const_iterator i = std::begin(a);
+  auto i = std::cbegin(a);
   // error: assignment of read-only location ‘* i’
   // *i = 2;
   auto ci = std::begin(ca);
