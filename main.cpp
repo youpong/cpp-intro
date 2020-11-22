@@ -112,9 +112,11 @@ struct array_iterator {
   // comparison operators
   //
 
-  bool operator==(array_iterator const &right) { return i == right.i; }
+  bool operator==(array_iterator const &right) const {
+    return i == right.i;
+  }
 
-  bool operator!=(array_iterator const &right) {
+  bool operator!=(array_iterator const &right) const {
     return !(*this == right);
   }
 
