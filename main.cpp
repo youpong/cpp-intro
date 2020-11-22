@@ -34,6 +34,7 @@ void lambda_expr() {
 }
 
 // pass std::for_each()
+// bioperators don't check both iter refer same array.
 template <typename Array>
 struct array_iterator {
   Array &a;
@@ -41,19 +42,31 @@ struct array_iterator {
 
   array_iterator(Array &a, std::size_t i) : a(a), i(i) {}
 
-  long long operator-(array_iterator const &iter) const {
-    return i - iter.i;
-  }
+  typename Array::reference operator*() { return a[i]; }
 
+  //
+  // assignment operators
+  //
+
+  array_iterator &operator=(array_iterator iter) {
+    //    a = iter.a;
+    i = iter.i;
+    return *this;
+  }
   array_iterator &operator+=(std::size_t n) {
     i += n;
     return *this;
   }
 
+  //
+  // increment/decrement operators
+  //
+
   array_iterator &operator++() {
     ++i;
     return *this;
   }
+
   array_iterator operator++(int) {
     array_iterator copy = *this;
     ++*this;
@@ -64,13 +77,30 @@ struct array_iterator {
     --i;
     return *this;
   }
+
   array_iterator operator--(int) {
     array_iterator copy = *this;
     --*this;
     return copy;
   }
 
-  typename Array::reference operator*() { return a[i]; }
+  //
+  // arithmetic operators
+  //
+
+  long long operator-(array_iterator const &iter) const {
+    return i - iter.i;
+  }
+
+  array_iterator operator+(std::size_t n) const {
+    array_iterator copy = *this;
+    copy.i += n;
+    return copy;
+  }
+
+  //
+  // comparison operators
+  //
 
   bool operator==(array_iterator const &right) { return i == right.i; }
 
@@ -301,8 +331,10 @@ void test() {
   array<int, 5> a = {1, 2, 3, 4, 5};
 
   auto iter = std::begin(a);
-  iter += 3;
-  expect(__LINE__, 4, *iter);
+  iter += 2;
+  expect(__LINE__, 3, *iter);
+  iter = iter + 2;
+  expect(__LINE__, 5, *iter);
 }
 
 int main() {
