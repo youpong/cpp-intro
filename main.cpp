@@ -395,9 +395,9 @@ void test2() {
   Array::const_iterator i = std::begin(a);
   // error: assignment of read-only location ‘* i’
   // *i = 2;
-  Array::const_iterator ci = std::begin(ca);
+  auto ci = std::begin(ca);
   // error: assignment of read-only location ‘* ci’
-  //*ci = 2;
+  // *ci = 2;
   expect(__LINE__, false, i == ci);
 }
 
