@@ -126,10 +126,14 @@ struct array_iterator {
   bool operator>=(array_iterator const &right) { return i >= right.i; }
 };
 
+template <typename Array>
+struct array_const_iterator {};
+
 template <typename T, std::size_t N>
 struct array {
 
   using iterator = array_iterator<array>;
+  using const_iterator = array_const_iterator<array>;
   using value_type = T;
   using reference = T &;
   using const_reference = T const &;
@@ -370,6 +374,19 @@ void test_array_iterator_comparison() {
   expect(__LINE__, false, a >= b);
 }
 
+void test() {
+  using Array = std::array<int, 5>;
+  Array a = {1, 2, 3, 4, 5};
+
+  Array::iterator i = std::begin(a);
+  const Array::iterator c_i = std::begin(a);
+  Array::const_iterator ci = std::cbegin(a);
+  const Array::const_iterator c_ci = std::cbegin(a);
+
+  a.cbegin();
+  std::cbegin(a);
+}
+
 int main() {
   name_scope();
   lambda_expr();
@@ -380,6 +397,7 @@ int main() {
   test_const();
   test_array_iterator_index();
   test_array_iterator_comparison();
+  test();
 
   return EXIT_SUCCESS;
 }
