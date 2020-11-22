@@ -33,6 +33,7 @@ void lambda_expr() {
   expect(__LINE__, 43, [](auto x) { return x + 1; }(42));
 }
 
+// pass std::for_each()
 template <typename Array>
 struct array_iterator {
   Array &a;
@@ -42,6 +43,11 @@ struct array_iterator {
 
   long long operator-(array_iterator const &iter) const {
     return i - iter.i;
+  }
+
+  array_iterator &operator+=(std::size_t n) {
+    i += n;
+    return *this;
   }
 
   array_iterator &operator++() {
@@ -291,6 +297,14 @@ void test_const() {
   // cs.get() = 4;
 }
 
+void test() {
+  array<int, 5> a = {1, 2, 3, 4, 5};
+
+  auto iter = std::begin(a);
+  iter += 3;
+  expect(__LINE__, 4, *iter);
+}
+
 int main() {
   name_scope();
   lambda_expr();
@@ -299,6 +313,7 @@ int main() {
   test_for_each();
   test_copy();
   test_const();
+  test();
 
   return EXIT_SUCCESS;
 }
