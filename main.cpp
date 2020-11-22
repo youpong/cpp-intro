@@ -383,8 +383,13 @@ void test() {
   Array::const_iterator ci = std::cbegin(a);
   const Array::const_iterator c_ci = std::cbegin(a);
 
+  // increment of read-only variable ‘c_i’
+  // ++c_i;
+  auto next_itr = c_i + 1; // Okay not change c_i
+  
   expect(__LINE__, true, i == c_i);
   expect(__LINE__, true, ci == c_ci);
+  expect(__LINE__, true, next_itr == c_i + 1);
 }
 
 void const_iterator() {
