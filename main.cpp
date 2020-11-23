@@ -386,7 +386,7 @@ void test() {
   // increment of read-only variable ‘c_i’
   // ++c_i;
   auto next_itr = c_i + 1; // Okay not change c_i
-  
+
   expect(__LINE__, true, i == c_i);
   expect(__LINE__, true, ci == c_ci);
   expect(__LINE__, true, next_itr == c_i + 1);
@@ -397,16 +397,22 @@ void const_iterator() {
   Array a = {1, 2, 3, 4, 5};
   const Array ca = {1, 2, 3, 4, 5};
 
+  // const_iterator: ci_a
   auto ci_a = std::cbegin(a);
-  // error: assignment of read-only location ‘* i’
-  // *ci_a = 2;
+
+  // const iterator: ci_ca
   auto ci_ca = std::begin(ca);
-  // error: assignment of read-only location ‘* ci’
-  // *ci_ca = 2;
+
+  // const_iterator: ci_a2
   auto i_a = std::begin(a);
   Array::const_iterator ci_a2 = i_a;
 
-  expect(__LINE__, true, ci_a == ci_a2);
+  // const_iterator can change itself
+  ++ci_a2;
+  // error: assignment of read-only location ‘* ci_a2’
+  // *ci_a2 = 2;
+
+  expect(__LINE__, false, ci_a == ci_a2);
   expect(__LINE__, false, ci_a == ci_ca);
 }
 
