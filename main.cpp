@@ -38,12 +38,13 @@ void lambda_expr() {
 template <typename Array>
 struct array_iterator {
   Array &a;
-  std::size_t i;
+  std::size_t i; // TODO const?
 
   array_iterator(Array &a, std::size_t i) : a(a), i(i) {}
 
   typename Array::reference operator*() { return a[i]; }
 
+  // TODO: not const?
   typename Array::reference operator[](std::size_t n) const {
     return *(*this + n);
   }
@@ -120,6 +121,7 @@ struct array_iterator {
     return !(*this == right);
   }
 
+  // TODO: const
   bool operator<(array_iterator const &right) { return i < right.i; }
   bool operator<=(array_iterator const &right) { return i <= right.i; }
   bool operator>(array_iterator const &right) { return i > right.i; }
@@ -127,7 +129,26 @@ struct array_iterator {
 };
 
 template <typename Array>
-struct array_const_iterator {};
+struct array_const_iterator {
+  Array const &a;
+  std::size_t i; // TODO: const ?
+
+  array_const_iterator(Array const &a, std::size_t i) : a(a), i(i) {}
+
+  array_const_iterator(
+      typename array_iterator<Array>::iterator const &iter)
+      : a(iter.a), i(iter.i) {}
+
+  typename Array::const_reference operator*() const { return a[i]; }
+  typename Array::const_reference operator[](std::size_t n) const {
+    return *(*this + n);
+  }
+
+  array_const_iterator &operator++() {
+    ++i;
+    return *this;
+  }
+};
 
 template <typename T, std::size_t N>
 struct array {
@@ -143,8 +164,13 @@ struct array {
   value_type storage[N];
 
   iterator begin() { return iterator(*this, 0); }
-
   iterator end() { return iterator(*this, N); }
+
+  const_iterator begin() const { return const_iterator(*this, 0); }
+  const_iterator end() const { return const_iterator(*this, N); }
+
+  const_iterator cbegin() { return const_iterator(*this, 0); }
+  const_iterator cend() { return const_iterator(*this, N); }
 
   reference operator[](size_type i) { return storage[i]; }
 
@@ -383,13 +409,15 @@ void test() {
   Array::const_iterator ci = std::cbegin(a);
   const Array::const_iterator c_ci = std::cbegin(a);
 
-  // increment of read-only variable ‘c_i’
+  // increment of read-only variable
   // ++c_i;
-  auto next_itr = c_i + 1; // Okay not change c_i
+  // ++c_ci;
+  auto next_itr1 = c_i + 1;  // Okay not change c_i
+  auto next_itr2 = c_ci + 1; // Okay not change c_ci
 
   expect(__LINE__, true, i == c_i);
   expect(__LINE__, true, ci == c_ci);
-  expect(__LINE__, true, next_itr == c_i + 1);
+  expect(__LINE__, true, next_itr1 == next_itr2);
 }
 
 void const_iterator() {
