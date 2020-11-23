@@ -64,3 +64,5 @@
 #include <thread>
 
 using namespace std::literals;
+
+void expect(int line, int expected, int actual);

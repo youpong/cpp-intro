@@ -1,4 +1,6 @@
-*~
-TAGS
-*.gch
 hello
+a.out
+*.o
+*.gch
+TAGS
+*~

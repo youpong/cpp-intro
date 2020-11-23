@@ -11,15 +11,17 @@ run: hello
 check: hello
 	./hello
 clean:
-	- rm hello all.h.gch
+	- rm -f hello all.h.gch *.o
 format:
 	clang-format -i *.cpp *.h
 tags:
 	etags *.cpp *.h
 
-hello: main.cpp all.h all.h.gch
-	$(CXX) $(CXXFLAGS) -include all.h $< -o $@
-#	$(CXX) -include all.h $< -o $@
-
+hello: main.o error.o
+	$(CXX) $^ -o $@
+main.o: main.cpp all.h all.h.gch
+	$(CXX) $(CXXFLAGS) -include all.h -c $<
+error.o: error.cpp all.h all.h.gch
+	$(CXX) $(CXXFLAGS) -include all.h -c $<
 all.h.gch: all.h
 	$(CXX) $(CXXFLAGS) -x c++-header -o $@ $<

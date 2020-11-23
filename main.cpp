@@ -1,4 +1,23 @@
-void expect(int line, int expected, int actual);
+void test_all_error();
+
+void expect(int line, int expected, int actual) {
+  if (expected == actual)
+    return;
+
+  //  error("%d: %d expected, but got %d", line, expected, actual);
+  std::cerr << line << ": "s << expected << " expected, but got "s
+            << actual << "\n";
+}
+
+/*
+noreturn void error(char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  vfprintf(stderr, fmt, ap);
+  fprintf(stderr, "\n");
+  exit(1);
+}
+*/
 
 auto distance = [](auto first, auto last) { return last - first; };
 
@@ -16,7 +35,7 @@ auto equal = [](auto first1, auto last1, auto first2, auto last2) {
 
 auto f = []() { return 1; };
 
-void name_scope() {
+static void name_scope() {
   expect(__LINE__, 1, f());
   auto f = []() { return 2; };
   expect(__LINE__, 2, f());
@@ -29,7 +48,7 @@ void name_scope() {
   expect(__LINE__, 2, f());
 }
 
-void lambda_expr() {
+static void lambda_expr() {
   expect(__LINE__, 43, [](auto x) { return x + 1; }(42));
 }
 
@@ -185,8 +204,13 @@ struct array {
   const_iterator cend() { return const_iterator(*this, N); }
 
   reference operator[](size_type i) { return storage[i]; }
-
   const_reference operator[](size_type i) const { return storage[i]; }
+
+  reference at(size_type i) {
+    if ( i < 0 || size() <= i )
+      throw std::out_of_range("Error: Out of Range");
+    return storage[i];
+  }
 
   reference front() { return storage[0]; }
   const_reference front() const { return storage[0]; }
@@ -200,7 +224,7 @@ struct array {
   size_type size() const { return N; }
 };
 
-void test_array() {
+static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
 
@@ -265,7 +289,7 @@ void test_array() {
          equal(std::begin(a), std::end(a), std::begin(a1), std::end(a1)));
 }
 
-void test_array_iterator() {
+static void test_array_iterator() {
   array<int, 5> a = {1, 2, 3, 4, 5};
 
   auto iter = a.begin();
@@ -286,22 +310,13 @@ void test_array_iterator() {
   expect(__LINE__, true, iter == iter2);
 }
 
-void test_for_each() {
+static void test_for_each() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   std::for_each(std::begin(a), std::end(a), [](auto &x) { ++x; });
 
   std::array<int, 5> a0 = {2, 3, 4, 5, 6};
   expect(__LINE__, true,
          equal(std::begin(a), std::end(a), std::begin(a0), std::end(a0)));
-}
-
-void expect(int line, int expected, int actual) {
-  if (expected == actual)
-    return;
-
-  //  error("%d: %d expected, but got %d", line, expected, actual);
-  std::cerr << line << ": "s << expected << " expected, but got "s
-            << actual << "\n";
 }
 
 template <typename Array>
@@ -329,7 +344,7 @@ void copy(Array &dst, Array const &src) {
     dst[i] = src[i];
 }
 
-void test_copy() {
+static void test_copy() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   array<int, 5> a_;
   copy(a_, a);
@@ -337,16 +352,6 @@ void test_copy() {
          equal(std::begin(a), std::end(a), std::begin(a_), std::end(a_)));
   print(a);
 }
-
-/*
-noreturn void error(char *fmt, ...) {
-  va_list ap;
-  va_start(ap, fmt);
-  vfprintf(stderr, fmt, ap);
-  fprintf(stderr, "\n");
-  exit(1);
-}
-*/
 
 struct S {
   int data{};
@@ -365,7 +370,7 @@ struct S {
   int const &get() const { return data; }
 };
 
-void test_const() {
+static void test_const() {
   int const cx = 1;
   expect(__LINE__, 1, cx);
   // error: assignment of read-only variable ‘cx’
@@ -386,7 +391,7 @@ void test_const() {
   // cs.get() = 4;
 }
 
-void test_array_iterator_index() {
+static void test_array_iterator_index() {
   array<int, 5> a = {1, 2, 3, 4, 5};
 
   auto iter = std::begin(a);
@@ -400,7 +405,7 @@ void test_array_iterator_index() {
   expect(__LINE__, 3, iter[-2]);
 }
 
-void test_array_iterator_comparison() {
+static void test_array_iterator_comparison() {
   array<int, 5> ar = {1, 2, 3, 4, 5};
 
   auto a = std::begin(ar);
@@ -412,7 +417,7 @@ void test_array_iterator_comparison() {
   expect(__LINE__, false, a >= b);
 }
 
-void const_iterator1() {
+static void const_iterator1() {
   using Array = std::array<int, 5>;
   Array a = {1, 2, 3, 4, 5};
 
@@ -432,7 +437,7 @@ void const_iterator1() {
   expect(__LINE__, true, next_itr1 == next_itr2);
 }
 
-void const_iterator2() {
+static void const_iterator2() {
   using Array = std::array<int, 5>;
   Array a = {1, 2, 3, 4, 5};
   const Array ca = {1, 2, 3, 4, 5};
@@ -456,7 +461,7 @@ void const_iterator2() {
   expect(__LINE__, false, ci_a == ci_ca);
 }
 
-void const_iterator3() {
+static void const_iterator3() {
   using Array = array<int, 5>;
   Array a = {1, 2, 3, 4, 5};
 
@@ -467,9 +472,13 @@ void const_iterator3() {
   expect(__LINE__, 15, total);
 }
 
-void test() {
-  std::array<int, 1> a = {1};
-  expect(__LINE__, 1, a.at(1000));
+static void test() {
+  array<int, 1> a = {1};
+  try {
+    expect(__LINE__, 1, a.at(1000));
+  } catch(std::out_of_range &e) {
+    std::cout << e.what();
+  }
 }
 
 int main() {
@@ -486,6 +495,7 @@ int main() {
   const_iterator2();
   const_iterator3();
   test();
-
+  test_all_error();
+  
   return EXIT_SUCCESS;
 }
