@@ -26,7 +26,13 @@ auto equal = [](auto first1, auto last1, auto first2, auto last2) {
   if (distance(first1, last1) != distance(first2, last2))
     return false;
 
-  for (auto i = first1, j = first2; i != last1; ++i, ++j)
+  // clang++-10.0.0-4ubuntu1
+  // error: 'auto' deduced as 'array_iterator<array<int, 5> >'
+  // in declaration of 'i' and deduced as 'int *' in declaration of 'j'
+  // for (auto i = first1, auto j = first2; i != last1; ++i, ++j)
+  auto i = first1;
+  auto j = first2;
+  for (; i != last1; ++i, ++j)
     if (*i != *j)
       return false;
 
@@ -154,8 +160,13 @@ struct array_const_iterator {
 
   array_const_iterator(Array const &a, std::size_t i) : a(a), i(i) {}
 
-  array_const_iterator(
-      typename array_iterator<Array>::array_iterator const &iter)
+  // clang++-10.0.0-4ubuntu1
+  // error: ISO C++ specifies that qualified reference to 'array_iterator'
+  // is a constructor name rather than a type in this context, despite
+  // preceding 'typename' keyword [-Werror,-Winjected-class-name]
+  // array_const_iterator(
+  //     typename array_iterator<Array>::array_iterator const &iter)
+  array_const_iterator(typename Array::iterator const &iter)
       : a(iter.a), i(iter.i) {}
 
   typename Array::const_reference operator*() const { return a[i]; }
@@ -207,7 +218,7 @@ struct array {
   const_reference operator[](size_type i) const { return storage[i]; }
 
   reference at(size_type i) {
-    if ( i < 0 || size() <= i )
+    if (i < 0 || size() <= i)
       throw std::out_of_range("Error: Out of Range");
     return storage[i];
   }
@@ -279,6 +290,7 @@ static void test_array() {
   expect(__LINE__, 5, ca.back());
 
   std::array<int, 5> a0 = {2, 3, 3, 5, 6};
+
   // std::equal()
   expect(__LINE__, true,
          equal(std::begin(a), std::end(a), std::begin(a0), std::end(a0)));
@@ -466,9 +478,9 @@ static void const_iterator3() {
   Array a = {1, 2, 3, 4, 5};
 
   auto total{0};
-  for (auto i = std::cbegin(a); i != std::cend(a); ++i) {
+  for (Array::const_iterator i = std::begin(a); i != std::cend(a); ++i)
     total += *i;
-  }
+
   expect(__LINE__, 15, total);
 }
 
@@ -476,7 +488,7 @@ static void test() {
   array<int, 1> a = {1};
   try {
     expect(__LINE__, 1, a.at(1000));
-  } catch(std::out_of_range &e) {
+  } catch (std::out_of_range &e) {
     std::cout << e.what();
   }
 }
@@ -496,6 +508,6 @@ int main() {
   const_iterator3();
   test();
   test_all_error();
-  
+
   return EXIT_SUCCESS;
 }

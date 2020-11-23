@@ -1,7 +1,3 @@
-static void  test() {
-	std::cout << "Hello, World";
-}
+static void test() { std::cout << "Hello, World"; }
 
-void test_all_error() {
-  test();
-}
+void test_all_error() { test(); }

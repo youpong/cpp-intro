@@ -1,4 +1,5 @@
-# C++ compiler: clang++-10.0.0 not support c++17
+# CXX: C++ compiler
+#   clang++-10.0.0-4ubuntu1: not support c++17
 #CXX = clang++
 CXX = g++
 
@@ -11,7 +12,7 @@ run: hello
 check: hello
 	./hello
 clean:
-	- rm -f hello all.h.gch *.o
+	- rm -f hello a.out all.h.gch *.o TAGS
 format:
 	clang-format -i *.cpp *.h
 tags:
