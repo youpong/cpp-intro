@@ -136,7 +136,7 @@ struct array_const_iterator {
   array_const_iterator(Array const &a, std::size_t i) : a(a), i(i) {}
 
   array_const_iterator(
-      typename array_iterator<Array>::iterator const &iter)
+      typename array_iterator<Array>::array_iterator const &iter)
       : a(iter.a), i(iter.i) {}
 
   typename Array::const_reference operator*() const { return a[i]; }
@@ -147,6 +147,18 @@ struct array_const_iterator {
   array_const_iterator &operator++() {
     ++i;
     return *this;
+  }
+
+  //
+  // comparison operators
+  //
+
+  bool operator==(array_const_iterator const &right) const {
+    return i == right.i;
+  }
+
+  bool operator!=(array_const_iterator const &right) const {
+    return !(*this == right);
   }
 };
 
@@ -400,7 +412,7 @@ void test_array_iterator_comparison() {
   expect(__LINE__, false, a >= b);
 }
 
-void test() {
+void const_iterator1() {
   using Array = std::array<int, 5>;
   Array a = {1, 2, 3, 4, 5};
 
@@ -420,7 +432,7 @@ void test() {
   expect(__LINE__, true, next_itr1 == next_itr2);
 }
 
-void const_iterator() {
+void const_iterator2() {
   using Array = std::array<int, 5>;
   Array a = {1, 2, 3, 4, 5};
   const Array ca = {1, 2, 3, 4, 5};
@@ -444,6 +456,22 @@ void const_iterator() {
   expect(__LINE__, false, ci_a == ci_ca);
 }
 
+void const_iterator3() {
+  using Array = array<int, 5>;
+  Array a = {1, 2, 3, 4, 5};
+
+  auto total{0};
+  for (auto i = std::cbegin(a); i != std::cend(a); ++i) {
+    total += *i;
+  }
+  expect(__LINE__, 15, total);
+}
+
+void test() {
+  std::array<int, 1> a = {1};
+  expect(__LINE__, 1, a.at(1000));
+}
+
 int main() {
   name_scope();
   lambda_expr();
@@ -454,8 +482,10 @@ int main() {
   test_const();
   test_array_iterator_index();
   test_array_iterator_comparison();
+  const_iterator1();
+  const_iterator2();
+  const_iterator3();
   test();
-  const_iterator();
 
   return EXIT_SUCCESS;
 }
