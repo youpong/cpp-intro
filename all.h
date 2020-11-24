@@ -65,4 +65,11 @@
 
 using namespace std::literals;
 
-void expect(int line, int expected, int actual);
+auto expect = [](auto line, auto expected, auto actual) {
+  if (expected == actual)
+    return;
+
+  std::cerr << line << ": "s << expected << " expected, but got "s
+            << actual << "\n";
+  exit(1);
+};

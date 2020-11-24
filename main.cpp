@@ -1,24 +1,5 @@
 void test_all_error();
 
-void expect(int line, int expected, int actual) {
-  if (expected == actual)
-    return;
-
-  //  error("%d: %d expected, but got %d", line, expected, actual);
-  std::cerr << line << ": "s << expected << " expected, but got "s
-            << actual << "\n";
-}
-
-/*
-noreturn void error(char *fmt, ...) {
-  va_list ap;
-  va_start(ap, fmt);
-  vfprintf(stderr, fmt, ap);
-  fprintf(stderr, "\n");
-  exit(1);
-}
-*/
-
 auto distance = [](auto first, auto last) { return last - first; };
 
 auto equal = [](auto first1, auto last1, auto first2, auto last2) {
@@ -276,8 +257,8 @@ static void test_array() {
   int const &icrefca = ca[3];
   expect(__LINE__, 4, icrefca);
 
-  expect(__LINE__, 5, a.size());
-  expect(__LINE__, 5, ca.size());
+  expect(__LINE__, 5ul, a.size());
+  expect(__LINE__, 5ul, ca.size());
 
   expect(__LINE__, 1, a.front()++);
   expect(__LINE__, 2, a[0]);
@@ -493,6 +474,16 @@ static void test() {
   }
 }
 
+static void test_type() {
+  // char const*
+  auto str1 = "without s";
+
+  // std::__cxx11::basic_string<...>
+  auto str2 = "with s"s;
+
+  expect(__LINE__, false, str2 == str1);
+}
+
 int main() {
   name_scope();
   lambda_expr();
@@ -507,6 +498,8 @@ int main() {
   const_iterator2();
   const_iterator3();
   test();
+  test_type();
+
   test_all_error();
 
   return EXIT_SUCCESS;

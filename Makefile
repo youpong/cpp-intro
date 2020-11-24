@@ -1,7 +1,7 @@
 # CXX: C++ compiler
 #   clang++-10.0.0-4ubuntu1: not support c++17
 #CXX = clang++
-CXX = g++
+#CXX = g++
 
 CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
 
