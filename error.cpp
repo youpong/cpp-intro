@@ -42,7 +42,7 @@ static void test3() {
   //  using f_type
   f_pointer ptr = &f;
 
-  (*ptr)(123);
+  ptr(124);
 }
 
 f_ptr g(f_ptr p) {
