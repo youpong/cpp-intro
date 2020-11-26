@@ -22,12 +22,14 @@ static void test() {
   expect(__LINE__, "I am error."s, err.what());
 }
 
+namespace n {
 int f(int);
 double g(double, double);
+} // namespace n
 
-int f(int x) { return x * 2; }
+int n::f(int x) { return x * 2; }
 
-double g(double x, double y) { return x * y; }
+double n::g(double x, double y) { return x * y; }
 
 using f_ptr = int (*)(int);
 f_ptr g(f_ptr p) {
@@ -42,21 +44,21 @@ static void test_func_ptr0() {
   using f_pointer = f_type *;
   using g_pointer = g_type *;
 
-  [[maybe_unused]] f_pointer ptr0 = &f;
-  [[maybe_unused]] g_pointer ptr1 = &g;
+  [[maybe_unused]] f_pointer ptr0 = &n::f;
+  [[maybe_unused]] g_pointer ptr1 = &n::g;
 }
 
 static void test_func_ptr() {
-  auto *ptr0 = &f;
+  auto *ptr0 = &n::f;
   expect(__LINE__, 254, ptr0(127));
 
-  int (*ptr1)(int) = &f;
+  int (*ptr1)(int) = &n::f;
   expect(__LINE__, 250, ptr1(125));
 
   using function_type = int(int);
   using function_pointer_type = function_type *;
 
-  function_pointer_type ptr2 = &f;
+  function_pointer_type ptr2 = &n::f;
   expect(__LINE__, 252, ptr2(126));
 }
 
@@ -74,11 +76,6 @@ static void test2() {
   // clang-format on
   [[maybe_unused]] auto (*ptr2)(int (*)(int))->int (*)(int) = &g;
   [[maybe_unused]] auto (*ptr3)(f_ptr)->f_ptr = &g;
-
-  //  ptr0(f);
-  //  ptr1(f);
-  //  ptr2(f);
-  //  ptr3(f);
 }
 
 void test_all_error() {
