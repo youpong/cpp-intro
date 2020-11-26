@@ -31,12 +31,6 @@ int n::f(int x) { return x * 2; }
 
 double n::g(double x, double y) { return x * y; }
 
-using f_ptr = int (*)(int);
-f_ptr g(f_ptr p) {
-  p(0);
-  return p;
-}
-
 static void test_func_ptr0() {
   using f_type = int(int);
   using g_type = double(double, double);
@@ -62,11 +56,22 @@ static void test_func_ptr() {
   expect(__LINE__, 252, ptr2(126));
 }
 
+int gl_v = 0;
+int f(int x) {
+  ++gl_v;
+  return x;
+}
+
+using f_ptr = int (*)(int);
+f_ptr g(f_ptr p) {
+  p(0);
+  return p;
+}
+
 static void test2() {
-  [[maybe_unused]] int (*(*ptr0)(int (*)(int)))(int) = &g;
+  int (*(*ptr0)(int (*)(int)))(int) = &g;
 
   // clang-format off
-  [[maybe_unused]]  
   int (*
        (*ptr1)
        (
@@ -74,8 +79,15 @@ static void test2() {
 	)
        )(int) = &g;
   // clang-format on
-  [[maybe_unused]] auto (*ptr2)(int (*)(int))->int (*)(int) = &g;
-  [[maybe_unused]] auto (*ptr3)(f_ptr)->f_ptr = &g;
+  auto (*ptr2)(int (*)(int))->int (*)(int) = &g;
+  auto (*ptr3)(f_ptr)->f_ptr = &g;
+
+  expect(__LINE__, 0, gl_v);
+  ptr0(&f);
+  ptr1(&f);
+  ptr2(&f);
+  ptr3(&f);
+  expect(__LINE__, 4, gl_v);  
 }
 
 void test_all_error() {
