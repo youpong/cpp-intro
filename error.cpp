@@ -25,28 +25,39 @@ static void test() {
 int f(int);
 double g(double, double);
 
-using f_type = int(int);
-using g_type = double(double, double);
+int f(int x) { return x * 2; }
 
-using f_pointer = f_type *;
-using g_pointer = g_type *;
+double g(double x, double y) { return x * y; }
 
 using f_ptr = int (*)(int);
-
-int f(int x) {
-  std::cout << x;
-  return x;
-}
-
-static void test3() {
-  int (*ptr)(int) = &f;
-
-  ptr(125);
-}
-
 f_ptr g(f_ptr p) {
   p(0);
   return p;
+}
+
+static void test_func_ptr0() {
+  using f_type = int(int);
+  using g_type = double(double, double);
+
+  using f_pointer = f_type *;
+  using g_pointer = g_type *;
+
+  [[maybe_unused]] f_pointer ptr0 = &f;
+  [[maybe_unused]] g_pointer ptr1 = &g;
+}
+
+static void test_func_ptr() {
+  auto *ptr0 = &f;
+  expect(__LINE__, 254, ptr0(127));
+
+  int (*ptr1)(int) = &f;
+  expect(__LINE__, 250, ptr1(125));
+
+  using function_type = int(int);
+  using function_pointer_type = function_type *;
+
+  function_pointer_type ptr2 = &f;
+  expect(__LINE__, 252, ptr2(126));
 }
 
 static void test2() {
@@ -74,5 +85,6 @@ void test_all_error() {
   test_throw();
   test();
   test2();
-  test3();
+  test_func_ptr0();
+  test_func_ptr();
 }
