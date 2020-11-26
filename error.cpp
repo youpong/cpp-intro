@@ -22,9 +22,29 @@ static void test() {
   expect(__LINE__, "I am error."s, err.what());
 }
 
+int f(int);
+double g(double, double);
+
+using f_type = int(int);
+using g_type = double(double, double);
+
+using f_pointer = f_type *;
+using g_pointer = g_type *;
+
 using f_ptr = int (*)(int);
 
-int f(int x) { return x; }
+int f(int x) {
+  std::cout << x;
+  return x;
+}
+
+static void test3() {
+  //  using f_type
+  f_pointer ptr = &f;
+
+  (*ptr)(123);
+}
+
 f_ptr g(f_ptr p) {
   p(0);
   return p;
@@ -55,4 +75,5 @@ void test_all_error() {
   test_throw();
   test();
   test2();
+  test3();
 }

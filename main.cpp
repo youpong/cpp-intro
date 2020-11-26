@@ -213,9 +213,10 @@ struct array {
   const_reference back() const { return storage[N - 1]; }
 
   void fill(const_reference u) {
-    // For clang-1200.0.32.27-x86_64-apple-darwin19.6.0, belows does not work 
-    // std::fill(std::begin(*this), std::end(*this), u);
-    std::for_each(std::begin(*this), std::end(*this), [=](auto &x) { x = u; });		  
+    // For clang-1200.0.32.27-x86_64-apple-darwin19.6.0, belows does not
+    // work std::fill(std::begin(*this), std::end(*this), u);
+    std::for_each(std::begin(*this), std::end(*this),
+                  [=](auto &x) { x = u; });
   }
 
   size_type size() const { return N; }
