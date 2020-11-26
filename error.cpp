@@ -39,10 +39,9 @@ int f(int x) {
 }
 
 static void test3() {
-  //  using f_type
-  f_pointer ptr = &f;
+  int (*ptr)(int) = &f;
 
-  ptr(124);
+  ptr(125);
 }
 
 f_ptr g(f_ptr p) {
