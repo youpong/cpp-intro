@@ -22,7 +22,37 @@ static void test() {
   expect(__LINE__, "I am error."s, err.what());
 }
 
+using f_ptr = int (*)(int);
+
+int f(int x) { return x; }
+f_ptr g(f_ptr p) {
+  p(0);
+  return p;
+}
+
+static void test2() {
+  [[maybe_unused]] int (*(*ptr0)(int (*)(int)))(int) = &g;
+
+  // clang-format off
+  [[maybe_unused]]  
+  int (*
+       (*ptr1)
+       (
+	int (*)(int)
+	)
+       )(int) = &g;
+  // clang-format on
+  [[maybe_unused]] auto (*ptr2)(int (*)(int))->int (*)(int) = &g;
+  [[maybe_unused]] auto (*ptr3)(f_ptr)->f_ptr = &g;
+
+  //  ptr0(f);
+  //  ptr1(f);
+  //  ptr2(f);
+  //  ptr3(f);
+}
+
 void test_all_error() {
   test_throw();
   test();
+  test2();
 }
