@@ -155,9 +155,7 @@ void test_marray() {
   expect(__LINE__, 6, *p); // *p == ma[1][0]
 }
 
-
-/* clang-format off
- *
+/*
  * compile below func decl to golang
  * ---------------------------------
  *
@@ -180,7 +178,7 @@ void test_marray() {
  *     -> * func(int) void
  *   s2.3. substitute params
  *   -> func(int, * func(int) void) *___
- * s3. combine 
+ * s3. combine
  * -> func(int, * func(int) void) * func(int) void
  *
  * trailing return type
@@ -193,8 +191,6 @@ void test_marray() {
  *
  * 	using sighandler_t = void (*)(int);
  * 	auto signal(int, sighandler_t) -> sighandler_t;
- *
- * clang-format on 
  */
 
 void test_all_error() {
