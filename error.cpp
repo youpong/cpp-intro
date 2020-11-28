@@ -68,8 +68,7 @@ f_ptr g(f_ptr p) {
   return p;
 }
 
-/* clang-format off
- *
+/*
  * compile below type to golang
  * ----------------------------
  *
@@ -99,8 +98,6 @@ f_ptr g(f_ptr p) {
  *   -> * func( * func(int) int ) * ___
  *    s3. combine
  * -> * func( * func(int) int ) * func(int) int
- *
- * clang-format on 
  */
 
 static void test2() {
@@ -127,17 +124,22 @@ static void test2() {
     = &g;          // initializer
   // clang-format on
 
-  // form: 4, tailing return type and type aliases
-  auto (*ptr4)(f_ptr)->f_ptr = &g;
+  // form: 4, type aliases
+  f_ptr (*ptr4)(f_ptr) = &g;
+
+  // form: 5, tailing return type and type aliases
+  auto (*ptr5)(f_ptr)->f_ptr = &g;
 
   expect(__LINE__, 0, gl_v);
+  (*ptr)(&f);
   ptr(&f);
   ptr0(&f);
   ptr1(&f);
   ptr2(&f);
   ptr3(&f);
   ptr4(&f);
-  expect(__LINE__, 6, gl_v);
+  ptr5(&f);
+  expect(__LINE__, 8, gl_v);
 }
 
 void test_marray() {
@@ -200,5 +202,4 @@ void test_all_error() {
   test2();
   test_func_ptr0();
   test_func_ptr();
-  test3();
 }
