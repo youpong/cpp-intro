@@ -1,11 +1,9 @@
+#include "util.h"
+#include <stdlib.h>
+
 extern int gl_v;
 
-static void test_marray() {
-  int ma[2][5];
-  int *p = ma[0];
-}
-
-/* 
+/*
  * compile below type to golang
  * ----------------------------
  *
@@ -50,12 +48,21 @@ static f_ptr g(f_ptr p) {
 }
 
 static void test_function_ptr() {
-  int (* (*ptr0)(int (*)(int)))(int) = &g;
+  // form1
+  int (*(*ptr0)(int (*)(int)))(int) = &g;
+
+  // form2: typedef
+  f_ptr (*ptr1)(f_ptr) = &g;
+
+  (*ptr0)(&f);
   ptr0(&f);
+  ptr1(&f);
+  expect(__LINE__, 3, gl_v);
 }
 
 int gl_v = 0;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   test_function_ptr();
+  return EXIT_SUCCESS;
 }

@@ -14,13 +14,9 @@ Args *new_Args(int argc, char **argv) {
   return args;
 }
 
-void delete_Args(Args *args) {
-  free(args);
-}
+void delete_Args(Args *args) { free(args); }
 
-bool Args_hasNext(Args *args) {
-  return args->argc > 0;
-}
+bool Args_hasNext(Args *args) { return args->argc > 0; }
 
 char *Args_next(Args *args) {
   char *ret = *(args->argv);
@@ -53,13 +49,9 @@ void Vector_push(Vector *vec, void *elem) {
   vec->data[vec->len++] = elem;
 }
 
-void *Vector_pop(Vector *vec) {
-  return vec->data[--vec->len];
-}
+void *Vector_pop(Vector *vec) { return vec->data[--vec->len]; }
 
-void *Vector_last(Vector *vec) {
-  return vec->data[vec->len - 1];
-}
+void *Vector_last(Vector *vec) { return vec->data[vec->len - 1]; }
 
 Map *new_Map() {
   Map *map = malloc(sizeof(Map));
