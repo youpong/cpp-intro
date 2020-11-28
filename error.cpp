@@ -131,38 +131,30 @@ static void test2() {
   auto (*ptr4)(f_ptr)->f_ptr = &g;
 
   expect(__LINE__, 0, gl_v);
-  ptr(&f);  
+  ptr(&f);
   ptr0(&f);
   ptr1(&f);
   ptr2(&f);
   ptr3(&f);
-  ptr4(&f);  
-  expect(__LINE__, 6, gl_v);  
+  ptr4(&f);
+  expect(__LINE__, 6, gl_v);
 }
 
 void test_marray() {
-  int ma[2][5] = { {1, 2, 3, 4, 5}, { 6, 7, 8, 9, 10} };
+  int ma[2][5] = {{1, 2, 3, 4, 5}, {6, 7, 8, 9, 10}};
 
   expect(__LINE__, true, &ma[0][0] == ma[0]);
   expect(__LINE__, true, &ma[0] == ma);
 
   int *p;
-  
-  p = ma[0]; // equiv. *(ma + 0) or *ma
+
+  p = ma[0];                 // equiv. *(ma + 0) or *ma
   expect(__LINE__, 2, *++p); // *++p == ma[0][1]
-  
-  p = *(ma+1); // equiv. to ma[1]
-  expect(__LINE__, 6, *p);  // *p == ma[1][0]
+
+  p = *(ma + 1);           // equiv. to ma[1]
+  expect(__LINE__, 6, *p); // *p == ma[1][0]
 }
 
-void test_all_error() {
-  test_throw();
-  test_marray();
-  test();
-  test2();
-  test_func_ptr0();
-  test_func_ptr();
-}
 
 /* clang-format off
  *
@@ -204,3 +196,13 @@ void test_all_error() {
  *
  * clang-format on 
  */
+
+void test_all_error() {
+  test_throw();
+  test_marray();
+  test();
+  test2();
+  test_func_ptr0();
+  test_func_ptr();
+  test3();
+}
