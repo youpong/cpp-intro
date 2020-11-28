@@ -68,6 +68,41 @@ f_ptr g(f_ptr p) {
   return p;
 }
 
+/* clang-format off
+ *
+ * compile below type to golang
+ * ----------------------------
+ *
+ * 	int (* (*ptr0)(int (*)(int)))(int);
+ *
+ * s1. analyse outside of (* ...)
+ * = int (* ...)(int)
+ * -> func(int) int
+ * s2. analyse inside of (* ...)
+ * = * (*ptr0)(int (*)(int))
+ *   s2.1. analyse outside of (*ptr0)
+ *   -> func(param) * ___
+ *     s2.1.1. analyse param
+ *     param = int (*)(int)
+ *       s2.1.1.1 analyse outside of (*)
+ *       -> func(int) int
+ *       s2.1.1.2 analyse inside of (*)
+ *       -> * ___
+ *       s2.1.1.3 combine
+ *       -> * func(int) int
+ *     s2.1.2. substitute param
+ *     -> func( * func(int) int ) * ___
+ *   s2.2. analyse inside of (*ptr0)
+ *   = *ptr0
+ *   -> * ___
+ *   s2.3. combine
+ *   -> * func( * func(int) int ) * ___
+ *    s3. combine
+ * -> * func( * func(int) int ) * func(int) int
+ *
+ * clang-format on 
+ */
+
 static void test2() {
   // form: 1
   auto ptr = &g;
@@ -80,37 +115,9 @@ static void test2() {
       (int (*)(int)) // pointer to function as param
   )(int)             // tail of return type
    = &g;             // initializer
-
-  // analyse type below
-  // int (* (*ptr0)(int (*)(int)))(int);
-  //
-  // s1. analyse outside of (*...)
-  // = int (*...)(int)
-  // -> func(int) int
-  // s2. analyse inside of (*...)
-  // = * (*ptr0)(int (*)(int))
-  //   s2.1. analyse outside of (*...)
-  //   -> func(param) *___
-  //     s2.1.1. analyse param
-  //     param = int (*)(int)
-  //       s2.1.1.1 analyse outside of (*)
-  //       -> func(int) int
-  //       s2.1.1.2 analyse inside of (*)
-  //       -> *___
-  //       s2.1.1.3 combine
-  //       -> * func(int) int
-  //     s2.1.2. substitute param
-  //     -> func( * func(int) int ) *___
-  //   s2.2. analyse inside of (*...)
-  //   = *ptr0
-  //   -> *___
-  //   s2.3. combine
-  //   -> * func( * func(int) int ) *___
-  // s3. combine
-  // -> * func( * func(int) int ) * func(int) int
   // clang-format on
 
-  // form: 3
+  // form: 3, tailing return type
   auto (*ptr2)(int (*)(int))->int (*)(int) = &g;
   // clang-format off
   auto             // place holder
@@ -120,7 +127,7 @@ static void test2() {
     = &g;          // initializer
   // clang-format on
 
-  // form: 4
+  // form: 4, tailing return type and type aliases
   auto (*ptr4)(f_ptr)->f_ptr = &g;
 
   expect(__LINE__, 0, gl_v);
@@ -157,27 +164,43 @@ void test_all_error() {
   test_func_ptr();
 }
 
-// clang-format off
-// Analyse type below.
-// void (*signal(int, void (*)(int)))(int);
-//
-// s1. analyse outside of (*signal...)
-// -> func(int) void
-// s2. analyse inside of (*signal...)
-// = *signal(int, void (*)(int))
-// -> func(parm1, param2) *___
-//   s2.1. analyse param1
-//   param1 -> int
-//   $2.2. analyse param2
-//   param2 = void (*)(int)
-//     s2.2.1. analyse outside of (*)
-//     -> func(int) void
-//     s2.2.2. analyse inside of (*)
-//     -> *___
-//     s2.2.3. combine
-//     -> * func(int) void
-//   s2.3. substitute params
-//   -> func(int, * func(int) void) *___
-// s3. combine 
-// -> func(int, * func(int) void) * func(int) void
-// clang-format on
+/* clang-format off
+ *
+ * compile below func decl to golang
+ * ---------------------------------
+ *
+ * 	void (* signal(int, void (*)(int)))(int);
+ *
+ * s1. analyse outside of (* signal...)
+ * -> func(int) void
+ * s2. analyse inside of (* signal...)
+ * = *signal(int, void (*)(int))
+ * -> func(parm1, param2) *___
+ *   s2.1. analyse param1
+ *   param1 -> int
+ *   $2.2. analyse param2
+ *   param2 = void (*)(int)
+ *     s2.2.1. analyse outside of (*)
+ *     -> func(int) void
+ *     s2.2.2. analyse inside of (*)
+ *     -> *___
+ *     s2.2.3. combine
+ *     -> * func(int) void
+ *   s2.3. substitute params
+ *   -> func(int, * func(int) void) *___
+ * s3. combine 
+ * -> func(int, * func(int) void) * func(int) void
+ *
+ * trailing return type
+ * ---------------------
+ *
+ * 	auto signal(int, void (*)(int)) -> void (*)(int);
+ *
+ * type aliases
+ * ------------
+ *
+ * 	using sighandler_t = void (*)(int);
+ * 	auto signal(int, sighandler_t) -> sighandler_t;
+ *
+ * clang-format on 
+ */
