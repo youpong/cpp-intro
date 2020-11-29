@@ -36,15 +36,15 @@ static void test_throw() {
     try {
       throw_by(*iter);
     } catch (int e) {
-      std::cout << "INT";
+      expect(__LINE__, true, *iter == "int");
     } catch (double e) {
-      std::cout << "DOUBLE";
+      expect(__LINE__, true, *iter == "double");
     } catch (std::array<int, 5> e) {
-      std::cout << "STD::ARRAY";
+      expect(__LINE__, true, *iter == "std::array");
     } catch (char const *e) {
-      std::cout << "CHAR CONST *";
+      expect(__LINE__, true, *iter == "char const *");
     } catch (std::string e) {
-      std::cout << "STD::STRING";
+      expect(__LINE__, true, *iter == "std::string");
     }
   }
 }
