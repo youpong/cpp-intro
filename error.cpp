@@ -47,6 +47,9 @@ static void test_throw() {
       expect(__LINE__, true, *iter == "std::string");
     }
   }
+  // if not catch.
+  // terminate called after throwing an instance of 'int'
+  // throw 1;
 }
 
 static void test() {
