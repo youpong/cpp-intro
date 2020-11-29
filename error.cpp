@@ -1,20 +1,52 @@
-static void test_throw() {
+static void throw_by(std::string ty) {
   // throw an instance of 'int'
-  // throw 123;
+  if ("int"s == ty) {
+    throw 123;
+  }
 
   // throw an instance of 'double'
-  // throw 3.14;
+  if ("double"s == ty) {
+    throw 3.14;
+  }
 
   // throw an instance of 'std::array<int, 5ul>'
-  // std::array<int, 5> a = {1, 2, 3, 4, 5};
-  // throw a;
+  if ("std::array"s == ty) {
+    std::array<int, 5> a = {1, 2, 3, 4, 5};
+    throw a;
+  }
 
-  // char const*
-  // throw "without s";
-  // throw an instance of
+  // throw an instance of 'char const*'
+  if ("char const *"s == ty) {
+    throw "without s";
+  }
+
+  // throw an instance of 'std::string'
   // 'std::__cxx11::basic_string<
   //  char, std::char_traits<char>, std::allocator<char> >'
-  // throw "with s"s;
+  if ("std::string"s == ty) {
+    throw "with s"s;
+  }
+}
+
+static void test_throw() {
+  std::string a[] = {"int", "double", "std::array", "char const *",
+                     "std::string"};
+
+  for (auto iter = std::begin(a); iter != std::end(a); ++iter) {
+    try {
+      throw_by(*iter);
+    } catch (int e) {
+      std::cout << "INT";
+    } catch (double e) {
+      std::cout << "DOUBLE";
+    } catch (std::array<int, 5> e) {
+      std::cout << "STD::ARRAY";
+    } catch (char const *e) {
+      std::cout << "CHAR CONST *";
+    } catch (std::string e) {
+      std::cout << "STD::STRING";
+    }
+  }
 }
 
 static void test() {
@@ -157,43 +189,15 @@ void test_marray() {
   expect(__LINE__, 6, *p); // *p == ma[1][0]
 }
 
-/*
- * compile below func decl to golang
- * ---------------------------------
- *
- * 	void (* signal(int, void (*)(int)))(int);
- *
- * s1. analyse outside of (* signal...)
- * -> func(int) void
- * s2. analyse inside of (* signal...)
- * = *signal(int, void (*)(int))
- * -> func(parm1, param2) *___
- *   s2.1. analyse param1
- *   param1 -> int
- *   $2.2. analyse param2
- *   param2 = void (*)(int)
- *     s2.2.1. analyse outside of (*)
- *     -> func(int) void
- *     s2.2.2. analyse inside of (*)
- *     -> *___
- *     s2.2.3. combine
- *     -> * func(int) void
- *   s2.3. substitute params
- *   -> func(int, * func(int) void) *___
- * s3. combine
- * -> func(int, * func(int) void) * func(int) void
- *
- * trailing return type
- * ---------------------
- *
- * 	auto signal(int, void (*)(int)) -> void (*)(int);
- *
- * type aliases
- * ------------
- *
- * 	using sighandler_t = void (*)(int);
- * 	auto signal(int, sighandler_t) -> sighandler_t;
- */
+void test_array_ptr() {
+  using ptr_to_array_t = int(*)[5];
+  int a[5] = {1, 2, 3, 4, 5};
+
+  ptr_to_array_t ptr = &a;
+
+  expect(__LINE__, 1, **ptr);
+  expect(__LINE__, 2, (*ptr)[1]);
+}
 
 void test_all_error() {
   test_throw();
@@ -202,4 +206,5 @@ void test_all_error() {
   test2();
   test_func_ptr0();
   test_func_ptr();
+  test_array_ptr();
 }
