@@ -460,12 +460,12 @@ static void const_iterator3() {
   expect(__LINE__, 15, total);
 }
 
-static void test() {
+static void test_at() {
   array<int, 1> a = {1};
   try {
     expect(__LINE__, 1, a.at(1000));
   } catch (std::out_of_range &e) {
-    std::cout << e.what();
+    expect(__LINE__, "Error: Out of Range"s, e.what());
   }
 }
 
@@ -492,7 +492,7 @@ int main() {
   const_iterator1();
   const_iterator2();
   const_iterator3();
-  test();
+  test_at();
   test_type();
 
   test_all_error();
