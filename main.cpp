@@ -164,6 +164,14 @@ struct array_const_iterator {
   }
 
   //
+  // arithmetic operators
+  //
+
+  long long operator-(array_const_iterator const &iter) const {
+    return i - iter.i;
+  }
+
+  //
   // comparison operators
   //
 
@@ -323,18 +331,15 @@ void print(Array const &c) {
   // void print(Array &c) {
   // TODO: implement other way. MUST learn pointer?
   // implements 1:
-  //  std::for_each(std::begin(c), std::end(c),
-  //		[](auto const &x) { std::cout << x; });
-  // std::begin(c): error
-  // c.begin(): error
-  // array_iterator<Array>(c, 0): error
+  std::for_each(std::begin(c), std::end(c),
+                [](auto &x) { std::cout << x; });
 
   // implements 2:
-  // for (auto iter = c.begin(); iter != c.end(); ++iter)
-  //    std::cout << *iter;
+  // for (auto iter = std::begin(c); iter != std::end(c); ++iter)
+  //      std::cout << *iter;
 
-  for (std::size_t i = 0; i != c.size(); ++i)
-    std::cout << c[i];
+  // for (std::size_t i = 0; i != c.size(); ++i)
+  //    std::cout << c[i];
 }
 
 template <typename Array>
@@ -348,7 +353,8 @@ static void test_copy() {
   array<int, 5> a_;
   copy(a_, a);
   expect(__LINE__, true,
-         equal(std::begin(a), std::end(a), std::begin(a_), std::end(a_)));
+         equal(std::cbegin(a), std::cend(a), std::cbegin(a_),
+               std::cend(a_)));
   print(a);
 }
 
@@ -465,7 +471,7 @@ static void const_iterator3() {
   Array a = {1, 2, 3, 4, 5};
 
   auto total{0};
-  for (Array::const_iterator i = std::begin(a); i != std::cend(a); ++i)
+  for (Array::const_iterator i = std::begin(a); i != std::end(a); ++i)
     total += *i;
 
   expect(__LINE__, 15, total);
