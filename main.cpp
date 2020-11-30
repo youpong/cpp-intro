@@ -2,7 +2,8 @@ void test_all_error();
 
 auto distance = [](auto first, auto last) { return last - first; };
 
-auto equal = [](auto first1, auto last1, auto first2, auto last2) {
+auto equal = [](auto const first1, auto const last1, auto const first2,
+                auto const last2) {
   // std::distance()
   if (distance(first1, last1) != distance(first2, last2))
     return false;
@@ -327,22 +328,6 @@ static void test_for_each() {
 }
 
 template <typename Array>
-void print(Array const &c) {
-  // void print(Array &c) {
-  // TODO: implement other way. MUST learn pointer?
-  // implements 1:
-  std::for_each(std::begin(c), std::end(c),
-                [](auto &x) { std::cout << x; });
-
-  // implements 2:
-  // for (auto iter = std::begin(c); iter != std::end(c); ++iter)
-  //      std::cout << *iter;
-
-  // for (std::size_t i = 0; i != c.size(); ++i)
-  //    std::cout << c[i];
-}
-
-template <typename Array>
 void copy(Array &dst, Array const &src) {
   for (std::size_t i = 0; i != src.size(); ++i)
     dst[i] = src[i];
@@ -353,9 +338,7 @@ static void test_copy() {
   array<int, 5> a_;
   copy(a_, a);
   expect(__LINE__, true,
-         equal(std::cbegin(a), std::cend(a), std::cbegin(a_),
-               std::cend(a_)));
-  print(a);
+         equal(std::begin(a), std::end(a), std::begin(a_), std::end(a_)));
 }
 
 struct S {
