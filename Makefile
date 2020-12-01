@@ -4,25 +4,29 @@
 #CXX = g++
 
 CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
+TARGET = prog
+OBJS = main.o error.o reference.o
 
 .PHONY: run clean format tags
 
-run: hello
-	./hello
-check: hello
-	./hello
+run: $(TARGET)
+	./$(TARGET)
+check: $(TARGET)
+	./$(TARGET)
 clean:
-	- rm -f hello a.out all.h.gch *.o TAGS
+	- rm -f $(TARGET) a.out all.h.gch *.o *~ TAGS
 format:
 	clang-format -i *.cpp *.h
 tags:
 	etags *.cpp *.h
 
-hello: main.o error.o
+$(TARGET): $(OBJS)
 	$(CXX) $^ -o $@
 main.o: main.cpp all.h all.h.gch
 	$(CXX) $(CXXFLAGS) -include all.h -c $<
 error.o: error.cpp all.h all.h.gch
+	$(CXX) $(CXXFLAGS) -include all.h -c $<
+reference.o: reference.cpp all.h all.h.gch
 	$(CXX) $(CXXFLAGS) -include all.h -c $<
 all.h.gch: all.h
 	$(CXX) $(CXXFLAGS) -x c++-header -o $@ $<

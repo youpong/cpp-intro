@@ -60,9 +60,18 @@ static void test_function_ptr() {
   expect(__LINE__, 3, gl_v);
 }
 
+static void test_array_ptr() {
+  int a[5] = {1, 2, 3, 4, 5};
+
+  int(*ptr)[5] = &a; // ptr is a pointer to array of int, len 5.
+
+  expect(__LINE__, 2, (*ptr)[1]); // !=  *ptr[1]
+}
+
 int gl_v = 0;
 
 int main(int argc, char **argv) {
   test_function_ptr();
+  test_array_ptr();
   return EXIT_SUCCESS;
 }

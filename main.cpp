@@ -1,4 +1,5 @@
 void test_all_error();
+void test_all_reference();
 
 auto distance = [](auto first, auto last) { return last - first; };
 
@@ -496,6 +497,7 @@ int main() {
   test_type();
 
   test_all_error();
+  test_all_reference();
 
   return EXIT_SUCCESS;
 }
