@@ -14,6 +14,18 @@ void testS() {
   expect(__LINE__, 2031, s.data);
 }
 
+void testS2() {
+  S s;
+  S *ptr = &s;
+  S &ref = *ptr;
+
+  (*ptr).data = 1606822901;
+  ptr->data += 1;  
+  ref.data += 1;
+
+  expect(__LINE__, 1606822903, s.data);
+}
+
 int &ref(int &x) {
   return x;
 }
@@ -34,5 +46,6 @@ void test() {
   
 void test_all_reference() {
   testS();
+  testS2();  
   test();
 }
