@@ -197,21 +197,19 @@ void test_array_ptr() {
   int a[5] = {1, 2, 3, 4, 5};
 
   ptr_to_array_t ptr = &a;
-  int (*ptr1)[5] = &a;
+  int(*ptr1)[5] = &a;
 
-  expect(__LINE__, 5ul, sizeof a/sizeof(int));
-  expect(__LINE__, 5ul, sizeof *ptr/sizeof(int));
-  
-  expect(__LINE__, true, ptr == ptr1);  
+  expect(__LINE__, 5ul, sizeof a / sizeof(int));
+  expect(__LINE__, 5ul, sizeof *ptr / sizeof(int));
+
+  expect(__LINE__, true, ptr == ptr1);
   expect(__LINE__, 1, **ptr);
   expect(__LINE__, 2, (*ptr)[1]);
 
   // Note: syntax sugar
-  // Variable 'a' references to the head element of the array 'a'.  
+  // Variable 'a' references to the head element of the array 'a'.
   // 	a == &a[0]
-  [[maybe_unused]]
-  int *ptr_to_array_el = a;
-  
+  [[maybe_unused]] int *ptr_to_array_el = a;
 }
 
 void test_all_error() {
