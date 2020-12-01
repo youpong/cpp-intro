@@ -1,11 +1,13 @@
-# CXX: C++ compiler
+TARGET = prog
+SRCS = main.cpp error.cpp reference.cpp
+OBJS = $(SRCS:.cpp=.o)
+
+# C++ compiler
 #   clang++-10.0.0-4ubuntu1: not support c++17
-#CXX = clang++
-#CXX = g++
+# CXX = clang++
+# CXX = g++
 
 CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
-TARGET = prog
-OBJS = main.o error.o reference.o
 
 .PHONY: run clean format tags
 
@@ -14,11 +16,13 @@ run: $(TARGET)
 check: $(TARGET)
 	./$(TARGET)
 clean:
-	- rm -f $(TARGET) a.out all.h.gch *.o *~ TAGS
+	- rm -f $(TARGET) all.h.gch a.out *.o *~ TAGS
 format:
-	clang-format -i *.cpp *.h
+	clang-format -i $(SRCS) *.h
 tags:
 	etags *.cpp *.h
+cloc:
+	cloc $(SRCS) *.h
 
 $(TARGET): $(OBJS)
 	$(CXX) $^ -o $@
