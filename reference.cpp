@@ -97,6 +97,16 @@ void test_arrow() {
   expect(__LINE__, 1606997960, obj.data);
 }
 
+void test_invoke() {
+  auto data_ptr = &C::data;
+
+  C obj;
+  obj.*data_ptr = 1606998210;
+  std::invoke(data_ptr, obj) += 24;
+
+  expect(__LINE__, 1606998234, obj.data);
+}
+
 void test_all_reference() {
   testS();
   testS2();
@@ -104,4 +114,5 @@ void test_all_reference() {
   test();
   test_ptr();
   test_arrow();
+  test_invoke();
 }
