@@ -105,6 +105,11 @@ void test_invoke() {
   std::invoke(data_ptr, obj) += 24;
 
   expect(__LINE__, 1606998234, obj.data);
+
+  C *c_ptr = &obj;
+  c_ptr->*data_ptr = 1606998240;
+  std::invoke(data_ptr, c_ptr) += 27;
+  expect(__LINE__, 1606998267, obj.data);
 }
 
 void test_all_reference() {
