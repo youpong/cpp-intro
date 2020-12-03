@@ -49,6 +49,10 @@ struct C {
   }
 
   void set2(int n) { this->data = n; }
+
+  int f0() { return data; }
+  int f1(int n) { return data + n; }
+  int f2(int n, int m) { return data + n + m; }
 };
 
 void test_this() {
@@ -110,6 +114,16 @@ void test_invoke() {
   c_ptr->*data_ptr = 1606998240;
   std::invoke(data_ptr, c_ptr) += 27;
   expect(__LINE__, 1606998267, obj.data);
+
+  obj.data = 1607003750;
+  expect(__LINE__, 1607003750, (obj.*&C::f0)());
+  expect(__LINE__, 1607003750, std::invoke(&C::f0, obj));
+
+  expect(__LINE__, 1607003778, (obj.*&C::f1)(28));
+  expect(__LINE__, 1607003779, std::invoke(&C::f1, obj, 29));
+
+  expect(__LINE__, 1607003811, (obj.*&C::f2)(30, 31));
+  expect(__LINE__, 1607003815, std::invoke(&C::f2, obj, 32, 33));
 }
 
 void test_all_reference() {
