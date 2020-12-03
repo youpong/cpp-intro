@@ -62,9 +62,35 @@ void test_this() {
   expect(__LINE__, 1606825222, b.data);
 }
 
+struct CC {
+  int data{};
+  int f(int n) {
+    data += n;
+    return data;
+  }
+};
+
+auto ptr() -> int CC::* { return &CC::data; }
+
+static void test_ptr() {
+  CC obj;
+  obj.data = 1606913468;
+  expect(__LINE__, 1606913468, obj.*ptr());
+
+  // a pointer to member function
+  int (CC::*ptr0)(int) = &CC::f;
+  expect(__LINE__, 1606913469, (obj.*ptr0)(1));
+
+  CC *obj_ptr = &obj;
+  auto data_ptr = &CC::data;
+  obj_ptr->*data_ptr += 2;
+  expect(__LINE__, 1606913471, obj.data);
+}
+
 void test_all_reference() {
   testS();
   testS2();
   test_this();
   test();
+  test_ptr();
 }
