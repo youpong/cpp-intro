@@ -87,10 +87,21 @@ static void test_ptr() {
   expect(__LINE__, 1606913471, obj.data);
 }
 
+void test_arrow() {
+  auto data_ptr = &C::data;
+
+  C obj;
+  auto c_ptr = &obj;
+
+  c_ptr->*data_ptr = 1606997960;
+  expect(__LINE__, 1606997960, obj.data);
+}
+
 void test_all_reference() {
   testS();
   testS2();
   test_this();
   test();
   test_ptr();
+  test_arrow();
 }
