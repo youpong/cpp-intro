@@ -126,6 +126,21 @@ void test_invoke() {
   expect(__LINE__, 1607003815, std::invoke(&C::f2, obj, 32, 33));
 }
 
+template <typename T>
+int get_size() {
+  return sizeof(T);
+}
+
+void test_size() {
+  expect(__LINE__, 8, get_size<int *>());
+  expect(__LINE__, 8, get_size<double *>());
+  expect(__LINE__, 8, get_size<int **>());
+
+  // std::cout << sizeof(int);
+  [[maybe_unused]] std::byte data[4];
+  //  std::cout << std::bit_cast<std::uintptr_t>(&data[0]);
+}
+
 void test_all_reference() {
   testS();
   testS2();
@@ -134,4 +149,5 @@ void test_all_reference() {
   test_ptr();
   test_arrow();
   test_invoke();
+  test_size();
 }
