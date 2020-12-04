@@ -3,9 +3,13 @@ SRCS = main.cpp error.cpp reference.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # C++ compiler
-# CXX = clang++
+CXX = clang++
 # CXX = g++
 
+# c++17 c++2a
+# okay  not   ubuntu-18.04/g++
+# okay  okay  ubuntu-20.04/g++-9.3.0-17
+# okay  okay  ubuntu-20.04/clang++10.0.0-4
 #CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
 CXXFLAGS =  -std=c++2a -Wall --pedantic-errors
 
