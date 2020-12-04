@@ -131,14 +131,20 @@ int get_size() {
   return sizeof(T);
 }
 
+#include <bit>
 void test_size() {
   expect(__LINE__, 8, get_size<int *>());
   expect(__LINE__, 8, get_size<double *>());
   expect(__LINE__, 8, get_size<int **>());
 
+  expect(__LINE__, 8, get_size<std::uintptr_t>());
+
   // std::cout << sizeof(int);
   [[maybe_unused]] std::byte data[4];
-  //  std::cout << std::bit_cast<std::uintptr_t>(&data[0]);
+
+  // clang++-10.0.0-4ubuntu1/g++-9.3.0-17ubuntu1(-std=c++2a)
+  // error: no member named 'bit_cast' in namespace 'std'
+  // std::cout << std::bit_cast<std::uintptr_t>(&data[0]);
 }
 
 void test_all_reference() {

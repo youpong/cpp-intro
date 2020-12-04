@@ -3,11 +3,11 @@ SRCS = main.cpp error.cpp reference.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # C++ compiler
-#   clang++-10.0.0-4ubuntu1: not support c++17
 # CXX = clang++
 # CXX = g++
 
-CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
+#CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
+CXXFLAGS =  -std=c++2a -Wall --pedantic-errors
 
 .PHONY: run clean format tags
 
