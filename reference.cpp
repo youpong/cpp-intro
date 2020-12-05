@@ -134,6 +134,15 @@ int get_size() {
 template <typename To, typename From>
 To bit_cast(From const &from) {
   To to;
+  std::cout << from << '\n';
+  std::memcpy(&to, &from, sizeof(To));
+  return to;
+}
+
+template <typename To, typename From>
+To bit_cast2(From const *from) {
+  To to;
+  std::cout << from << '\n';
   std::memcpy(&to, &from, sizeof(To));
   return to;
 }
@@ -148,6 +157,7 @@ void test_size() {
 
   int data0{};
   std::cout << bit_cast<std::uintptr_t>(&data0) << '\n';
+  std::cout << bit_cast2<std::uintptr_t>(&data0) << '\n';
 
   // std::cout << sizeof(int);
   std::byte data[4];
@@ -155,7 +165,10 @@ void test_size() {
   // clang++-10.0.0-4ubuntu1/g++-9.3.0-17ubuntu1(-std=c++2a)
   // error: no member named 'bit_cast' in namespace 'std'
   // std::cout << std::bit_cast<std::uintptr_t>(&data[0]); TODO
-  std::cout << bit_cast<std::uintptr_t>(&data[0]);
+  /*
+  std::cout << bit_cast<std::uintptr_t>(&data[0]) << '\n';
+  std::cout << bit_cast2<std::uintptr_t>(&data[0]) << '\n';
+  */
 }
 
 void test_all_reference() {
