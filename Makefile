@@ -6,10 +6,11 @@ OBJS = $(SRCS:.cpp=.o)
 CXX = clang++
 # CXX = g++
 
-# c++17 c++2a
-# okay  not   ubuntu-18.04/g++
-# okay  okay  ubuntu-20.04/g++-9.3.0-17
+# c++17 c++2a environment
+# okay  okay  github/ubuntu-18.04/clang++
+# okay  not   github/ubuntu-18.04/g++
 # okay  okay  ubuntu-20.04/clang++10.0.0-4
+# okay  okay  ubuntu-20.04/g++-9.3.0-17
 #CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
 CXXFLAGS =  -std=c++2a -Wall --pedantic-errors
 
