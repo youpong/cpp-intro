@@ -1,6 +1,8 @@
 #include "util.h"
 #include <stdlib.h>
 
+void test_all_memcpy();
+
 extern int gl_v;
 
 /*
@@ -71,6 +73,7 @@ static void test_array_ptr() {
 int gl_v = 0;
 
 int main(int argc, char **argv) {
+  test_all_memcpy();
   test_function_ptr();
   test_array_ptr();
   return EXIT_SUCCESS;

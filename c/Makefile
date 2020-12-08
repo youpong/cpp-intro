@@ -3,6 +3,8 @@
 
 CFLAGS = -g -Wall -std=c17 -D_POSIX_C_SOURCE=200809L -D_DEFAULT_SOURCE
 TARGET = prog
+SRCS = main.c util.c memcpy.c
+OBJS = $(SRCS:.c=.o)
 
 .PHONY: run clean format tags
 
@@ -11,15 +13,14 @@ run: $(TARGET)
 check: $(TARGET)
 	./$(TARGET)
 clean:
-	- rm -f $(TARGET) a.out *.o TAGS
+	- rm -f $(TARGET) $(OBJS) a.out TAGS
 format:
-	clang-format -i *.c *.h
+	clang-format -i $(SRCS) *.h
 tags:
-	etags *.c *.h
+	etags $(SRCS) *.h
 
-$(TARGET): main.o util.o
+$(TARGET): $(OBJS)
 	$(CC) $^ -o $@
-main.o: main.c
-#	$(CXX) $(CXXFLAGS) -include all.h -c $<
+main.o: main.c util.h
 util.o: util.c util.h
-
+memcpy.o: memcpy.c util.h
