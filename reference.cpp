@@ -1,3 +1,10 @@
+namespace ns {
+void *memcpy(void *dest, const void *src, size_t n);
+
+template <typename To, typename From>
+To bit_cast(From const *from);
+} // namespace ns
+
 struct S {
   int data;
 
@@ -132,19 +139,28 @@ int get_size() {
 }
 
 template <typename To, typename From>
-To bit_cast(From const &from) {
+To bit_cast(From const &from) { // int const &from
   To to;
-  std::cout << from << '\n';
+  //  std::cout << from << '\n';
   std::memcpy(&to, &from, sizeof(To));
   return to;
 }
 
 template <typename To, typename From>
-To bit_cast2(From const *from) {
+To ns::bit_cast(From const *from) {
   To to;
-  std::cout << from << '\n';
-  std::memcpy(&to, &from, sizeof(To));
+
+  ns::memcpy(&to, &from, sizeof(To));
   return to;
+}
+
+void *ns::memcpy(void *dest, const void *src, size_t n) {
+  auto *p = static_cast<char *>(dest);
+  const auto *q = static_cast<const char *>(src);
+  for (size_t i = 0; i < n; ++i)
+    *p++ = *q++;
+
+  return dest;
 }
 
 // #include <bit>
@@ -156,18 +172,22 @@ void test_size() {
   expect(__LINE__, 8, get_size<std::uintptr_t>());
 
   int data0{};
-  std::cout << bit_cast<std::uintptr_t>(&data0) << '\n';
-  std::cout << bit_cast2<std::uintptr_t>(&data0) << '\n';
+  std::cout << "&data0:\t" << &data0 << '\n';
+  //  std::cout << bit_cast<std::uintptr_t>(&data0) << '\n';
+  // std::cout << "&data0:\t" << std::hex <<
+  // bit_cast2<std::uintptr_t>(&data0) << '\n';
+  auto tmp = ns::bit_cast<std::uintptr_t>(&data0);
+  std::cout << "&data0:\t0x" << std::hex << tmp << '\n';
 
   // std::cout << sizeof(int);
-  std::byte data[4];
+  [[maybe_unused]] std::byte data[4];
 
   // clang++-10.0.0-4ubuntu1/g++-9.3.0-17ubuntu1(-std=c++2a)
   // error: no member named 'bit_cast' in namespace 'std'
   // std::cout << std::bit_cast<std::uintptr_t>(&data[0]); TODO
   /*
   std::cout << bit_cast<std::uintptr_t>(&data[0]) << '\n';
-  std::cout << bit_cast2<std::uintptr_t>(&data[0]) << '\n';
+  std::cout << ns::bit_cast<std::uintptr_t>(&data[0]) << '\n';
   */
 }
 
