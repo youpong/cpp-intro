@@ -12,6 +12,8 @@ void *memcpy_(void *dest, const void *src, size_t n) {
   return dest;
 }
 
+void *bit_cast(const void *from, size_t n) { return null; }
+
 static void test_memcpy_() {
 #define MSG "HELLO"
   char *src = MSG;
