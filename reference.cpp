@@ -138,6 +138,10 @@ int get_size() {
   return sizeof(T);
 }
 
+/**
+ * obtatin value of type To by reinterpreting the object
+ * representation of from.
+ */
 template <typename To, typename From>
 To bit_cast(From const &from) {
   To to;
@@ -172,13 +176,35 @@ void test_size() {
 
   expect(__LINE__, 8, get_size<std::uintptr_t>());
 
+  // a address of int_data.
+  // int int_data {};
+  // bit_cast<std::uintptr_t>(&int_data);
+
+  return;
+
   expect(__LINE__, 4, get_size<int>());
+
+  std::byte data[sizeof(int)];
+  data[0] = static_cast<std::byte>(0xFF);
+  for (size_t i = 1; i < sizeof(int); i++)
+    data[i] = data[0];
+
+  //  std::cout << bit_cast<std::uintptr_t>(&data[0]);
+  std::cout << "bit_cast: " << bit_cast<int>(&data[0]) << '\n';
+  std::cout << "ns::bit_cast: " << ns::bit_cast<int>(&data[0]) << '\n';
+
+  int a = 0;
+  for (size_t i = 0; i != sizeof(int); i++) {
+    //    std::cout << a << '\n';
+    a = a * 256 + static_cast<int>(data[i]);
+  }
+  std::cout << a << '\n';
+
+  return;
 
   int data0{};
   expect(__LINE__, bit_cast<std::uintptr_t>(&data0),
          ns::bit_cast<std::uintptr_t>(&data0));
-
-  [[maybe_unused]] std::byte data[4];
 
   // std::cout << std::bit_cast<std::uintptr_t>(&data[0]); TODO
   /*
