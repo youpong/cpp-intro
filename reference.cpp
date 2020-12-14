@@ -229,6 +229,11 @@ void test_void_ptr() {
   void *void_ptr = &data;
 
   [[maybe_unused]] int *int_ptr = static_cast<int *>(void_ptr);
+
+  int const *int_const_ptr = &data;
+  void const *void_const_ptr = int_const_ptr;
+  [[maybe_unused]] int const *original =
+      static_cast<int const *>(void_const_ptr);
 }
 
 void test_all_reference() {
