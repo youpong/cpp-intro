@@ -213,6 +213,17 @@ void test_size() {
   */
 }
 
+void test_void() {
+  // clang++: error: variable has incomplete type 'void'
+  // g++:     error: variable or field ‘x’ declared void
+  // 	void x;
+
+  static_cast<void>(123);
+
+  return;
+}
+
+
 void test_all_reference() {
   testS();
   testS2();
@@ -222,4 +233,5 @@ void test_all_reference() {
   test_arrow();
   test_invoke();
   test_size();
+  test_void();
 }
