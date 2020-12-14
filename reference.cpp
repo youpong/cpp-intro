@@ -223,6 +223,13 @@ void test_void() {
   return;
 }
 
+void test_void_ptr() {
+  int data{};
+
+  void *void_ptr = &data;
+
+  [[maybe_unused]] int *int_ptr = static_cast<int *>(void_ptr);
+}
 
 void test_all_reference() {
   testS();
@@ -234,4 +241,5 @@ void test_all_reference() {
   test_invoke();
   test_size();
   test_void();
+  test_void_ptr();
 }
