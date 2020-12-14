@@ -1,4 +1,8 @@
 namespace ns {
+/*
+ * template <typename Dest, typename Src>
+ * Dest *ns::memcpy(Dest *dest, Src const *src, std::size_t n);
+ */
 void *memcpy(void *dest, const void *src, size_t n);
 
 template <typename To, typename From>
@@ -156,6 +160,10 @@ To ns::bit_cast(From const *from) {
   return to;
 }
 
+/*
+ * template <typename Dest, typename Src>
+ * Dest *ns::memcpy(Dest *dest, Src const *src, std::size_t n) {
+ */  
 void *ns::memcpy(void *dest, const void *src, size_t n) {
   auto *p = static_cast<char *>(dest);
   const auto *q = static_cast<const char *>(src);
