@@ -163,7 +163,7 @@ To ns::bit_cast(From const *from) {
 /*
  * template <typename Dest, typename Src>
  * Dest *ns::memcpy(Dest *dest, Src const *src, std::size_t n) {
- */  
+ */
 void *ns::memcpy(void *dest, const void *src, size_t n) {
   auto *p = static_cast<char *>(dest);
   const auto *q = static_cast<const char *>(src);
@@ -244,6 +244,40 @@ void test_void_ptr() {
       static_cast<int const *>(void_const_ptr);
 }
 
+void test_byte() {
+  // error: cannot initialize a variable of type 'std::byte' with an
+  // rvalue of type 'int'
+  //	std::byte a = 123;
+
+  // error: cannot initialize a variable of type 'std::byte' with an
+  // rvalue of type 'int'
+  //	std::byte b(123);
+
+  // error: assigning to 'std::byte' from incompatible type 'int'
+  //	std::byte c;
+  //	c = 123;
+
+  std::byte d{123};
+  d = std::byte{234};
+}
+
+void test_byte_cast() {
+  // error: invalid operands to binary expression ('std::byte' and 'int')
+  //	a == 123;
+
+  expect(__LINE__, true, std::byte{123} == static_cast<std::byte>(123));
+  expect(__LINE__, true, std::byte{124} == std::byte(124));
+
+  expect(__LINE__, true, std::byte{0} == static_cast<std::byte>(256));
+  expect(__LINE__, true, std::byte{0} == std::byte(256));
+
+  expect(__LINE__, true, std::byte{255} == static_cast<std::byte>(-1));
+  expect(__LINE__, true, std::byte{255} == std::byte(-1));
+
+  expect(__LINE__, true, std::byte{0} == static_cast<std::byte>(512));
+  expect(__LINE__, true, std::byte{0} == std::byte(512));
+}
+
 void test_all_reference() {
   testS();
   testS2();
@@ -255,4 +289,6 @@ void test_all_reference() {
   test_size();
   test_void();
   test_void_ptr();
+  test_byte();
+  test_byte_cast();
 }
