@@ -278,6 +278,27 @@ void test_byte_cast() {
   expect(__LINE__, true, std::byte{0} == std::byte(512));
 }
 
+template <typename T>
+void print_raw_address(T ptr) {
+  // std::cout << std::bit_cast<std::uintptr_t>(ptr) << "\n"s;
+  std::cout << bit_cast<std::uintptr_t>(ptr) << "\n"s;
+}
+
+void test_addr() {
+  int data[] = {0, 1, 2};
+
+  //  print_raw_address(&data[0]);
+  //  print_raw_address(&data[1]);
+  //  print_raw_address(&data[2]);
+
+  expect(__LINE__, sizeof(int) * 1,
+         bit_cast<std::uintptr_t>(&data[1]) -
+             bit_cast<std::uintptr_t>(&data[0]));
+  expect(__LINE__, sizeof(int) * 2,
+         bit_cast<std::uintptr_t>(&data[2]) -
+             bit_cast<std::uintptr_t>(&data[0]));
+}
+
 void test_all_reference() {
   testS();
   testS2();
@@ -291,4 +312,5 @@ void test_all_reference() {
   test_void_ptr();
   test_byte();
   test_byte_cast();
+  test_addr();
 }
