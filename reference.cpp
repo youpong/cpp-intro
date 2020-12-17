@@ -3,7 +3,7 @@ namespace ns {
  * template <typename Dest, typename Src>
  * Dest *ns::memcpy(Dest *dest, Src const *src, std::size_t n);
  */
-void *memcpy(void *dest, const void *src, size_t n);
+void *memcpy(void *dest, const void *src, std::size_t n);
 
 template <typename To, typename From>
 To bit_cast(From const *from);
@@ -164,10 +164,11 @@ To ns::bit_cast(From const *from) {
  * template <typename Dest, typename Src>
  * Dest *ns::memcpy(Dest *dest, Src const *src, std::size_t n) {
  */
-void *ns::memcpy(void *dest, const void *src, size_t n) {
-  auto *p = static_cast<char *>(dest);
-  const auto *q = static_cast<const char *>(src);
-  for (size_t i = 0; i < n; ++i)
+void *ns::memcpy(void *dest, const void *src, std::size_t n) {
+  auto *p = static_cast<std::byte *>(dest);
+  const auto *q = static_cast<const std::byte *>(src);
+
+  for (std::size_t i = 0; i < n; ++i)
     *p++ = *q++;
 
   return dest;
@@ -299,6 +300,22 @@ void test_addr() {
              bit_cast<std::uintptr_t>(&data[0]));
 }
 
+void test_ptr_arithmetic() {
+  int a[] = {0, 1, 2, 3};
+
+  int *a0 = &a[0];
+
+  int *a3 = a0 + 3;
+  //  print_raw_address( a3 );
+  expect(__LINE__, sizeof(int) * 3,
+         bit_cast<std::uintptr_t>(a3) - bit_cast<std::uintptr_t>(a0));
+
+  int *a1 = a3 - 2;
+  //  print_raw_address( a1 );
+  expect(__LINE__, -sizeof(int) * 2,
+         bit_cast<std::uintptr_t>(a1) - bit_cast<std::uintptr_t>(a3));
+}
+
 void test_all_reference() {
   testS();
   testS2();
@@ -313,4 +330,5 @@ void test_all_reference() {
   test_byte();
   test_byte_cast();
   test_addr();
+  test_ptr_arithmetic();
 }
