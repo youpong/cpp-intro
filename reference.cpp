@@ -168,7 +168,7 @@ void *ns::memcpy(void *dest, const void *src, std::size_t n) {
   auto *p = static_cast<std::byte *>(dest);
   const auto *q = static_cast<const std::byte *>(src);
 
-  for (std::size_t i = 0; i < n; ++i)
+  for (auto last = p + n; p != last;)
     *p++ = *q++;
 
   return dest;
