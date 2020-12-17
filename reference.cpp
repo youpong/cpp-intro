@@ -1,9 +1,7 @@
 namespace ns {
-/*
- * template <typename Dest, typename Src>
- * Dest *ns::memcpy(Dest *dest, Src const *src, std::size_t n);
- */
-void *memcpy(void *dest, const void *src, std::size_t n);
+
+template <typename Dest, typename Src>
+Dest *memcpy(Dest *dest, Src const *src, std::size_t n);
 
 template <typename To, typename From>
 To bit_cast(From const *from);
@@ -160,13 +158,13 @@ To ns::bit_cast(From const *from) {
   return to;
 }
 
-/*
- * template <typename Dest, typename Src>
- * Dest *ns::memcpy(Dest *dest, Src const *src, std::size_t n) {
- */
-void *ns::memcpy(void *dest, const void *src, std::size_t n) {
-  auto *p = static_cast<std::byte *>(dest);
-  const auto *q = static_cast<const std::byte *>(src);
+template <typename Dest, typename Src>
+Dest *ns::memcpy(Dest *dest, Src const *src, std::size_t n) {
+  void *void_ptr = static_cast<void *>(dest);
+  auto *p = static_cast<std::byte *>(void_ptr);
+
+  const void *const_void_ptr = static_cast<const void *>(src);
+  const auto *q = static_cast<const std::byte *>(const_void_ptr);
 
   for (auto last = p + n; p != last;)
     *p++ = *q++;
