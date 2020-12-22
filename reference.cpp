@@ -1,7 +1,11 @@
+#include <stdlib.h>
+
 namespace ns {
 
 template <typename Dest, typename Src>
 Dest *memcpy(Dest *dest, Src const *src, std::size_t n);
+
+void *memcpy2(void *dest, const void *src, std::size_t n);
 
 template <typename To, typename From>
 To bit_cast(From const *from);
@@ -172,6 +176,16 @@ Dest *ns::memcpy(Dest *dest, Src const *src, std::size_t n) {
   return dest;
 }
 
+void *ns::memcpy2(void *dest, const void *src, std::size_t n) {
+  auto *p = static_cast<std::byte *>(dest);
+  const auto *q = static_cast<const std::byte *>(src);
+
+  for (std::size_t i = 0; i != n; ++i)
+    p[i] = q[i];
+
+  return dest;
+}
+
 // #include <bit>
 // clang++-10.0.0-4ubuntu1/g++-9.3.0-17ubuntu1(-std=c++2a)
 // error: no member named 'bit_cast' in namespace 'std'
@@ -312,6 +326,25 @@ void test_ptr_arithmetic() {
   //  print_raw_address( a1 );
   expect(__LINE__, -sizeof(int) * 2,
          bit_cast<std::uintptr_t>(a1) - bit_cast<std::uintptr_t>(a3));
+
+  // caliculate the address of a[2]
+  // arithmetic operation on the pointer of type std::byte points to
+  // address of a[0]
+  void *void_ptr = a0;
+  std::byte *byte_ptr = static_cast<std::byte *>(void_ptr);
+  byte_ptr += sizeof(int) * 2;
+  void_ptr = byte_ptr;
+  int *a2 = static_cast<int *>(void_ptr);
+  expect(__LINE__, 2, *a2);
+}
+
+void test_memcpy2() {
+  char src[] = "hello";
+  char *dest = static_cast<char *>(malloc(strlen(src) + 1));
+
+  char *r = static_cast<char *>(ns::memcpy2(dest, src, strlen(src) + 1));
+  expect(__LINE__, "hello"s, dest);
+  expect(__LINE__, "hello"s, r);
 }
 
 void test_all_reference() {
@@ -329,4 +362,8 @@ void test_all_reference() {
   test_byte_cast();
   test_addr();
   test_ptr_arithmetic();
+  test_memcpy2();
+  // TODO: NULL pointer
+  //  nullptr
+  //  test_nullptr();
 }
