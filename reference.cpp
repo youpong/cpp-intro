@@ -347,6 +347,20 @@ void test_memcpy2() {
   expect(__LINE__, "hello"s, r);
 }
 
+void test_nullptr() {
+  //  int i;
+  int *pointer = nullptr;
+
+  expect(__LINE__, nullptr, pointer);
+  ++pointer;
+  expect(__LINE__, false, nullptr == pointer);
+
+  int *ptr2 = NULL;
+  int *ptr3 = 0;
+  expect(__LINE__, nullptr, ptr2);
+  expect(__LINE__, nullptr, ptr3);
+}
+
 void test_all_reference() {
   testS();
   testS2();
@@ -363,7 +377,5 @@ void test_all_reference() {
   test_addr();
   test_ptr_arithmetic();
   test_memcpy2();
-  // TODO: NULL pointer
-  //  nullptr
-  //  test_nullptr();
+  test_nullptr();
 }
