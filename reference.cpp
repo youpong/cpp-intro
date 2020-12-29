@@ -348,7 +348,6 @@ void test_memcpy2() {
 }
 
 void test_nullptr() {
-  //  int i;
   int *pointer = nullptr;
 
   expect(__LINE__, nullptr, pointer);
