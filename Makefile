@@ -14,8 +14,10 @@ CXX = clang++
 #CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
 CXXFLAGS =  -std=c++2a -Wall --pedantic-errors
 
-.PHONY: run clean format tags
+.PHONY: run clean check format tags cloc list
 
+list:
+	@sed -n 's/.PHONY:[[:space:]]*//p' Makefile
 run: $(TARGET)
 	./$(TARGET)
 check: $(TARGET)

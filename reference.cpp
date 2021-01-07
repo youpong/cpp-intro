@@ -239,10 +239,10 @@ void test_void() {
   // g++:     error: variable or field ‘x’ declared void
   // 	void x;
 
-  static_cast<void>(123);
-
-  return;
+  return static_cast<void>(123);
 }
+
+void test_void2() { return; }
 
 void test_void_ptr() {
   int data{};
@@ -370,6 +370,7 @@ void test_all_reference() {
   test_invoke();
   test_size();
   test_void();
+  test_void2();
   test_void_ptr();
   test_byte();
   test_byte_cast();
