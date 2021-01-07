@@ -164,10 +164,10 @@ To ns::bit_cast(From const *from) {
 
 void *ns::memcpy(void *dest, void const *src, std::size_t n) {
   auto *p = static_cast<std::byte *>(dest);
-  const auto *q = static_cast<const std::byte *>(src);
+  auto *q = static_cast<const std::byte *>(src);
 
-  for (std::size_t i = 0; i != n; ++i)
-    p[i] = q[i];
+  for (auto last = p + n; p != last; ++p, ++q)
+    *p = *q;
 
   return dest;
 }
@@ -178,10 +178,10 @@ Dest *ns::memcpy2(Dest *dest, Src const *src, std::size_t n) {
   auto *p = static_cast<std::byte *>(void_ptr);
 
   void const *const_void_ptr = static_cast<void const *>(src);
-  auto const *q = static_cast<std::byte const *>(const_void_ptr);
+  auto *q = static_cast<std::byte const *>(const_void_ptr);
 
-  for (auto last = p + n; p != last; ++p, ++q)
-    *p = *q;
+  for (std::size_t i = 0; i != n; ++i)
+    p[i] = q[i];
 
   return dest;
 }
