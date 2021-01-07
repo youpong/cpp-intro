@@ -372,7 +372,26 @@ void test_nullptr() {
   expect(__LINE__, nullptr, ptr3);
 }
 
+struct S2 {
+  int x = 1'610'008'100;
+};
+
+void test_mem_ptr() {
+  int data = 1'610'008'000;
+  int *ptr = &data;
+  int read1 = *ptr;
+  expect(__LINE__, 1'610'008'000, read1);
+
+  S2 object;
+  int S2::*mem_ptr = &S2::x;
+  int read2 = object.*mem_ptr;
+  expect(__LINE__, 1'610'008'100, read2);
+}
+
+void foo() {}
+
 void test_all_reference() {
+  foo();
   testS();
   testS2();
   test_this();
@@ -390,4 +409,5 @@ void test_all_reference() {
   test_ptr_arithmetic();
   test_memcpy2();
   test_nullptr();
+  test_mem_ptr();
 }
