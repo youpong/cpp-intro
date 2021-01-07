@@ -325,21 +325,23 @@ void test_addr() {
 void test_ptr_arithmetic() {
   int a[] = {0, 1, 2, 3};
 
+  // a pointer to 0th element.
   int *a0 = &a[0];
 
+  // add sizeof(int) * 3 to a0.
   int *a3 = a0 + 3;
   //  print_raw_address( a3 );
   expect(__LINE__, sizeof(int) * 3,
          bit_cast<std::uintptr_t>(a3) - bit_cast<std::uintptr_t>(a0));
 
+  // subtract sizeof(int) * 2 from a3.
   int *a1 = a3 - 2;
   //  print_raw_address( a1 );
   expect(__LINE__, -sizeof(int) * 2,
          bit_cast<std::uintptr_t>(a1) - bit_cast<std::uintptr_t>(a3));
 
-  // caliculate the address of a[2]
-  // arithmetic operation on the pointer of type std::byte points to
-  // address of a[0]
+  // caliculate the address of a[2] with address of a[0]
+  // sizeof(std::byte) is 1.
   void *void_ptr = a0;
   std::byte *byte_ptr = static_cast<std::byte *>(void_ptr);
   byte_ptr += sizeof(int) * 2;
