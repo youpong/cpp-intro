@@ -18,7 +18,7 @@ struct S {
   int *ptr() { return &data; }
 };
 
-void testS() {
+static void testS() {
   S s;
 
   *s.ptr() = 2030;
@@ -27,7 +27,7 @@ void testS() {
   expect(__LINE__, 2031, s.data);
 }
 
-void testS2() {
+static void testS2() {
   S s;
   S *ptr = &s;
   S &ref = *ptr;
@@ -39,11 +39,11 @@ void testS2() {
   expect(__LINE__, 1606822903, s.data);
 }
 
-int &ref(int &x) { return x; }
+static int &ref(int &x) { return x; }
 
-int *ptr(int *x) { return x; }
+static int *ptr(int *x) { return x; }
 
-void test() {
+static void test() {
   int n = 42;
 
   ++ref(n);
@@ -68,7 +68,7 @@ struct C {
   int f2(int n, int m) { return data + n + m; }
 };
 
-void test_this() {
+static void test_this() {
   C a;
   C b;
 
@@ -104,7 +104,7 @@ static void test_ptr() {
   expect(__LINE__, 1606913471, obj.data);
 }
 
-void test_arrow() {
+static void test_arrow() {
   auto data_ptr = &C::data;
 
   C obj;
@@ -114,7 +114,7 @@ void test_arrow() {
   expect(__LINE__, 1606997960, obj.data);
 }
 
-void test_invoke() {
+static void test_invoke() {
   auto data_ptr = &C::data;
 
   C obj;
@@ -140,7 +140,7 @@ void test_invoke() {
 }
 
 template <typename T>
-int get_size() {
+static int get_size() {
   return sizeof(T);
 }
 
@@ -190,7 +190,7 @@ Dest *ns::memcpy2(Dest *dest, Src const *src, std::size_t n) {
 // clang++-10.0.0-4ubuntu1/g++-9.3.0-17ubuntu1(-std=c++2a)
 // error: no member named 'bit_cast' in namespace 'std'
 // 	std::bit_cast<std::uintptr_t>(&data[0])
-void test_size() {
+static void test_size() {
   expect(__LINE__, 8, get_size<int *>());
   expect(__LINE__, 8, get_size<double *>());
   expect(__LINE__, 8, get_size<int **>());
@@ -234,7 +234,7 @@ void test_size() {
   */
 }
 
-void test_void() {
+static void test_void() {
   // clang++: error: variable has incomplete type 'void'
   // g++:     error: variable or field ‘x’ declared void
   // 	void x;
@@ -243,12 +243,12 @@ void test_void() {
   return static_cast<void>(123);
 }
 
-void test_void2() {
+static void test_void2() {
   expect(__LINE__, 0, 0);
   return;
 }
 
-void test_void_ptr() {
+static void test_void_ptr() {
   int data{};
 
   void *void_ptr = &data;
@@ -261,7 +261,7 @@ void test_void_ptr() {
       static_cast<int const *>(void_const_ptr);
 }
 
-void test_byte() {
+static void test_byte() {
   // error: cannot initialize a variable of type 'std::byte' with an
   // rvalue of type 'int'
   //	std::byte a = 123;
@@ -278,7 +278,7 @@ void test_byte() {
   d = std::byte{234};
 }
 
-void test_byte_cast() {
+static void test_byte_cast() {
   // error: invalid operands to binary expression ('std::byte' and 'int')
   //	a == 123;
 
@@ -301,7 +301,7 @@ void print_raw_address(T ptr) {
   std::cout << bit_cast<std::uintptr_t>(ptr) << "\n"s;
 }
 
-void test_addr() {
+static void test_addr() {
   int data[] = {0, 1, 2};
 
   //  print_raw_address(&data[0]);
@@ -322,7 +322,7 @@ void test_addr() {
              bit_cast<std::uintptr_t>(&data[0]));
 }
 
-void test_ptr_arithmetic() {
+static void test_ptr_arithmetic() {
   int a[] = {0, 1, 2, 3};
 
   // a pointer to 0th element.
@@ -350,7 +350,7 @@ void test_ptr_arithmetic() {
   expect(__LINE__, 2, *a2);
 }
 
-void test_memcpy2() {
+static void test_memcpy2() {
   char src[] = "hello";
   char *dest = static_cast<char *>(malloc(strlen(src) + 1));
 
@@ -359,7 +359,7 @@ void test_memcpy2() {
   expect(__LINE__, "hello"s, r);
 }
 
-void test_nullptr() {
+static void test_nullptr() {
   int *pointer = nullptr;
 
   expect(__LINE__, nullptr, pointer);
@@ -376,7 +376,7 @@ struct S2 {
   int x = 1'610'008'100;
 };
 
-void test_mem_ptr() {
+static void test_mem_ptr() {
   int data = 1'610'008'000;
   int *ptr = &data;
   int read1 = *ptr;
@@ -394,7 +394,7 @@ struct Object {
   int z = 1'610'008'202;
 };
 
-void test_mem_ptr2() {
+static void test_mem_ptr2() {
   //  std::cout << "sizeof(int): " << sizeof(int) << "\n"s;
   //  std::cout << "sizeof(Object): " << sizeof(Object) << "\n"s;
   expect(__LINE__, 4, sizeof(int));
