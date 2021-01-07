@@ -388,7 +388,25 @@ void test_mem_ptr() {
   expect(__LINE__, 1'610'008'100, read2);
 }
 
-void foo() {}
+struct Object {
+  int x;
+  int y;
+  int z;
+};
+
+void foo() {
+  //  std::cout << "sizeof(int): " << sizeof(int) << "\n"s;
+  //  std::cout << "sizeof(Object): " << sizeof(Object) << "\n"s;
+  expect(__LINE__, 4, sizeof(int));
+  expect(__LINE__, 12, sizeof(Object));
+
+  //  print_raw_address( &Object::x);
+  //  print_raw_address( &Object::y);
+  //  print_raw_address( &Object::z);
+  expect(__LINE__, 0, bit_cast<std::uintptr_t>(&Object::x));
+  expect(__LINE__, 4, bit_cast<std::uintptr_t>(&Object::y));
+  expect(__LINE__, 8, bit_cast<std::uintptr_t>(&Object::z));
+}
 
 void test_all_reference() {
   foo();
