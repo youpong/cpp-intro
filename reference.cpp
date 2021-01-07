@@ -389,12 +389,12 @@ void test_mem_ptr() {
 }
 
 struct Object {
-  int x;
-  int y;
-  int z;
+  int x = 1'610'008'200;
+  int y = 1'610'008'201;
+  int z = 1'610'008'202;
 };
 
-void foo() {
+void test_mem_ptr2() {
   //  std::cout << "sizeof(int): " << sizeof(int) << "\n"s;
   //  std::cout << "sizeof(Object): " << sizeof(Object) << "\n"s;
   expect(__LINE__, 4, sizeof(int));
@@ -406,10 +406,20 @@ void foo() {
   expect(__LINE__, 0, bit_cast<std::uintptr_t>(&Object::x));
   expect(__LINE__, 4, bit_cast<std::uintptr_t>(&Object::y));
   expect(__LINE__, 8, bit_cast<std::uintptr_t>(&Object::z));
+
+  Object object;
+
+  std::byte *start = bit_cast<std::byte *>(&object);
+  int *x = bit_cast<int *>(start + 0);
+  int *y = bit_cast<int *>(start + 4);
+  int *z = bit_cast<int *>(start + 8);
+
+  expect(__LINE__, 1'610'008'200, *x);
+  expect(__LINE__, 1'610'008'201, *y);
+  expect(__LINE__, 1'610'008'202, *z);
 }
 
 void test_all_reference() {
-  foo();
   testS();
   testS2();
   test_this();
@@ -428,4 +438,5 @@ void test_all_reference() {
   test_memcpy2();
   test_nullptr();
   test_mem_ptr();
+  test_mem_ptr2();
 }
