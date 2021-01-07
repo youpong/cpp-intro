@@ -3,7 +3,7 @@ SRCS = main.cpp error.cpp reference.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # C++ compiler
-CXX = clang++
+# CXX = clang++
 # CXX = g++
 
 # c++17 c++2a environment

@@ -163,8 +163,8 @@ To ns::bit_cast(From const *from) {
 }
 
 void *ns::memcpy(void *dest, void const *src, std::size_t n) {
-  auto *p = static_cast<std::byte *>(dest);
-  auto *q = static_cast<const std::byte *>(src);
+  auto p = static_cast<std::byte *>(dest);
+  auto q = static_cast<const std::byte *>(src);
 
   for (auto last = p + n; p != last; ++p, ++q)
     *p = *q;
@@ -175,10 +175,10 @@ void *ns::memcpy(void *dest, void const *src, std::size_t n) {
 template <typename Dest, typename Src>
 Dest *ns::memcpy2(Dest *dest, Src const *src, std::size_t n) {
   void *void_ptr = static_cast<void *>(dest);
-  auto *p = static_cast<std::byte *>(void_ptr);
+  auto p = static_cast<std::byte *>(void_ptr);
 
   void const *const_void_ptr = static_cast<void const *>(src);
-  auto *q = static_cast<std::byte const *>(const_void_ptr);
+  auto q = static_cast<std::byte const *>(const_void_ptr);
 
   for (std::size_t i = 0; i != n; ++i)
     p[i] = q[i];
@@ -274,8 +274,10 @@ static void test_byte() {
   //	std::byte c;
   //	c = 123;
 
-  std::byte d{123};
-  d = std::byte{234};
+  [[maybe_unused]] std::byte d{123};
+
+  [[maybe_unused]] std::byte e{};
+  e = std::byte{234};
 }
 
 static void test_byte_cast() {
@@ -383,9 +385,16 @@ static void test_mem_ptr() {
   expect(__LINE__, 1'610'008'000, read1);
 
   S2 object;
-  int S2::*mem_ptr = &S2::x;
+  auto mem_ptr = &S2::x;
   int read2 = object.*mem_ptr;
   expect(__LINE__, 1'610'008'100, read2);
+
+  // clang++: error: no member named 'mem_ptr' in 'S2'
+  // g++:     error: ‘struct S2’ has no member named ‘mem_ptr’
+  // 	int *ptr2 = object.mem_ptr;
+
+  int *ptr3 = &(object.*mem_ptr);
+  expect(__LINE__, 1'610'008'100, *ptr3);
 }
 
 struct Object {
@@ -397,15 +406,18 @@ struct Object {
 static void test_mem_ptr2() {
   //  std::cout << "sizeof(int): " << sizeof(int) << "\n"s;
   //  std::cout << "sizeof(Object): " << sizeof(Object) << "\n"s;
-  expect(__LINE__, 4, sizeof(int));
-  expect(__LINE__, 12, sizeof(Object));
+  expect(__LINE__, static_cast<size_t>(4), sizeof(int));
+  expect(__LINE__, static_cast<size_t>(12), sizeof(Object));
 
   //  print_raw_address( &Object::x);
   //  print_raw_address( &Object::y);
   //  print_raw_address( &Object::z);
-  expect(__LINE__, 0, bit_cast<std::uintptr_t>(&Object::x));
-  expect(__LINE__, 4, bit_cast<std::uintptr_t>(&Object::y));
-  expect(__LINE__, 8, bit_cast<std::uintptr_t>(&Object::z));
+  expect(__LINE__, static_cast<std::uintptr_t>(0),
+         bit_cast<std::uintptr_t>(&Object::x));
+  expect(__LINE__, static_cast<std::uintptr_t>(4),
+         bit_cast<std::uintptr_t>(&Object::y));
+  expect(__LINE__, static_cast<std::uintptr_t>(8),
+         bit_cast<std::uintptr_t>(&Object::z));
 
   Object object;
 
