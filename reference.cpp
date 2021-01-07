@@ -308,9 +308,15 @@ void test_addr() {
   //  print_raw_address(&data[1]);
   //  print_raw_address(&data[2]);
 
+  // Two pointers to compatible types may be subtracted. The value of the
+  // result is number of array elements that separate the two pointers.
+  expect(__LINE__, 1, &data[1] - &data[0]);
+
+  // Subtract two Raw addresses of an object.
   expect(__LINE__, sizeof(int) * 1,
          bit_cast<std::uintptr_t>(&data[1]) -
              bit_cast<std::uintptr_t>(&data[0]));
+
   expect(__LINE__, sizeof(int) * 2,
          bit_cast<std::uintptr_t>(&data[2]) -
              bit_cast<std::uintptr_t>(&data[0]));
