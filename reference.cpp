@@ -239,10 +239,14 @@ void test_void() {
   // g++:     error: variable or field ‘x’ declared void
   // 	void x;
 
+  expect(__LINE__, 0, 0);
   return static_cast<void>(123);
 }
 
-void test_void2() { return; }
+void test_void2() {
+  expect(__LINE__, 0, 0);
+  return;
+}
 
 void test_void_ptr() {
   int data{};
