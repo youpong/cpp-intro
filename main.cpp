@@ -152,6 +152,53 @@ struct array_iterator {
   }
 };
 
+template <typename Array>
+struct array_const_iterator {
+  using const_reference = typename Array::const_reference;
+
+  Array const &a;
+  std::size_t i;
+
+  array_const_iterator(Array const &a, std::size_t i) : a(a), i(i) {}
+
+  // clang++-10.0.0-4ubuntu1
+  // error: ISO C++ specifies that qualified reference to 'array_iterator'
+  // is a constructor name rather than a type in this context, despite
+  // preceding 'typename' keyword [-Werror,-Winjected-class-name]
+  // array_const_iterator(
+  //     typename array_iterator<Array>::array_iterator const &iter)
+  array_const_iterator(typename Array::iterator const &iter)
+      : a(iter.a), i(iter.i) {}
+
+  const_reference operator*() const { return a[i]; }
+  const_reference operator[](std::size_t n) const { return *(*this + n); }
+
+  array_const_iterator &operator++() {
+    ++i;
+    return *this;
+  }
+
+  //
+  // arithmetic operators
+  //
+
+  long long operator-(array_const_iterator const &iter) const {
+    return i - iter.i;
+  }
+
+  //
+  // comparison operators
+  //
+
+  bool operator==(array_const_iterator const &right) const {
+    return i == right.i;
+  }
+
+  bool operator!=(array_const_iterator const &right) const {
+    return !(*this == right);
+  }
+};
+
 #else
 template <typename Array>
 struct array_iterator {
@@ -254,30 +301,26 @@ struct array_iterator {
     return p >= right.p;
   }
 };
-#endif
+
 template <typename Array>
 struct array_const_iterator {
+  using pointer = typename Array::pointer;
   using const_reference = typename Array::const_reference;
 
-  Array const &a;
-  std::size_t i;
+  pointer p;
 
-  array_const_iterator(Array const &a, std::size_t i) : a(a), i(i) {}
+  array_const_iterator(Array const &a, std::size_t i) { p = &a[i]; }
 
-  // clang++-10.0.0-4ubuntu1
-  // error: ISO C++ specifies that qualified reference to 'array_iterator'
-  // is a constructor name rather than a type in this context, despite
-  // preceding 'typename' keyword [-Werror,-Winjected-class-name]
-  // array_const_iterator(
-  //     typename array_iterator<Array>::array_iterator const &iter)
-  array_const_iterator(typename Array::iterator const &iter)
-      : a(iter.a), i(iter.i) {}
+  array_const_iterator(typename Array::iterator const &iter) {
+    p = iter.p;
+  }
 
-  const_reference operator*() const { return a[i]; }
+  const_reference operator*() const { return *p; }
+
   const_reference operator[](std::size_t n) const { return *(*this + n); }
 
   array_const_iterator &operator++() {
-    ++i;
+    ++p;
     return *this;
   }
 
@@ -286,7 +329,7 @@ struct array_const_iterator {
   //
 
   long long operator-(array_const_iterator const &iter) const {
-    return i - iter.i;
+    return p - iter.p;
   }
 
   //
@@ -294,13 +337,15 @@ struct array_const_iterator {
   //
 
   bool operator==(array_const_iterator const &right) const {
-    return i == right.i;
+    return p == right.p;
   }
 
   bool operator!=(array_const_iterator const &right) const {
     return !(*this == right);
   }
 };
+
+#endif
 
 template <typename T, std::size_t N>
 struct array {
