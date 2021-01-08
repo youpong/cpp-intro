@@ -41,24 +41,24 @@ static void lambda_expr() {
   expect(__LINE__, 43, [](auto x) { return x + 1; }(42));
 }
 
-// Support
-// std::for_each()
-// Don't Support
-// std::fill()
-// bioperators don't check both iter refer same array.
+// Support method
+// 	std::for_each()
+// Don't Support method
+// 	std::fill()
+// Note:
+// 	bioperators don't check both iter refer same array.
 template <typename Array>
 struct array_iterator {
+  using reference = typename Array::reference;
+
   Array &a;
-  std::size_t i; // TODO const?
+  std::size_t i;
 
   array_iterator(Array &a, std::size_t i) : a(a), i(i) {}
 
-  typename Array::reference operator*() { return a[i]; }
+  reference operator*() const { return a[i]; }
 
-  // TODO: not const?
-  typename Array::reference operator[](std::size_t n) const {
-    return *(*this + n);
-  }
+  reference operator[](std::size_t n) const { return *(*this + n); }
 
   //
   // assignment operators
@@ -69,6 +69,7 @@ struct array_iterator {
     i = iter.i;
     return *this;
   }
+
   array_iterator &operator+=(std::size_t n) {
     i += n;
     return *this;
