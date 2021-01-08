@@ -74,4 +74,8 @@ auto expect = [](auto line, auto expected, auto actual) {
   exit(1);
 };
 
-//#define ARRAY_ITERATOR1
+// ARRAY_ITERATOR:
+//   1: iterator class with index
+//   2: iterator class with pointer
+//   3: pointer as iterator
+#define ARRAY_ITERATOR 3

@@ -41,7 +41,7 @@ static void lambda_expr() {
   expect(__LINE__, 43, [](auto x) { return x + 1; }(42));
 }
 
-#ifdef ARRAY_ITERATOR1
+#if ARRAY_ITERATOR == 1
 // Support method
 // 	std::for_each()
 // Don't Support method
@@ -198,8 +198,9 @@ struct array_const_iterator {
     return !(*this == right);
   }
 };
+#endif
 
-#else
+#if ARRAY_ITERATOR == 2
 template <typename Array>
 struct array_iterator {
   using pointer = typename Array::pointer;
@@ -344,14 +345,17 @@ struct array_const_iterator {
     return !(*this == right);
   }
 };
-
 #endif
 
 template <typename T, std::size_t N>
 struct array {
-
+#if ARRAY_ITERATOR < 3
   using iterator = array_iterator<array>;
   using const_iterator = array_const_iterator<array>;
+#else
+  using iterator = T *;
+  using const_iterator = const T *;
+#endif
   using value_type = T;
   using pointer = T *;
   using reference = T &;
@@ -361,14 +365,23 @@ struct array {
 
   value_type storage[N];
 
+#if ARRAY_ITERATOR < 3
   iterator begin() { return iterator(*this, 0); }
   iterator end() { return iterator(*this, N); }
-
-  const_iterator begin() const { return const_iterator(*this, 0); }
-  const_iterator end() const { return const_iterator(*this, N); }
-
   const_iterator cbegin() { return const_iterator(*this, 0); }
   const_iterator cend() { return const_iterator(*this, N); }
+#else
+  iterator begin() { return &storage[0]; }
+  iterator end() { return begin() + N; }
+  const_iterator cbegin() { return &storage[0]; }
+  const_iterator cend() { return cbegin() + N; }
+#endif
+
+  const_iterator begin() const {
+    std::cout << "const_iterator begin()";
+    return const_iterator(*this, 0);
+  }
+  const_iterator end() const { return const_iterator(*this, N); }
 
   reference operator[](size_type i) { return storage[i]; }
   const_reference operator[](size_type i) const { return storage[i]; }
@@ -623,6 +636,18 @@ static void const_iterator3() {
   expect(__LINE__, 15, total);
 }
 
+// cbegin()
+static void const_iterator4() {
+  using Array = array<int, 5>;
+  Array a = {1, 2, 3, 4, 5};
+
+  auto total{0};
+  for (Array::const_iterator i = a.cbegin(); i != a.cend(); ++i)
+    total += *i;
+
+  expect(__LINE__, 15, total);
+}
+
 static void test_at() {
   array<int, 1> a = {1};
   try {
@@ -655,6 +680,7 @@ int main() {
   const_iterator1();
   const_iterator2();
   const_iterator3();
+  const_iterator4();
   test_at();
   test_type();
 
