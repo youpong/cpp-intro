@@ -3,7 +3,8 @@ SRCS = main.cpp error.cpp reference.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # C++ compiler
-# CXX = clang++
+# use clang++ for ubuntu-latest(18.04) C/C++ CI
+CXX = clang++
 # CXX = g++
 
 # c++17 c++2a environment
