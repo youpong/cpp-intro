@@ -365,23 +365,23 @@ struct array {
 
   value_type storage[N];
 
+  // clang-format off
 #if ARRAY_ITERATOR < 3
-  iterator begin() { return iterator(*this, 0); }
-  iterator end() { return iterator(*this, N); }
-  const_iterator cbegin() { return const_iterator(*this, 0); }
-  const_iterator cend() { return const_iterator(*this, N); }
+  iterator       begin()        { return       iterator(*this, 0); }
+  iterator       end()          { return       iterator(*this, N); }
+  const_iterator begin()  const { return const_iterator(*this, 0); }
+  const_iterator end()    const { return const_iterator(*this, N); }
+  const_iterator cbegin() const { return const_iterator(*this, 0); }
+  const_iterator cend()   const { return const_iterator(*this, N); }
 #else
-  iterator begin() { return &storage[0]; }
-  iterator end() { return begin() + N; }
-  const_iterator cbegin() { return &storage[0]; }
-  const_iterator cend() { return cbegin() + N; }
+  iterator       begin()        { return &storage[0];  }
+  iterator       end()          { return begin()  + N; }
+  const_iterator begin()  const { return &storage[0];  }
+  const_iterator end()    const { return begin()  + N; }
+  const_iterator cbegin() const { return &storage[0];  }
+  const_iterator cend()   const { return cbegin() + N; }
 #endif
-
-  const_iterator begin() const {
-    std::cout << "const_iterator begin()";
-    return const_iterator(*this, 0);
-  }
-  const_iterator end() const { return const_iterator(*this, N); }
+  // clang-format on
 
   reference operator[](size_type i) { return storage[i]; }
   const_reference operator[](size_type i) const { return storage[i]; }
@@ -636,10 +636,24 @@ static void const_iterator3() {
   expect(__LINE__, 15, total);
 }
 
-// cbegin()
+// begin()/end() const
 static void const_iterator4() {
   using Array = array<int, 5>;
   Array a = {1, 2, 3, 4, 5};
+
+  auto total{0};
+
+  // std::cbegin(a) calls a.begin() const.
+  for (Array::const_iterator i = std::cbegin(a); i != std::cend(a); ++i)
+    total += *i;
+
+  expect(__LINE__, 15, total);
+}
+
+// cbegin()/cend()
+static void const_iterator5() {
+  using Array = array<int, 5>;
+  const Array a = {1, 2, 3, 4, 5};
 
   auto total{0};
   for (Array::const_iterator i = a.cbegin(); i != a.cend(); ++i)
@@ -681,6 +695,7 @@ int main() {
   const_iterator2();
   const_iterator3();
   const_iterator4();
+  const_iterator5();
   test_at();
   test_type();
 
