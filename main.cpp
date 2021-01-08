@@ -41,6 +41,8 @@ static void lambda_expr() {
   expect(__LINE__, 43, [](auto x) { return x + 1; }(42));
 }
 
+#define ARRAY_ITERATOR1
+#ifdef ARRAY_ITERATOR1
 // Support method
 // 	std::for_each()
 // Don't Support method
@@ -65,7 +67,6 @@ struct array_iterator {
   //
 
   array_iterator &operator=(array_iterator iter) {
-    //    a = iter.a;
     i = iter.i;
     return *this;
   }
@@ -79,22 +80,26 @@ struct array_iterator {
   // increment/decrement operators
   //
 
+  // pre
   array_iterator &operator++() {
     ++i;
     return *this;
   }
 
+  // post
   array_iterator operator++(int) {
     array_iterator copy = *this;
     ++*this;
     return copy;
   }
 
+  // pre
   array_iterator &operator--() {
     --i;
     return *this;
   }
 
+  // post
   array_iterator operator--(int) {
     array_iterator copy = *this;
     --*this;
@@ -105,14 +110,10 @@ struct array_iterator {
   // arithmetic operators
   //
 
+  // result may be under 0. std::size_t, type of member i, is
+  // unsigned integer.
   long long operator-(array_iterator const &iter) const {
     return i - iter.i;
-  }
-
-  array_iterator operator-(std::size_t n) const {
-    array_iterator copy = *this;
-    copy.i -= n;
-    return copy;
   }
 
   array_iterator operator+(std::size_t n) const {
@@ -120,6 +121,8 @@ struct array_iterator {
     copy.i += n;
     return copy;
   }
+
+  array_iterator operator-(std::size_t n) const { return *this + (-n); }
 
   //
   // comparison operators
@@ -140,6 +143,95 @@ struct array_iterator {
   bool operator>=(array_iterator const &right) { return i >= right.i; }
 };
 
+#else
+template <typename Array>
+struct array_iterator {
+  using pointer = typename Array::pointer;
+  using reference = typename Array::reference;
+
+  pointer p;
+
+  array_iterator(pointer p) : p(p) {}
+
+  reference operator*() { return *p; }
+
+  reference operator[](std::size_t n) { return p[n]; }
+
+  //
+  // assignment operators
+  //
+
+  array_iterator &operator=(array_iterator iter) {
+    p = iter.p;
+    return *this;
+  }
+
+  array_iterator &operator+=(std::size_t n) {
+    p += n;
+    return *this;
+  }
+
+  //
+  // inc/dec operators
+  //
+
+  // pre
+  array_iterator &operator++() {
+    ++p;
+    return *this;
+  }
+
+  // post
+  array_iterator operator++(int) {
+    array_iterator copy = *this;
+    ++*this;
+    return copy;
+  }
+
+  // pre
+  array_iterator &operator--() {
+    --p;
+    return *this;
+  }
+
+  // post
+  array_iterator operator--(int) {
+    array_iterator copy = *this;
+    --*this;
+    return copy;
+  }
+
+  //
+  // arithmetic operators
+  //
+
+  // result may be under 0.
+  long long operator-(array_iterator const &iter) const {
+    return p - iter;
+  }
+
+  array_iterator operator-(std::size_t n) const {
+    array_iterator copy = *this;
+    copy -= n;
+    return copy;
+  }
+
+  array_iterator operator+(std::size_t n) const { return nullptr; }
+
+  //
+  // comparison operators
+
+  bool operator==(array_iterator const &right) const {
+    return p == right.p;
+  }
+
+  bool operator!=(array_iterator const &right) const {
+    return !(*this == right);
+  }
+
+  //
+};
+#endif
 template <typename Array>
 struct array_const_iterator {
   Array const &a;
@@ -193,6 +285,7 @@ struct array {
   using iterator = array_iterator<array>;
   using const_iterator = array_const_iterator<array>;
   using value_type = T;
+  using pointer = T *;
   using reference = T &;
   using const_reference = T const &;
 
