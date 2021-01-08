@@ -41,7 +41,6 @@ static void lambda_expr() {
   expect(__LINE__, 43, [](auto x) { return x + 1; }(42));
 }
 
-#define ARRAY_ITERATOR1
 #ifdef ARRAY_ITERATOR1
 // Support method
 // 	std::for_each()
@@ -137,10 +136,18 @@ struct array_iterator {
   }
 
   // TODO: const
-  bool operator<(array_iterator const &right) { return i < right.i; }
-  bool operator<=(array_iterator const &right) { return i <= right.i; }
-  bool operator>(array_iterator const &right) { return i > right.i; }
-  bool operator>=(array_iterator const &right) { return i >= right.i; }
+  bool operator<(array_iterator const &right) const {
+    return i < right.i;
+  }
+  bool operator<=(array_iterator const &right) const {
+    return i <= right.i;
+  }
+  bool operator>(array_iterator const &right) const {
+    return i > right.i;
+  }
+  bool operator>=(array_iterator const &right) const {
+    return i >= right.i;
+  }
 };
 
 #else
@@ -210,16 +217,17 @@ struct array_iterator {
     return p - iter;
   }
 
-  array_iterator operator-(std::size_t n) const {
+  array_iterator operator+(std::size_t n) const {
     array_iterator copy = *this;
-    copy -= n;
+    copy += n;
     return copy;
   }
 
-  array_iterator operator+(std::size_t n) const { return nullptr; }
+  array_iterator operator-(std::size_t n) const { return *this + (-n); }
 
   //
   // comparison operators
+  //
 
   bool operator==(array_iterator const &right) const {
     return p == right.p;
@@ -229,7 +237,9 @@ struct array_iterator {
     return !(*this == right);
   }
 
-  //
+  bool operator<(array_iterator const &right) const {
+    return p < right.p;
+  }
 };
 #endif
 template <typename Array>
