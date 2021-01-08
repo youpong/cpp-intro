@@ -135,16 +135,18 @@ struct array_iterator {
     return !(*this == right);
   }
 
-  // TODO: const
   bool operator<(array_iterator const &right) const {
     return i < right.i;
   }
+
   bool operator<=(array_iterator const &right) const {
     return i <= right.i;
   }
+
   bool operator>(array_iterator const &right) const {
     return i > right.i;
   }
+
   bool operator>=(array_iterator const &right) const {
     return i >= right.i;
   }
@@ -158,7 +160,9 @@ struct array_iterator {
 
   pointer p;
 
-  array_iterator(pointer p) : p(p) {}
+  //  array_iterator(pointer p) : p(p) {}
+
+  array_iterator(Array &a, std::size_t i) { p = &a[i]; }
 
   reference operator*() { return *p; }
 
@@ -214,7 +218,7 @@ struct array_iterator {
 
   // result may be under 0.
   long long operator-(array_iterator const &iter) const {
-    return p - iter;
+    return p - iter.p;
   }
 
   array_iterator operator+(std::size_t n) const {
@@ -240,12 +244,23 @@ struct array_iterator {
   bool operator<(array_iterator const &right) const {
     return p < right.p;
   }
+  bool operator<=(array_iterator const &right) const {
+    return p <= right.p;
+  }
+  bool operator>(array_iterator const &right) const {
+    return p > right.p;
+  }
+  bool operator>=(array_iterator const &right) const {
+    return p >= right.p;
+  }
 };
 #endif
 template <typename Array>
 struct array_const_iterator {
+  using const_reference = typename Array::const_reference;
+
   Array const &a;
-  std::size_t i; // TODO: const ?
+  std::size_t i;
 
   array_const_iterator(Array const &a, std::size_t i) : a(a), i(i) {}
 
@@ -258,10 +273,8 @@ struct array_const_iterator {
   array_const_iterator(typename Array::iterator const &iter)
       : a(iter.a), i(iter.i) {}
 
-  typename Array::const_reference operator*() const { return a[i]; }
-  typename Array::const_reference operator[](std::size_t n) const {
-    return *(*this + n);
-  }
+  const_reference operator*() const { return a[i]; }
+  const_reference operator[](std::size_t n) const { return *(*this + n); }
 
   array_const_iterator &operator++() {
     ++i;
