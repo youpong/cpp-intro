@@ -682,6 +682,93 @@ static void test_type() {
   expect(__LINE__, false, str2 == str1);
 }
 
+template <typename RandomAccessIterator>
+void test_iterator_0(RandomAccessIterator i, int n) {
+  [[maybe_unused]] RandomAccessIterator iter;
+  iter = i + n;
+  iter = i - n;
+  iter = n + i;
+  // comment out. refers to issue #1
+  // iter = n - i;
+
+  iter = i + (-n);
+
+  iter = i += n;
+  iter = i -= n;
+}
+
+template <typename RandomAccessIterator>
+void test_iterator_1(RandomAccessIterator a, RandomAccessIterator b) {
+  b - a;
+  a - b;
+}
+
+/*
+  a < b;
+  a <= b;
+  a >= b;
+  a > b;
+}
+*/
+
+static void test_random_access_iter() {
+  std::array<int, 5> a = {0, 1, 2, 3, 4};
+  [[maybe_unused]] int n = 5;
+
+  [[maybe_unused]] auto iter = std::begin(a);
+  //  std::cout << iter.iterator_category;
+  //  n - iter ;
+}
+
+static void test_random_access_iter2() {
+  using Array = array<int, 5>;
+  Array a1 = {0, 1, 2, 3, 4};
+
+  test_iterator_0(std::begin(a1), 0);
+}
+
+template <typename tag, typename Iterator>
+constexpr bool is_category_of() {
+  using iter_tag =
+      typename std::iterator_traits<Iterator>::iterator_category;
+  return std::is_base_of_v<tag, iter_tag>;
+}
+
+static void test_random_access_iter3() {
+  using iterator = std::vector<int>::iterator;
+  expect(__LINE__, true,
+         is_category_of<std::random_access_iterator_tag, iterator>());
+
+  std::vector<int> v;
+  [[maybe_unused]] int n = 3;
+
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
+
+  [[maybe_unused]] auto iter = std::begin(v);
+  // clang++
+  // error: invalid operands to binary expression ('int' and
+  // '__gnu_cxx::__normal_iterator<int *, std::vector<int,
+  // std::allocator<int> > >')
+  //
+  // g++
+  // error: no match for ‘operator-’ (operand types are ‘int’ and
+  // ‘__gnu_cxx::__normal_iterator<int*, std::vector<int> >’)
+  //
+  // n - iter ;
+}
+
+static void foo() {
+  bool b;
+  using iterator = std::vector<int>::iterator;
+  b = is_category_of<std::forward_iterator_tag, iterator>();
+  std::cout << std::boolalpha << b << "\n"s;
+
+  b = is_category_of<std::random_access_iterator_tag, iterator>();
+  std::cout << std::boolalpha << b << "\n"s;
+}
+
 int main() {
   name_scope();
   lambda_expr();
@@ -699,6 +786,12 @@ int main() {
   const_iterator5();
   test_at();
   test_type();
+
+  test_random_access_iter();
+  test_random_access_iter2();
+  test_random_access_iter3();
+
+  foo();
 
   test_all_error();
   test_all_reference();
