@@ -305,10 +305,10 @@ struct array_iterator {
 
 template <typename Array>
 struct array_const_iterator {
-  using pointer = typename Array::pointer;
+  using const_pointer = typename Array::const_pointer;
   using const_reference = typename Array::const_reference;
 
-  pointer p;
+  const_pointer p;
 
   array_const_iterator(Array const &a, std::size_t i) { p = &a[i]; }
 
@@ -359,6 +359,7 @@ struct array {
   using value_type = T;
   using pointer = T *;
   using reference = T &;
+  using const_pointer = T const *;
   using const_reference = T const &;
 
   using size_type = std::size_t;
