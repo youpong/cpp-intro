@@ -714,16 +714,24 @@ void test_iterator_2(RandomAccessIterator i, std::size_t n) {
 template <typename RandomAccessIterator>
 void test_iterator_3(RandomAccessIterator a, RandomAccessIterator b) {
   // clang-format off
-  static_cast<void>( a <  b);
-  static_cast<void>( a <= b);
-  static_cast<void>( a >= b);
-  static_cast<void>( a >  b);
+  static_cast<void>( a <  b );
+  static_cast<void>( a <= b );
+  static_cast<void>( a >= b );
+  static_cast<void>( a >  b );
+  // clang-format on  
+}
+
+template <typename BidirectionalIterator>
+void test_iterator_4(BidirectionalIterator a, BidirectionalIterator b) {
+  // clang-format off
+  static_cast<void>( a == b );
+  static_cast<void>( a != b );  
   // clang-format on  
 }
 
 static void test_random_access_iter() {
   std::array<int, 5> a = {0, 1, 2, 3, 4};
-  //  int n = 5;
+
   auto iter = std::begin(a);
   auto end_iter = std::end(a);
 
@@ -732,16 +740,21 @@ static void test_random_access_iter() {
   test_iterator_1(end_iter, iter);
   test_iterator_2(iter, 4);
   test_iterator_3(iter, end_iter);
-
-  //  std::cout << "a";
-  //  n - iter ;
+  test_iterator_4(iter, end_iter);
 }
 
-static void test_random_access_iter2() {
-  using Array = array<int, 5>;
-  Array a1 = {0, 1, 2, 3, 4};
+static void test_bidirectional_access_iter() {
+  std::list<int> list;
 
-  test_iterator_0(std::begin(a1), 0);
+  list.push_front(0);
+  list.push_front(1);
+  list.push_front(2);
+  
+
+  auto iter = std::begin(list);
+  auto end_iter = std::end(list);
+
+  test_iterator_4(iter, end_iter);
 }
 
 template <typename tag, typename Iterator>
@@ -805,9 +818,10 @@ int main() {
   test_type();
 
   test_random_access_iter();
-  test_random_access_iter2();
   test_random_access_iter3();
 
+  test_bidirectional_access_iter();
+  
   foo();
 
   test_all_error();
