@@ -695,6 +695,9 @@ void test_iterator_0(RandomAccessIterator i, std::size_t n) {
 
   iter = i += n;
   iter = i -= n;
+
+  // same as *(i + n)
+  static_cast<void>(i[n]);
 }
 
 template <typename RandomAccessIterator>
@@ -703,12 +706,6 @@ void test_iterator_1(RandomAccessIterator a, RandomAccessIterator b) {
   [[maybe_unused]] long long diff;
   diff = b - a;
   diff = a - b;
-}
-
-template <typename RandomAccessIterator>
-void test_iterator_2(RandomAccessIterator i, std::size_t n) {
-  // same as *(i + n)
-  static_cast<void>(i[n]);
 }
 
 template <typename RandomAccessIterator>
@@ -778,7 +775,6 @@ static void test_random_access_iter() {
   test_iterator_0(iter, 5);
   test_iterator_1(iter, end_iter);
   test_iterator_1(end_iter, iter);
-  test_iterator_2(iter, 4);
   test_iterator_3(iter, end_iter);
   test_iterator_5(iter);
   test_iterator_7(iter, end_iter);
