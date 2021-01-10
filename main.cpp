@@ -711,13 +711,15 @@ void test_iterator_2(RandomAccessIterator i, std::size_t n) {
   static_cast<void>(i[n]);
 }
 
-/*
-  a < b;
-  a <= b;
-  a >= b;
-  a > b;
+template <typename RandomAccessIterator>
+void test_iterator_3(RandomAccessIterator a, RandomAccessIterator b) {
+  // clang-format off
+  static_cast<void>( a <  b);
+  static_cast<void>( a <= b);
+  static_cast<void>( a >= b);
+  static_cast<void>( a >  b);
+  // clang-format on  
 }
-*/
 
 static void test_random_access_iter() {
   std::array<int, 5> a = {0, 1, 2, 3, 4};
@@ -729,6 +731,8 @@ static void test_random_access_iter() {
   test_iterator_1(iter, end_iter);
   test_iterator_1(end_iter, iter);
   test_iterator_2(iter, 4);
+  test_iterator_3(iter, end_iter);
+
   //  std::cout << "a";
   //  n - iter ;
 }
