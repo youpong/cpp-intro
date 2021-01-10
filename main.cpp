@@ -699,8 +699,10 @@ void test_iterator_0(RandomAccessIterator i, int n) {
 
 template <typename RandomAccessIterator>
 void test_iterator_1(RandomAccessIterator a, RandomAccessIterator b) {
-  b - a;
-  a - b;
+  //  [[maybe_unused]]RandomAccessIterator iter;
+  [[maybe_unused]] long long diff;
+  diff = b - a;
+  diff = a - b;
 }
 
 /*
@@ -713,10 +715,15 @@ void test_iterator_1(RandomAccessIterator a, RandomAccessIterator b) {
 
 static void test_random_access_iter() {
   std::array<int, 5> a = {0, 1, 2, 3, 4};
-  [[maybe_unused]] int n = 5;
+  //  int n = 5;
+  auto iter = std::begin(a);
+  auto end_iter = std::end(a);
 
-  [[maybe_unused]] auto iter = std::begin(a);
-  //  std::cout << iter.iterator_category;
+  test_iterator_0(iter, 5);
+  test_iterator_1(iter, end_iter);
+  test_iterator_1(end_iter, iter);
+
+  //  std::cout << "a";
   //  n - iter ;
 }
 
