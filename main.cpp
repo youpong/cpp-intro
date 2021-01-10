@@ -729,7 +729,31 @@ void test_iterator_4(BidirectionalIterator a, BidirectionalIterator b) {
   // clang-format on  
 }
 
+template <typename BidirectionalIterator>
+void test_iterator_5(BidirectionalIterator iter) {
+  // clang-format off
+  static_cast<void>( ++iter );
+  static_cast<void>( --iter );
+  // clang-format on  
+}
+
+template <typename tag, typename Iterator>
+constexpr bool is_category_of() {
+  using iter_tag =
+      typename std::iterator_traits<Iterator>::iterator_category;
+  return std::is_base_of_v<tag, iter_tag>;
+}
+
+/**
+  Random access iterator
+  - std::vector<T>
+  - std::array<T,N>
+*/
 static void test_random_access_iter() {
+  using iterator = std::array<int, 5>::iterator;
+  expect(__LINE__, true,
+         is_category_of<std::random_access_iterator_tag, iterator>());
+  
   std::array<int, 5> a = {0, 1, 2, 3, 4};
 
   auto iter = std::begin(a);
@@ -741,9 +765,15 @@ static void test_random_access_iter() {
   test_iterator_2(iter, 4);
   test_iterator_3(iter, end_iter);
   test_iterator_4(iter, end_iter);
+  test_iterator_5(iter);
 }
 
+/**
+  Bidirectional access iterator
+  - std::list<T>
+*/
 static void test_bidirectional_access_iter() {
+  
   std::list<int> list;
 
   list.push_front(0);
@@ -755,13 +785,7 @@ static void test_bidirectional_access_iter() {
   auto end_iter = std::end(list);
 
   test_iterator_4(iter, end_iter);
-}
-
-template <typename tag, typename Iterator>
-constexpr bool is_category_of() {
-  using iter_tag =
-      typename std::iterator_traits<Iterator>::iterator_category;
-  return std::is_base_of_v<tag, iter_tag>;
+  test_iterator_5(iter);  
 }
 
 static void test_random_access_iter3() {
