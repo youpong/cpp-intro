@@ -723,17 +723,7 @@ void test_iterator_3(RandomAccessIterator a, RandomAccessIterator b) {
 
 template <typename BidirectionalIterator>
 void test_iterator_5(BidirectionalIterator iter) {
-  // clang-format off
-  //  static_cast<void>( ++iter );
   static_cast<void>( --iter );
-  // clang-format on  
-}
-
-template <typename ForwardIterator>
-void test_iterator_6(ForwardIterator iter) {
-  // clang-format off
-  static_cast<void>( ++iter );
-  // clang-format on  
 }
 
 template <typename InputIterator>
@@ -791,7 +781,6 @@ static void test_random_access_iter() {
   test_iterator_2(iter, 4);
   test_iterator_3(iter, end_iter);
   test_iterator_5(iter);
-  test_iterator_6(iter);
   test_iterator_7(iter, end_iter);
   test_iterator_8(iter, 8); // error in std::array<T,N>
 }
@@ -817,7 +806,6 @@ static void test_bidirectional_iter() {
   auto end_iter = std::end(list);
 
   test_iterator_5(iter);
-  test_iterator_6(iter);
   test_iterator_7(iter, end_iter);
   test_iterator_8(iter, 8);
 }
@@ -840,7 +828,6 @@ static void test_forward_iter() {
   auto iter = std::begin(list);
   auto end_iter = std::end(list);
 
-  test_iterator_6(iter);
   test_iterator_7(iter, end_iter);
   test_iterator_8(iter, 8);
 }
