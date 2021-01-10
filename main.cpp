@@ -732,9 +732,30 @@ void test_iterator_4(BidirectionalIterator a, BidirectionalIterator b) {
 template <typename BidirectionalIterator>
 void test_iterator_5(BidirectionalIterator iter) {
   // clang-format off
-  static_cast<void>( ++iter );
+  //  static_cast<void>( ++iter );
   static_cast<void>( --iter );
   // clang-format on  
+}
+
+template <typename ForwardIterator>
+void test_iterator_6(ForwardIterator iter) {
+  // clang-format off
+  static_cast<void>( ++iter );
+  // clang-format on  
+}
+
+template <typename InputIterator>
+void test_iterator_7(InputIterator a, InputIterator b) {
+  // clang-format off
+  static_cast<void>( a == b );
+  static_cast<void>( a != b );
+  
+  static_cast<void>( *a );
+  // a->m;
+
+  static_cast<void>( ++a );
+  static_cast<void>( a++ );
+  // clang-format on
 }
 
 template <typename tag, typename Iterator>
@@ -753,7 +774,7 @@ static void test_random_access_iter() {
   using iterator = std::array<int, 5>::iterator;
   expect(__LINE__, true,
          is_category_of<std::random_access_iterator_tag, iterator>());
-  
+
   std::array<int, 5> a = {0, 1, 2, 3, 4};
 
   auto iter = std::begin(a);
@@ -766,26 +787,78 @@ static void test_random_access_iter() {
   test_iterator_3(iter, end_iter);
   test_iterator_4(iter, end_iter);
   test_iterator_5(iter);
+  test_iterator_6(iter);
+  test_iterator_7(iter, end_iter);
 }
 
 /**
-  Bidirectional access iterator
+  Bidirectional iterator
   - std::list<T>
 */
-static void test_bidirectional_access_iter() {
-  
+static void test_bidirectional_iter() {
+  using iterator = std::list<int>::iterator;
+  expect(__LINE__, false,
+         is_category_of<std::random_access_iterator_tag, iterator>());
+  expect(__LINE__, true,
+         is_category_of<std::bidirectional_iterator_tag, iterator>());
+
   std::list<int> list;
 
   list.push_front(0);
   list.push_front(1);
   list.push_front(2);
-  
 
   auto iter = std::begin(list);
   auto end_iter = std::end(list);
 
   test_iterator_4(iter, end_iter);
-  test_iterator_5(iter);  
+  test_iterator_5(iter);
+  test_iterator_6(iter);
+  test_iterator_7(iter, end_iter);
+}
+
+/**
+ forward iterator
+ - std::forward_lsit<T>
+*/
+static void test_forward_iter() {
+  using iterator = std::forward_list<int>::iterator;
+  expect(__LINE__, false,
+         is_category_of<std::bidirectional_iterator_tag, iterator>());
+  expect(__LINE__, true,
+         is_category_of<std::forward_iterator_tag, iterator>());
+  std::forward_list<int> list;
+  list.push_front(0);
+  list.push_front(1);
+  list.push_front(2);
+
+  auto iter = std::begin(list);
+  auto end_iter = std::end(list);
+
+  test_iterator_6(iter);
+  test_iterator_7(iter, end_iter);
+}
+
+/**
+   input iterator
+ */
+static void test_input_iter() {
+  /*
+  using iterator = std::XXXXX<int>::iterator;
+  expect(__LINE__, false,
+         is_category_of<std::forward_iterator_tag, iterator>());
+  expect(__LINE__, true,
+         is_category_of<std::input_iterator_tag, iterator>());
+  */
+
+  //  test_iterator_7(iter);
+}
+
+/**
+  output iterator
+*/
+static void test_output_iter() {
+  //  output_iterator_tag
 }
 
 static void test_random_access_iter3() {
@@ -844,8 +917,12 @@ int main() {
   test_random_access_iter();
   test_random_access_iter3();
 
-  test_bidirectional_access_iter();
-  
+  test_bidirectional_iter();
+
+  test_forward_iter();
+  test_input_iter();
+  test_output_iter();
+
   foo();
 
   test_all_error();
