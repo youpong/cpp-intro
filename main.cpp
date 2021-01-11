@@ -893,7 +893,21 @@ static void foo() {
   std::cout << std::boolalpha << b << "\n"s;
 }
 
+template <typename Iterator>
+void test_iterator_toraits_0(Iterator i, Iterator j) {
+  [[maybe_unused]]
+  typename std::iterator_traits<Iterator>::difference_type diff = j - i;
+}
+
+static void test_iterator_traits() {
+  std::vector<int> v = {0, 1, 2, 3, 4};
+  auto iter = std::begin(v);
+  test_iterator_toraits_0(iter, iter);
+}
+
 int main() {
+
+  test_iterator_traits();
   name_scope();
   lambda_expr();
   test_array();

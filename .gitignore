@@ -1,6 +1,7 @@
 hello
 prog
 a.out
+nohup.out
 *.o
 *.gch
 TAGS
