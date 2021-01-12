@@ -429,6 +429,28 @@ struct cout_iterator {
   }
 };
 
+template <typename Container>
+struct back_inserter {
+  // --- boilerplate code
+  // for output iterator doesn't use these.
+  using difference_type = void;
+  using value_type = void;
+  using reference = void;
+  using pointer = void;
+  using iterator_category = std::output_iterator_tag;
+
+  cout_iterator &operator*() { return *this; }
+  cout_iterator &operator++() { return *this; }
+  cout_iterator &operator++(int) { return *this; }
+  // --- boilerplate code
+
+  Container &c;
+  back_inserter(Container &c) : c(c) {}
+  back_inserter &operator=(const typename Container::value_type &value) {
+    c.push_back(value);
+  }
+};
+
 static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
@@ -868,16 +890,23 @@ static void test_input_iter() {
   - std::ostream_iterator<T>
 */
 static void test_output_iter() {
-
+  //
+  // std::ostream_iterator<T>
+  //
   using iterator = std::ostream_iterator<int>;
   expect(__LINE__, false,
          is_category_of<std::forward_iterator_tag, iterator>());
   expect(__LINE__, true,
          is_category_of<std::output_iterator_tag, iterator>());
 
-  iterator iter = iterator(std::cout);  
-
+  iterator iter(std::cout);
   test_iterator_8(iter, 8);
+
+  //
+  // cout_iterator
+  //
+  cout_iterator iter2;
+  test_iterator_8(iter2, 8);
 }
 
 static void test_random_access_iter3() {
@@ -936,7 +965,17 @@ static void test_cout_iterator() {
   std::copy(std::begin(v), std::end(v), out);
 }
 
+static void test_test() {
+  std::array<int, 5> a = {0, 1, 2, 3, 4};
+  std::vector<int> tmp;
+  // auto out = back_inserter(tmp);
+  auto out = std::back_inserter(tmp);
+  std::copy(std::begin(a), std::end(a), out);
+  expect(__LINE__, 4, tmp[4]);
+}
+
 int main() {
+  test_test();
   test_cout_iterator();
   test_output_iterator();
   test_iterator_traits();
