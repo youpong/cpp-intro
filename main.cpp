@@ -439,15 +439,16 @@ struct back_inserter {
   using pointer = void;
   using iterator_category = std::output_iterator_tag;
 
-  cout_iterator &operator*() { return *this; }
-  cout_iterator &operator++() { return *this; }
-  cout_iterator &operator++(int) { return *this; }
+  back_inserter &operator*() { return *this; }
+  back_inserter &operator++() { return *this; }
+  back_inserter &operator++(int) { return *this; }
   // --- boilerplate code
 
   Container &c;
   back_inserter(Container &c) : c(c) {}
   back_inserter &operator=(const typename Container::value_type &value) {
     c.push_back(value);
+    return *this;
   }
 };
 
@@ -965,11 +966,11 @@ static void test_cout_iterator() {
   std::copy(std::begin(v), std::end(v), out);
 }
 
-static void test_test() {
+static void test_back_inserter() {
   std::array<int, 5> a = {0, 1, 2, 3, 4};
   std::vector<int> tmp;
-  // auto out = back_inserter(tmp);
-  auto out = std::back_inserter(tmp);
+  auto out = back_inserter(tmp);
+  //  auto out = std::back_inserter(tmp);
   std::copy(std::begin(a), std::end(a), out);
   expect(__LINE__, 4, tmp[4]);
 }
