@@ -758,9 +758,8 @@ void test_iterator_7(InputIterator a, InputIterator b) {
   // clang-format on
 }
 
-template <typename OutputIterator>
-void test_iterator_8(OutputIterator iter,
-                     typename OutputIterator::value_type v) {
+template <typename OutputIterator, typename V>
+void test_iterator_8(OutputIterator iter, V v) {
   // clang-format off
   static_cast<void>( *iter = v );
 
@@ -866,17 +865,19 @@ static void test_input_iter() {
 
 /**
   output iterator
+  - std::ostream_iterator<T>
 */
 static void test_output_iter() {
-  /*
-  using iterator = std::XXXXX<int>::iterator;
+
+  using iterator = std::ostream_iterator<int>;
   expect(__LINE__, false,
          is_category_of<std::forward_iterator_tag, iterator>());
   expect(__LINE__, true,
          is_category_of<std::output_iterator_tag, iterator>());
-  */
 
-  //  test_iterator_8(iter, value);
+  iterator iter = iterator(std::cout);  
+
+  test_iterator_8(iter, 8);
 }
 
 static void test_random_access_iter3() {
