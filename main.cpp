@@ -897,6 +897,11 @@ template <typename Iterator>
 void test_iterator_toraits_0(Iterator i, Iterator j) {
   [[maybe_unused]]
   typename std::iterator_traits<Iterator>::difference_type diff = j - i;
+  typename std::iterator_traits<Iterator>::value_type v = *i;
+  [[maybe_unused]] typename std::iterator_traits<Iterator>::pointer p =
+      &v;
+  [[maybe_unused]] typename std::iterator_traits<Iterator>::reference r =
+      v;
 }
 
 static void test_iterator_traits() {
