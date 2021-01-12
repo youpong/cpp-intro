@@ -883,16 +883,6 @@ static void test_random_access_iter3() {
   // n - iter ;
 }
 
-static void foo() {
-  bool b;
-  using iterator = std::vector<int>::iterator;
-  b = is_category_of<std::forward_iterator_tag, iterator>();
-  std::cout << std::boolalpha << b << "\n"s;
-
-  b = is_category_of<std::random_access_iterator_tag, iterator>();
-  std::cout << std::boolalpha << b << "\n"s;
-}
-
 template <typename Iterator>
 void test_iterator_toraits_0(Iterator i, Iterator j) {
   [[maybe_unused]]
@@ -910,8 +900,15 @@ static void test_iterator_traits() {
   test_iterator_toraits_0(iter, iter);
 }
 
-int main() {
+static void test_output_iterator() {
+  std::array<int, 5> a = {0, 1, 2, 3, 4};
+  std::vector<int> v(5);
+  std::copy(std::begin(a), std::end(a), std::begin(v));
+  expect(__LINE__, 4, v.back());
+}
 
+int main() {
+  test_output_iterator();
   test_iterator_traits();
   name_scope();
   lambda_expr();
@@ -938,8 +935,6 @@ int main() {
   test_forward_iter();
   test_input_iter();
   test_output_iter();
-
-  foo();
 
   test_all_error();
   test_all_reference();
