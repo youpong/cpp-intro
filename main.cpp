@@ -408,6 +408,27 @@ struct array {
   size_type size() const { return N; }
 };
 
+struct cout_iterator {
+  // --- boilerplate code
+  // for output iterator doesn't use these.
+  using difference_type = void;
+  using value_type = void;
+  using reference = void;
+  using pointer = void;
+  using iterator_category = std::output_iterator_tag;
+
+  cout_iterator &operator*() { return *this; }
+  cout_iterator &operator++() { return *this; }
+  cout_iterator &operator++(int) { return *this; }
+  // --- boilerplate code
+
+  template <typename T>
+  cout_iterator &operator=(T const &x) {
+    std::cout << x;
+    return *this;
+  }
+};
+
 static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
@@ -907,7 +928,15 @@ static void test_output_iterator() {
   expect(__LINE__, 4, v.back());
 }
 
+static void test_cout_iterator() {
+  std::vector<int> v = {0, 1, 2, 3, 4};
+  cout_iterator out;
+
+  std::copy(std::begin(v), std::end(v), out);
+}
+
 int main() {
+  test_cout_iterator();
   test_output_iterator();
   test_iterator_traits();
   name_scope();
