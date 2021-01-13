@@ -767,6 +767,15 @@ void test_iterator_5(BidirectionalIterator iter) {
   static_cast<void>( --iter );
 }
 
+template <typename ForwardIterator>
+void test_multipath_guarantee(ForwardIterator i) {
+  auto prev = i;
+  ++i;
+  ++prev;
+  expect(__LINE__, true, i == prev);
+  expect(__LINE__, true, *i == *prev);
+}
+
 template <typename InputIterator>
 void test_iterator_7(InputIterator a, InputIterator b) {
   // clang-format off
@@ -820,6 +829,7 @@ static void test_random_access_iter() {
   test_iterator_1(end_iter, iter);
   test_iterator_3(iter, end_iter);
   test_iterator_5(iter);
+  test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
   test_iterator_8(iter, 8); // error in std::array<T,N>
 }
@@ -845,6 +855,7 @@ static void test_bidirectional_iter() {
   auto end_iter = std::end(list);
 
   test_iterator_5(iter);
+  test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
   test_iterator_8(iter, 8);
 }
@@ -867,6 +878,7 @@ static void test_forward_iter() {
   auto iter = std::begin(list);
   auto end_iter = std::end(list);
 
+  test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
   test_iterator_8(iter, 8);
 }
@@ -980,7 +992,6 @@ static void test_back_inserter() {
   std::array<int, 5> a = {0, 1, 2, 3, 4};
   std::vector<int> tmp;
   auto out = back_inserter(tmp);
-  //  auto out = std::back_inserter(tmp);
   std::copy(std::begin(a), std::end(a), out);
   expect(__LINE__, 4, tmp[4]);
 }
