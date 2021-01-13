@@ -887,9 +887,11 @@ static void test_input_iter() {
 }
 
 /**
-  output iterator
-  - std::ostream_iterator<T>
-*/
+ * output iterator
+ *  - std::ostream_iterator<T>
+ *  - std::back_insert_iterator<Container> std::back_inserter(Container
+ * &x)
+ */
 static void test_output_iter() {
   //
   // std::ostream_iterator<T>
@@ -976,7 +978,7 @@ static void test_back_inserter() {
 }
 
 int main() {
-  test_test();
+  test_back_inserter();
   test_cout_iterator();
   test_output_iterator();
   test_iterator_traits();
