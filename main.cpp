@@ -961,6 +961,14 @@ static void test_output_iterator() {
   expect(__LINE__, 4, v.back());
 }
 
+static void test_output_iterator2() {
+  std::array<int, 5> a = {0, 1, 2, 3, 4};
+  std::vector<int> tmp;
+  auto out = std::back_inserter(tmp);
+  std::copy(std::begin(a), std::end(a), out);
+  expect(__LINE__, 4, tmp[4]);
+}
+
 static void test_cout_iterator() {
   std::vector<int> v = {0, 1, 2, 3, 4};
   cout_iterator out;
@@ -981,6 +989,8 @@ int main() {
   test_back_inserter();
   test_cout_iterator();
   test_output_iterator();
+  test_output_iterator2();
+
   test_iterator_traits();
   name_scope();
   lambda_expr();
