@@ -452,6 +452,38 @@ struct back_inserter {
   }
 };
 
+namespace old {
+template <typename Container>
+struct back_insert_iterator {
+  // --- boilerplate code
+  // for output iterator doesn't use these.
+  using difference_type = void;
+  using value_type = void;
+  using reference = void;
+  using pointer = void;
+  using iterator_category = std::output_iterator_tag;
+
+  back_insert_iterator &operator*() { return *this; }
+  back_insert_iterator &operator++() { return *this; }
+  back_insert_iterator &operator++(int) { return *this; }
+  // --- boilerplate code
+
+  back_insert_iterator(Container &c) : c(&c) {}
+  back_insert_iterator &
+  operator=(const typename Container::value_type &value) {
+    c->push_back(value);
+    return *this;
+  }
+
+  Container *c;
+};
+
+template <typename Container>
+back_insert_iterator<Container> back_inserter(Container &c) {
+  return back_insert_iterator<Container>(c);
+}
+} // namespace old
+
 static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
@@ -981,11 +1013,12 @@ static void test_output_iterator2() {
   expect(__LINE__, 4, tmp[4]);
 }
 
-static void test_cout_iterator() {
-  std::vector<int> v = {0, 1, 2, 3, 4};
-  cout_iterator out;
-
-  std::copy(std::begin(v), std::end(v), out);
+static void test_output_iterator3() {
+  std::array<int, 5> a = {0, 1, 2, 3, 4};
+  std::vector<int> tmp;
+  auto out = old::back_inserter(tmp);
+  std::copy(std::begin(a), std::end(a), out);
+  expect(__LINE__, 4, tmp[4]);
 }
 
 static void test_back_inserter() {
@@ -996,11 +1029,19 @@ static void test_back_inserter() {
   expect(__LINE__, 4, tmp[4]);
 }
 
+static void test_cout_iterator() {
+  std::vector<int> v = {0, 1, 2, 3, 4};
+  cout_iterator out;
+
+  std::copy(std::begin(v), std::end(v), out);
+}
+
 int main() {
   test_back_inserter();
   test_cout_iterator();
   test_output_iterator();
   test_output_iterator2();
+  test_output_iterator3();
 
   test_iterator_traits();
   name_scope();
