@@ -484,6 +484,48 @@ back_insert_iterator<Container> back_inserter(Container &c) {
 }
 } // namespace old
 
+template <typename T>
+struct cin_iterator {
+  // --- boilerplate code
+  using difference_type = std::ptrdiff_t;
+  using value_type = T;
+  using reference = T &;
+  using pointer = T *;
+  using iterator_category = std::input_iterator_tag;
+  // --- boilerplate code
+
+  cin_iterator(bool fail = false) : fail(fail) { ++*this; }
+
+  // const reference &operator*() const { return value; }
+  reference &operator*() { return value; }
+
+  cin_iterator &operator++() {
+    if (!fail) {
+      std::cin >> value;
+      fail = std::cin.fail();
+    }
+    return *this;
+  }
+  cin_iterator &operator++(int) {
+    auto old = *this;
+    ++*this;
+    return old;
+  }
+
+  bool fail;
+  value_type value;
+};
+
+template <typename T>
+bool operator==(cin_iterator<T> const &l, cin_iterator<T> const &r) {
+  return l.fail == r.fail;
+}
+
+template <typename T>
+bool operator!=(cin_iterator<T> const &l, cin_iterator<T> const &r) {
+  return !(l == r);
+}
+
 static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
@@ -1036,7 +1078,17 @@ static void test_cout_iterator() {
   std::copy(std::begin(v), std::end(v), out);
 }
 
+static void test_cin_iterator() {
+  cin_iterator<int> input, fail(true);
+  std::vector<int> buffer;
+
+  //  std::copy(input, fail, std::back_inserter(buffer));
+  cout_iterator out;
+  std::copy(input, fail, out);
+}
+
 int main() {
+  test_cin_iterator();
   test_back_inserter();
   test_cout_iterator();
   test_output_iterator();
