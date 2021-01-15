@@ -1099,8 +1099,17 @@ static void test_print() {
   std::vector<int> v = {0, 1, 2, 3, 4};
   print(std::begin(v), std::end(v));
 
-  cin_iterator<int> iter, fail(true);
-  print(iter, fail);
+  if (false) {
+    cin_iterator<int> iter, fail(true);
+    print(iter, fail);
+  }
+
+  {
+    std::istream_iterator<int> iter(std::cin), end_iter;
+    std::vector<int> v;
+    std::copy(iter, end_iter, std::back_inserter(v));
+    print(std::begin(v), std::end(v));
+  }
 }
 
 int main() {
