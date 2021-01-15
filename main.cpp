@@ -526,6 +526,14 @@ bool operator!=(cin_iterator<T> const &l, cin_iterator<T> const &r) {
   return !(l == r);
 }
 
+template <typename InputIterator>
+void print(InputIterator iter, InputIterator end_iter) {
+  while (iter != end_iter) {
+    std::cout << *iter;
+    ++iter;
+  }
+}
+
 static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
@@ -1087,7 +1095,17 @@ static void test_cin_iterator() {
   std::copy(input, fail, out);
 }
 
+static void test_print() {
+  std::vector<int> v = {0, 1, 2, 3, 4};
+  print(std::begin(v), std::end(v));
+
+  cin_iterator<int> iter, fail(true);
+  print(iter, fail);
+}
+
 int main() {
+  test_print();
+
   test_cin_iterator();
   test_back_inserter();
   test_cout_iterator();
