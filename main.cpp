@@ -998,10 +998,16 @@ static void test_output_iter() {
 
   iterator iter(std::cout);
   test_iterator_8(iter, 8);
+}
 
-  //
-  // cout_iterator
-  //
+/**
+ * cout_iterator
+ */
+static void test_output_iter2() {
+  using iterator = cout_iterator;
+  expect(__LINE__, true,
+         is_category_of<std::output_iterator_tag, iterator>());
+
   cout_iterator iter2;
   test_iterator_8(iter2, 8);
 }
@@ -1148,6 +1154,7 @@ int main() {
   test_forward_iter();
   test_input_iter();
   test_output_iter();
+  test_output_iter2();
 
   test_all_error();
   test_all_reference();
