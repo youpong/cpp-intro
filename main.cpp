@@ -506,7 +506,8 @@ struct cin_iterator {
     }
     return *this;
   }
-  cin_iterator &operator++(int) {
+
+  cin_iterator operator++(int) {
     auto old = *this;
     ++*this;
     return old;
@@ -966,18 +967,30 @@ static void test_forward_iter() {
 }
 
 /**
-   input iterator
+ * input iterator
+ * - std::istream_iterator<T>
  */
 static void test_input_iter() {
-  /*
-  using iterator = std::XXXXX<int>::iterator;
+  using iterator = std::istream_iterator<int>;
   expect(__LINE__, false,
          is_category_of<std::forward_iterator_tag, iterator>());
   expect(__LINE__, true,
          is_category_of<std::input_iterator_tag, iterator>());
-  */
 
-  //  test_iterator_7(iter, iter);
+  std::istream_iterator<int> iter(std::cin);
+  test_iterator_7(iter, iter);
+}
+
+/**
+ * cin_iterator
+ */
+static void test_input_iter2() {
+  using iterator = cin_iterator<int>;
+  expect(__LINE__, true,
+         is_category_of<std::input_iterator_tag, iterator>());
+
+  cin_iterator<int> iter;
+  test_iterator_7(iter, iter);
 }
 
 /**
@@ -1184,6 +1197,8 @@ int main() {
 
   test_forward_iter();
   test_input_iter();
+  test_input_iter2();
+
   test_output_iter();
   test_output_iter2();
   test_output_iter3();
