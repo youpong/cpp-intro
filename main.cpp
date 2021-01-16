@@ -1012,6 +1012,34 @@ static void test_output_iter2() {
   test_iterator_8(iter2, 8);
 }
 
+/**
+ * back_inserter
+ */
+static void test_output_iter3() {
+  using iterator = back_inserter<std::vector<int>>;
+  expect(__LINE__, true,
+         is_category_of<std::output_iterator_tag, iterator>());
+
+  std::vector<int> v;
+  auto iter = back_inserter(v);
+
+  test_iterator_8(iter, 8);
+}
+
+/**
+ * old::back_inserter
+ */
+static void test_output_iter4() {
+  using iterator = old::back_insert_iterator<std::vector<int>>;
+  expect(__LINE__, true,
+         is_category_of<std::output_iterator_tag, iterator>());
+
+  std::vector<int> v;
+  auto iter = old::back_inserter(v);
+
+  test_iterator_8(iter, 8);
+}
+
 static void test_random_access_iter3() {
   using iterator = std::vector<int>::iterator;
   expect(__LINE__, true,
@@ -1077,6 +1105,9 @@ static void test_output_iterator3() {
   expect(__LINE__, 4, tmp[4]);
 }
 
+/**
+ * back_inserter
+ */
 static void test_back_inserter() {
   std::array<int, 5> a = {0, 1, 2, 3, 4};
   std::vector<int> tmp;
@@ -1155,9 +1186,12 @@ int main() {
   test_input_iter();
   test_output_iter();
   test_output_iter2();
+  test_output_iter3();
+  test_output_iter4();
 
   test_all_error();
   test_all_reference();
 
   return EXIT_SUCCESS;
 }
+// TODO const iterator
