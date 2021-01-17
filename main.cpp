@@ -535,6 +535,38 @@ void print(InputIterator iter, InputIterator end_iter) {
   }
 }
 
+template <typename T>
+struct iota_iterator {
+  // --- boilerplate code
+  using difference_type = std::ptrdiff_t;
+  using value_type = T;
+  using reference = T &;
+  using pointer = T *;
+  using iterator_category = std::forward_iterator_tag;
+  // --- boilerplate code
+
+  T value;
+  iota_iterator(T value = 0) : value(value) {}
+
+  reference operator*() noexcept { return value; }
+  // const reference operator*() const noexcept { return value; }
+  reference operator*() const noexcept { return value; }
+  iota_iterator &operator++() {
+    ++value;
+    return *this;
+  }
+};
+
+template <typename T>
+bool operator==(iota_iterator<T> const &l, iota_iterator<T> const &r) {
+  return l.value == r.value;
+}
+
+template <typename T>
+bool operator!=(iota_iterator<T> const &l, iota_iterator<T> const &r) {
+  return !(l == r);
+}
+
 static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
@@ -1140,7 +1172,8 @@ static void test_cin_iterator() {
   cin_iterator<int> input, fail(true);
   std::vector<int> buffer;
 
-  //  std::copy(input, fail, std::back_inserter(buffer));
+  [[maybe_unused]] bool b = input == fail;
+
   cout_iterator out;
   std::copy(input, fail, out);
 }
@@ -1162,7 +1195,26 @@ static void test_print() {
   }
 }
 
+static void test_iota_iterator() {
+  iota_iterator<int> iter;
+  expect(__LINE__, 0, *iter);
+  expect(__LINE__, 1, *++iter);
+  expect(__LINE__, 2, *++iter);
+
+  iota_iterator first(0), last(10);
+  iter = last;
+
+  [[maybe_unused]] bool b = first == last;
+
+  std::for_each(first, last, [](auto i) { std::cout << i; });
+
+  std::vector<int> v;
+  std::copy(first, last, std::back_inserter(v));
+  expect(__LINE__, 9, v[9]);
+}
+
 int main() {
+  test_iota_iterator();
   test_print();
 
   test_cin_iterator();
