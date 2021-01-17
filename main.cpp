@@ -551,21 +551,26 @@ struct iota_iterator {
   reference operator*() noexcept { return value; }
   // const reference operator*() const noexcept { return value; }
   reference operator*() const noexcept { return value; }
-  iota_iterator &operator++() {
+
+  iota_iterator &operator++() noexcept {
     ++value;
     return *this;
   }
+
+  iota_iterator operator++(int) noexcept {
+    auto temp = *this;
+    ++*this;
+    return temp;
+  }
+
+  bool operator==(iota_iterator<T> const &r) const noexcept {
+    return value == r.value;
+  }
+
+  bool operator!=(iota_iterator<T> const &r) const noexcept {
+    return !(*this == r);
+  }
 };
-
-template <typename T>
-bool operator==(iota_iterator<T> const &l, iota_iterator<T> const &r) {
-  return l.value == r.value;
-}
-
-template <typename T>
-bool operator!=(iota_iterator<T> const &l, iota_iterator<T> const &r) {
-  return !(l == r);
-}
 
 static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
@@ -1198,7 +1203,7 @@ static void test_print() {
 static void test_iota_iterator() {
   iota_iterator<int> iter;
   expect(__LINE__, 0, *iter);
-  expect(__LINE__, 1, *++iter);
+  expect(__LINE__, 0, *iter++);
   expect(__LINE__, 2, *++iter);
 
   iota_iterator first(0), last(10);
