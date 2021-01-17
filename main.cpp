@@ -1004,6 +1004,21 @@ static void test_forward_iter() {
 }
 
 /**
+ * iota_iterator
+ */
+static void test_forward_iter2() {
+  using iterator = iota_iterator<int>;
+  expect(__LINE__, true,
+         is_category_of<std::forward_iterator_tag, iterator>());
+
+  iota_iterator<int> iter, last(10);
+
+  test_multipath_guarantee(iter);
+  test_iterator_7(iter, last);
+  test_iterator_8(iter, 8);
+}
+
+/**
  * input iterator
  * - std::istream_iterator<T>
  */
@@ -1253,6 +1268,8 @@ int main() {
   test_bidirectional_iter();
 
   test_forward_iter();
+  test_forward_iter2();
+
   test_input_iter();
   test_input_iter2();
 
