@@ -598,8 +598,12 @@ struct forward_link_list_iterator {
   }
 };
 
-namespace ns {
+template <typename T>
+forward_link_list<T> &next(forward_link_list<T> &list) noexcept {
+  return *list.next;
+}
 
+namespace ns {
 template <typename List>
 struct forward_link_list_iterator {
   // --- boilerplate code
@@ -633,6 +637,7 @@ struct forward_link_list {
 
   iterator begin() { return iterator(this); }
 };
+
 } // namespace ns
 
 static void test_array() {
@@ -1318,6 +1323,12 @@ static void test_forward_link_list() {
   forward_link_list<int> list2{2, &list3};
   forward_link_list<int> list1{1, &list2};
   [[maybe_unused]] forward_link_list<int> list0{0, &list1};
+
+  expect(__LINE__, 0, list0.value);
+  expect(__LINE__, 1, list0.next->value);
+  expect(__LINE__, 2, list0.next->next->value);
+  expect(__LINE__, 1, next(list0).value);
+  expect(__LINE__, 2, next(next(list0)).value);
 }
 
 namespace ns {
@@ -1330,6 +1341,7 @@ static void test_forward_link_list() {
 
   [[maybe_unused]] auto iter = list0.begin();
   expect(__LINE__, 0, *iter);
+  expect(__LINE__, 1, *++iter);
 }
 } // namespace ns
 
