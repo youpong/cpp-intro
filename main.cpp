@@ -572,6 +572,12 @@ struct iota_iterator {
   }
 };
 
+template <typename T>
+struct forward_link_list {
+  T value;
+  forward_link_list *next;
+};
+
 static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
@@ -1233,7 +1239,16 @@ static void test_iota_iterator() {
   expect(__LINE__, 9, v[9]);
 }
 
+static void test_forward_link_list() {
+  forward_link_list<int> list3{3, nullptr};
+  forward_link_list<int> list2{2, &list3};
+  forward_link_list<int> list1{1, &list2};
+  [[maybe_unused]] forward_link_list<int> list0{0, &list1};
+}
+
 int main() {
+  test_forward_link_list();
+
   test_iota_iterator();
   test_print();
 
