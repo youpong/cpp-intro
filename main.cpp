@@ -578,6 +578,63 @@ struct forward_link_list {
   forward_link_list *next;
 };
 
+template <typename T>
+struct forward_link_list_iterator {
+  // --- boilerplate code
+  using difference_type = std::ptrdiff_t;
+  using value_type = T;
+  using reference = T &;
+  using pointer = T *;
+  using iterator_category = std::forward_iterator_tag;
+  // --- boilerplate code
+
+  forward_link_list<T> *ptr;
+
+  T &operator*() noexcept { return ptr->value; }
+
+  forward_link_list_iterator &operator++() noexcept {
+    ptr = ptr->next;
+    return *this;
+  }
+};
+
+namespace ns {
+
+template <typename List>
+struct forward_link_list_iterator {
+  // --- boilerplate code
+  //  using difference_type = std::ptrdiff_t;
+  //  using value_type = T;
+  using reference = typename List::reference;
+
+  //  using pointer = T *;
+  //  using iterator_category = std::forward_iterator_tag;
+  // --- boilerplate code
+
+  List *ptr;
+
+  forward_link_list_iterator(List *ptr) : ptr(ptr) {}
+
+  reference operator*() noexcept { return ptr->value; }
+
+  forward_link_list_iterator &operator++() noexcept {
+    ptr = ptr->next;
+    return *this;
+  }
+};
+
+template <typename T>
+struct forward_link_list {
+  using iterator = forward_link_list_iterator<forward_link_list>;
+  using reference = T &;
+
+  T value;
+  forward_link_list *next;
+
+  iterator begin() { return iterator(this); }
+};
+} // namespace ns
+
 static void test_array() {
   array<int, 5> a = {1, 2, 3, 4, 5};
   const array<int, 5> ca = {1, 2, 3, 4, 5};
@@ -1025,6 +1082,23 @@ static void test_forward_iter2() {
 }
 
 /**
+ * forward_link_list_iterator
+ */
+static void test_forward_iter3() {
+  /*
+  using iterator = forwar
+  expect(__LINE__, true,
+         is_category_of<std::forward_iterator_tag, iterator>());
+
+  iota_iterator<int> iter, last(10);
+
+  test_multipath_guarantee(iter);
+  test_iterator_7(iter, last);
+  test_iterator_8(iter, 8);
+  */
+}
+
+/**
  * input iterator
  * - std::istream_iterator<T>
  */
@@ -1246,8 +1320,24 @@ static void test_forward_link_list() {
   [[maybe_unused]] forward_link_list<int> list0{0, &list1};
 }
 
+namespace ns {
+static void test_forward_link_list() {
+  //  using namespace ns;
+  forward_link_list<int> list3{3, nullptr};
+  forward_link_list<int> list2{2, &list3};
+  forward_link_list<int> list1{1, &list2};
+  [[maybe_unused]] forward_link_list<int> list0{0, &list1};
+
+  [[maybe_unused]] auto iter = list0.begin();
+  expect(__LINE__, 0, *iter);
+}
+} // namespace ns
+
 int main() {
+  ns::test_forward_link_list();
+
   test_forward_link_list();
+  return 0;
 
   test_iota_iterator();
   test_print();
@@ -1284,6 +1374,7 @@ int main() {
 
   test_forward_iter();
   test_forward_iter2();
+  test_forward_iter3();
 
   test_input_iter();
   test_input_iter2();
