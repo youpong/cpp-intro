@@ -608,11 +608,10 @@ struct forward_link_list_iterator {
   bool operator==(forward_link_list_iterator const &r) const {
     return ptr == r.ptr;
   }
-  
+
   bool operator!=(forward_link_list_iterator const &r) const {
     return !(*this == r);
   }
-  
 };
 
 template <typename T>
@@ -641,6 +640,20 @@ struct forward_link_list_iterator {
   forward_link_list_iterator &operator++() noexcept {
     ptr = ptr->next;
     return *this;
+  }
+
+  forward_link_list_iterator operator++(int) noexcept {
+    auto temp = *this;
+    ptr = ptr->next;
+    return temp;
+  }
+
+  bool operator==(forward_link_list_iterator const &r) const {
+    return ptr == r.ptr;
+  }
+
+  bool operator!=(forward_link_list_iterator const &r) const {
+    return !(*this == r);
   }
 };
 
@@ -1150,25 +1163,23 @@ static void test_forward_iter3() {
  */
 static void test_forward_iter4() {
   // using iterator = forward_link_list_iterator<int>;
-  // using iterator = ns::forward_link_list_iterator<ns::forward_link_list<int>>;  
-  //  using iterator = ns::forward_link_list<int>::iterator;
+  // using iterator =
+  // 	ns::forward_link_list_iterator<ns::forward_link_list<int>>;
+  // using iterator = ns::forward_link_list<int>::iterator;
 
   // TODO
   //  expect(__LINE__, true,
   //	 is_category_of<std::forward_iterator_tag, iterator>());
-  
-  /*
+
   ns::forward_link_list<int> list1 = {1, nullptr};
   ns::forward_link_list<int> list0 = {0, &list1};
 
   auto iter = list0.begin();
   auto last = list1.begin();
-  */
-  /*
+
   test_multipath_guarantee(iter);
   test_iterator_7(iter, last);
   test_iterator_8(iter, 8);
-  */
 }
 
 /**
@@ -1473,14 +1484,14 @@ int main() {
   test_type();
 
   test_random_access_iter();
-  test_random_access_iter2();  
+  test_random_access_iter2();
   test_random_access_iter3();
 
   test_bidirectional_iter();
 
   test_forward_iter();
   test_forward_iter2();
-  test_forward_iter3(); 
+  test_forward_iter3();
   test_forward_iter4();
 
   test_input_iter();
