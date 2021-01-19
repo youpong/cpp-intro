@@ -598,6 +598,13 @@ struct forward_link_list_iterator {
     ptr = ptr->next;
     return *this;
   }
+
+  forward_link_list_iterator operator++(int) noexcept {
+    auto tmp = *this;
+    ptr = ptr->next;
+    return tmp;
+  }
+
   bool operator==(forward_link_list_iterator const &r) const {
     return false;
   }
@@ -1092,7 +1099,6 @@ static void test_forward_iter2() {
 }
 
 /**
- * TODO
  * forward_link_list_iterator
  */
 static void test_forward_iter3() {
@@ -1106,8 +1112,8 @@ static void test_forward_iter3() {
   forward_link_list_iterator<int> iter(&list0), last(&list1);
 
   test_multipath_guarantee(iter);
-  //  test_iterator_7(iter, last);
-  //  test_iterator_8(iter, 8);
+  test_iterator_7(iter, last);
+  test_iterator_8(iter, 8);
 }
 
 /**
