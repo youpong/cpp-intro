@@ -606,8 +606,13 @@ struct forward_link_list_iterator {
   }
 
   bool operator==(forward_link_list_iterator const &r) const {
-    return false;
+    return ptr == r.ptr;
   }
+  
+  bool operator!=(forward_link_list_iterator const &r) const {
+    return !(*this == r);
+  }
+  
 };
 
 template <typename T>
@@ -624,7 +629,7 @@ struct forward_link_list_iterator {
   using reference = typename List::reference;
 
   //  using pointer = T *;
-  //  using iterator_category = std::forward_iterator_tag;
+  using iterator_category = std::forward_iterator_tag;
   // --- boilerplate code
 
   List *ptr;
@@ -647,7 +652,10 @@ struct forward_link_list {
   T value;
   forward_link_list *next;
 
+  // clang-format off
   iterator begin() { return iterator(this); }
+  //  iterator end()   { return iterator(this); }
+  // clang-format on  
 };
 
 } // namespace ns
@@ -1013,14 +1021,11 @@ constexpr bool is_category_of() {
   - std::array<T,N>
 */
 static void test_random_access_iter() {
-  //  using iterator = std::array<int, 5>::iterator;
   using iterator = std::vector<int>::iterator;
   expect(__LINE__, true,
          is_category_of<std::random_access_iterator_tag, iterator>());
 
-  //  std::array<int, 5> a = {0, 1, 2, 3, 4};
   std::vector<int> a = {0, 1, 2, 3, 4};
-
   auto iter = std::begin(a);
   auto end_iter = std::end(a);
 
@@ -1032,6 +1037,30 @@ static void test_random_access_iter() {
   test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
   test_iterator_8(iter, 8); // error in std::array<T,N>
+}
+
+/**
+ * std::array
+ */
+static void test_random_access_iter2() {
+  using iterator = std::array<int, 5>::iterator;
+  expect(__LINE__, true,
+         is_category_of<std::random_access_iterator_tag, iterator>());
+
+  std::array<int, 5> a = {0, 1, 2, 3, 4};
+
+  auto iter = std::begin(a);
+  auto end_iter = std::end(a);
+  /*
+  test_iterator_0(iter, 5);
+  test_iterator_1(iter, end_iter);
+  test_iterator_1(end_iter, iter);
+  test_iterator_3(iter, end_iter);
+  test_iterator_5(iter);
+  test_multipath_guarantee(iter);
+  test_iterator_7(iter, end_iter);
+  test_iterator_8(iter, 8); // error in std::array<T,N>
+  */
 }
 
 /**
@@ -1114,6 +1143,32 @@ static void test_forward_iter3() {
   test_multipath_guarantee(iter);
   test_iterator_7(iter, last);
   test_iterator_8(iter, 8);
+}
+
+/**
+ * ns::forward_link_list_iterator
+ */
+static void test_forward_iter4() {
+  // using iterator = forward_link_list_iterator<int>;
+  // using iterator = ns::forward_link_list_iterator<ns::forward_link_list<int>>;  
+  //  using iterator = ns::forward_link_list<int>::iterator;
+
+  // TODO
+  //  expect(__LINE__, true,
+  //	 is_category_of<std::forward_iterator_tag, iterator>());
+  
+  /*
+  ns::forward_link_list<int> list1 = {1, nullptr};
+  ns::forward_link_list<int> list0 = {0, &list1};
+
+  auto iter = list0.begin();
+  auto last = list1.begin();
+  */
+  /*
+  test_multipath_guarantee(iter);
+  test_iterator_7(iter, last);
+  test_iterator_8(iter, 8);
+  */
 }
 
 /**
@@ -1322,7 +1377,8 @@ static void test_iota_iterator() {
   iota_iterator first(0), last(10);
   iter = last;
 
-  [[maybe_unused]] bool b = first == last;
+  bool b = first == last;
+  expect(__LINE__, false, b);
 
   std::for_each(first, last, [](auto i) { std::cout << i; });
 
@@ -1368,6 +1424,7 @@ static void test_forward_link_list() {
 }
 
 static void test_forward_link_list_iterator() {
+  // TODO:
   //  using namespace ns;
   forward_link_list<int> list3{3, nullptr};
   forward_link_list<int> list2{2, &list3};
@@ -1386,7 +1443,6 @@ int main() {
 
   test_forward_link_list();
   test_forward_link_list_iterator();
-  return 0;
 
   test_iota_iterator();
   test_print();
@@ -1417,13 +1473,15 @@ int main() {
   test_type();
 
   test_random_access_iter();
+  test_random_access_iter2();  
   test_random_access_iter3();
 
   test_bidirectional_iter();
 
   test_forward_iter();
   test_forward_iter2();
-  test_forward_iter3();
+  test_forward_iter3(); 
+  test_forward_iter4();
 
   test_input_iter();
   test_input_iter2();
