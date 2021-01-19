@@ -590,11 +590,16 @@ struct forward_link_list_iterator {
 
   forward_link_list<T> *ptr;
 
+  forward_link_list_iterator(forward_link_list<T> *ptr) : ptr(ptr) {}
+
   T &operator*() noexcept { return ptr->value; }
 
   forward_link_list_iterator &operator++() noexcept {
     ptr = ptr->next;
     return *this;
+  }
+  bool operator==(forward_link_list_iterator const &r) const {
+    return false;
   }
 };
 
@@ -1087,20 +1092,22 @@ static void test_forward_iter2() {
 }
 
 /**
+ * TODO
  * forward_link_list_iterator
  */
 static void test_forward_iter3() {
-  /*
-  using iterator = forwar
+  using iterator = forward_link_list_iterator<int>;
   expect(__LINE__, true,
          is_category_of<std::forward_iterator_tag, iterator>());
 
-  iota_iterator<int> iter, last(10);
+  forward_link_list<int> list1 = {1, nullptr};
+  forward_link_list<int> list0 = {0, &list1};
+
+  forward_link_list_iterator<int> iter(&list0), last(&list1);
 
   test_multipath_guarantee(iter);
-  test_iterator_7(iter, last);
-  test_iterator_8(iter, 8);
-  */
+  //  test_iterator_7(iter, last);
+  //  test_iterator_8(iter, 8);
 }
 
 /**
@@ -1322,7 +1329,7 @@ static void test_forward_link_list() {
   forward_link_list<int> list3{3, nullptr};
   forward_link_list<int> list2{2, &list3};
   forward_link_list<int> list1{1, &list2};
-  [[maybe_unused]] forward_link_list<int> list0{0, &list1};
+  forward_link_list<int> list0{0, &list1};
 
   expect(__LINE__, 0, list0.value);
   expect(__LINE__, 1, list0.next->value);
@@ -1331,15 +1338,37 @@ static void test_forward_link_list() {
   expect(__LINE__, 2, next(next(list0)).value);
 }
 
+static void test_forward_link_list_iterator() {
+  forward_link_list<int> list3{3, nullptr};
+  forward_link_list<int> list2{2, &list3};
+  forward_link_list<int> list1{1, &list2};
+  forward_link_list<int> list0{0, &list1};
+
+  forward_link_list_iterator<int> iter(&list0);
+  expect(__LINE__, 0, *iter);
+  expect(__LINE__, 1, *++iter);
+}
+
 namespace ns {
 static void test_forward_link_list() {
+  forward_link_list<int> list3{3, nullptr};
+  forward_link_list<int> list2{2, &list3};
+  forward_link_list<int> list1{1, &list2};
+  forward_link_list<int> list0{0, &list1};
+
+  expect(__LINE__, 0, list0.value);
+  expect(__LINE__, 1, list0.next->value);
+  expect(__LINE__, 2, list0.next->next->value);
+}
+
+static void test_forward_link_list_iterator() {
   //  using namespace ns;
   forward_link_list<int> list3{3, nullptr};
   forward_link_list<int> list2{2, &list3};
   forward_link_list<int> list1{1, &list2};
-  [[maybe_unused]] forward_link_list<int> list0{0, &list1};
+  forward_link_list<int> list0{0, &list1};
 
-  [[maybe_unused]] auto iter = list0.begin();
+  auto iter = list0.begin();
   expect(__LINE__, 0, *iter);
   expect(__LINE__, 1, *++iter);
 }
@@ -1347,8 +1376,10 @@ static void test_forward_link_list() {
 
 int main() {
   ns::test_forward_link_list();
+  ns::test_forward_link_list_iterator();
 
   test_forward_link_list();
+  test_forward_link_list_iterator();
   return 0;
 
   test_iota_iterator();
