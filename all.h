@@ -80,7 +80,7 @@ auto expect = [](auto line, auto expected, auto actual) {
 //   3: pointer as iterator
 #define ARRAY_ITERATOR 3
 
-// Result                 S S S S S S
+// Result                 F F S S S S
 //------------------------------------
 // ARRAY_ITERATOR 1       X     X
 //                2         X     X

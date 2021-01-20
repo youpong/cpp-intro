@@ -1049,11 +1049,23 @@ static void test_random_access_iter() {
   test_iterator_5(iter);
   test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
-  test_iterator_8(iter, 8); // error in std::array<T,N>
+  test_iterator_8(iter, 8);
+
+  [[maybe_unused]] int n = 3;
+  // clang++
+  // error: invalid operands to binary expression ('int' and
+  // '__gnu_cxx::__normal_iterator<int *, std::vector<int,
+  // std::allocator<int> > >')
+  //
+  // g++
+  // error: no match for ‘operator-’ (operand types are ‘int’ and
+  // ‘__gnu_cxx::__normal_iterator<int*, std::vector<int> >’)
+  //
+  // n - iter ;
 }
 
 /**
- * std::array
+ * std::array<T, N>
  */
 static void test_random_access_iter2() {
   using iterator = std::array<int, 5>::iterator;
@@ -1064,7 +1076,7 @@ static void test_random_access_iter2() {
 
   auto iter = std::begin(a);
   auto end_iter = std::end(a);
-  /*
+
   test_iterator_0(iter, 5);
   test_iterator_1(iter, end_iter);
   test_iterator_1(end_iter, iter);
@@ -1072,8 +1084,30 @@ static void test_random_access_iter2() {
   test_iterator_5(iter);
   test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
-  test_iterator_8(iter, 8); // error in std::array<T,N>
-  */
+  test_iterator_8(iter, 8);
+}
+
+/**
+ * array
+ */
+static void test_random_access_iter3() {
+  using iterator = array<int, 5>::iterator;
+  expect(__LINE__, true,
+         is_category_of<std::random_access_iterator_tag, iterator>());
+
+  array<int, 5> a = {0, 1, 2, 3, 4};
+
+  auto iter = std::begin(a);
+  auto end_iter = std::end(a);
+
+  test_iterator_0(iter, 5);
+  test_iterator_1(iter, end_iter);
+  test_iterator_1(end_iter, iter);
+  test_iterator_3(iter, end_iter);
+  test_iterator_5(iter);
+  test_multipath_guarantee(iter);
+  test_iterator_7(iter, end_iter);
+  test_iterator_8(iter, 8);
 }
 
 /**
@@ -1269,31 +1303,6 @@ static void test_output_iter4() {
   test_iterator_8(iter, 8);
 }
 
-static void test_random_access_iter3() {
-  using iterator = std::vector<int>::iterator;
-  expect(__LINE__, true,
-         is_category_of<std::random_access_iterator_tag, iterator>());
-
-  std::vector<int> v;
-  [[maybe_unused]] int n = 3;
-
-  v.push_back(1);
-  v.push_back(2);
-  v.push_back(3);
-
-  [[maybe_unused]] auto iter = std::begin(v);
-  // clang++
-  // error: invalid operands to binary expression ('int' and
-  // '__gnu_cxx::__normal_iterator<int *, std::vector<int,
-  // std::allocator<int> > >')
-  //
-  // g++
-  // error: no match for ‘operator-’ (operand types are ‘int’ and
-  // ‘__gnu_cxx::__normal_iterator<int*, std::vector<int> >’)
-  //
-  // n - iter ;
-}
-
 template <typename Iterator>
 void test_iterator_toraits_0(Iterator i, Iterator j) {
   [[maybe_unused]]
@@ -1424,6 +1433,7 @@ static void test_forward_link_list_iterator() {
 
 namespace ns {
 static void test_forward_link_list() {
+
   forward_link_list<int> list3{3, nullptr};
   forward_link_list<int> list2{2, &list3};
   forward_link_list<int> list1{1, &list2};
@@ -1435,8 +1445,6 @@ static void test_forward_link_list() {
 }
 
 static void test_forward_link_list_iterator() {
-  // TODO:
-  //  using namespace ns;
   forward_link_list<int> list3{3, nullptr};
   forward_link_list<int> list2{2, &list3};
   forward_link_list<int> list1{1, &list2};
