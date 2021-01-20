@@ -1,5 +1,13 @@
+//
+// function declaration
+//
+
 void test_all_error();
 void test_all_reference();
+
+//
+// global variable definition lambda
+//
 
 auto distance = [](auto first, auto last) { return last - first; };
 
@@ -23,6 +31,10 @@ auto equal = [](auto const first1, auto const last1, auto const first2,
 };
 
 auto f = []() { return 1; };
+
+//
+// function definition
+//
 
 static void name_scope() {
   expect(__LINE__, 1, f());
@@ -542,7 +554,7 @@ struct iota_iterator {
   using value_type = T;
   using reference = T &;
   using pointer = T *;
-  using iterator_category = std::forward_iterator_tag;
+  using iterator_category = std::bidirectional_iterator_tag;
   // --- boilerplate code
 
   T value;
@@ -560,6 +572,17 @@ struct iota_iterator {
   iota_iterator operator++(int) noexcept {
     auto temp = *this;
     ++*this;
+    return temp;
+  }
+
+  iota_iterator &operator--() noexcept {
+    --value;
+    return *this;
+  }
+
+  iota_iterator operator--(int) noexcept {
+    auto temp = *this;
+    --*this;
     return temp;
   }
 
@@ -1052,6 +1075,9 @@ static void test_random_access_iter() {
   test_iterator_8(iter, 8);
 
   [[maybe_unused]] int n = 3;
+
+  // Issues #1
+  //
   // clang++
   // error: invalid operands to binary expression ('int' and
   // '__gnu_cxx::__normal_iterator<int *, std::vector<int,
@@ -1089,6 +1115,7 @@ static void test_random_access_iter2() {
 
 /**
  * array
+ * TODO: passing by implementation pattern 1 and 2.
  */
 static void test_random_access_iter3() {
   using iterator = array<int, 5>::iterator;
@@ -1137,6 +1164,22 @@ static void test_bidirectional_iter() {
 }
 
 /**
+ * iota_iterator
+ */
+static void test_bidirectional_iter2() {
+  using iterator = iota_iterator<int>;
+  expect(__LINE__, true,
+         is_category_of<std::bidirectional_iterator_tag, iterator>());
+
+  iota_iterator<int> iter, last(10);
+
+  test_iterator_5(iter);
+  test_multipath_guarantee(iter);
+  test_iterator_7(iter, last);
+  test_iterator_8(iter, 8);
+}
+
+/**
  forward iterator
  - std::forward_lsit<T>
 */
@@ -1156,21 +1199,6 @@ static void test_forward_iter() {
 
   test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
-  test_iterator_8(iter, 8);
-}
-
-/**
- * iota_iterator
- */
-static void test_forward_iter2() {
-  using iterator = iota_iterator<int>;
-  expect(__LINE__, true,
-         is_category_of<std::forward_iterator_tag, iterator>());
-
-  iota_iterator<int> iter, last(10);
-
-  test_multipath_guarantee(iter);
-  test_iterator_7(iter, last);
   test_iterator_8(iter, 8);
 }
 
@@ -1469,6 +1497,7 @@ int main() {
   test_cin_iterator();
   test_back_inserter();
   test_cout_iterator();
+
   test_output_iterator();
   test_output_iterator2();
   test_output_iterator3();
@@ -1496,9 +1525,9 @@ int main() {
   test_random_access_iter3();
 
   test_bidirectional_iter();
+  test_bidirectional_iter2();
 
   test_forward_iter();
-  test_forward_iter2();
   test_forward_iter3();
   test_forward_iter4();
 
