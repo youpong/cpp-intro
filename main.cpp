@@ -642,6 +642,57 @@ forward_link_list<T> &next(forward_link_list<T> &list) noexcept {
   return *list.next;
 }
 
+template <typename T>
+struct bidirectional_link_list {
+  T value;
+
+  bidirectional_link_list *prev;
+  bidirectional_link_list *next;
+
+  bidirectional_link_list(T value, bidirectional_link_list *prev,
+                          bidirectional_link_list *next) {
+    this->value = value;
+    this->prev = prev;
+    this->next = next;
+  }
+
+  void push_front(T value) {
+    bidirectional_link_list temp(this->value, this, this->next);
+  }
+};
+
+template <typename T>
+struct bidirectional_link_list_iterator {
+  using iterator = bidirectional_link_list_iterator;
+
+  // --- boilerplate code
+  using difference_type = std::ptrdiff_t;
+  using value_type = T;
+  using reference = T &;
+  using pointer = T *;
+  using iterator_category = std::bidirectional_iterator_tag;
+  // --- boilerplate code
+
+  bidirectional_link_list<T> *ptr;
+
+  bidirectional_link_list_iterator(bidirectional_link_list<T> *ptr)
+      : ptr(ptr) {}
+
+  T &operator*() noexcept { return ptr->value; }
+
+  iterator &operator++() noexcept {
+    ptr = ptr->next;
+    return *this;
+  }
+
+  iterator &operator--() noexcept {
+    ptr = ptr->prev;
+    return *this;
+  }
+
+  bool hasNext() noexcept { return ptr->next != nullptr; }
+};
+
 namespace ns {
 template <typename List>
 struct forward_link_list_iterator {
@@ -1179,6 +1230,37 @@ static void test_bidirectional_iter2() {
   test_iterator_8(iter, 8);
 }
 
+// TODO: test  std::ostream_iterator<int>
+
+/**
+ * bidirectional_link_list_iterator
+ */
+static void test_bidirectional_iter3() {
+  using iterator = bidirectional_link_list_iterator<int>;
+  expect(__LINE__, true,
+         is_category_of<std::bidirectional_iterator_tag, iterator>());
+
+  bidirectional_link_list<int> list(0, nullptr, nullptr);
+  list.push_front(0);
+  list.push_front(1);
+  list.push_front(2);
+
+  std::cout << "iter3\n"s;
+  std::ostream_iterator<int> out(std::cout);
+
+  for (auto iter = bidirectional_link_list_iterator(&list);
+       iter.hasNext(); ++iter)
+    std::cout << *iter;
+  std::cout << "iter3\n"s;
+
+  /*
+  test_iterator_5(iter);
+  test_multipath_guarantee(iter);
+  test_iterator_7(iter, last);
+  test_iterator_8(iter, 8);
+  */
+}
+
 /**
  forward iterator
  - std::forward_lsit<T>
@@ -1526,6 +1608,7 @@ int main() {
 
   test_bidirectional_iter();
   test_bidirectional_iter2();
+  test_bidirectional_iter3();
 
   test_forward_iter();
   test_forward_iter3();
