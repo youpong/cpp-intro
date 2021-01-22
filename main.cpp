@@ -712,7 +712,7 @@ template <typename List>
 struct forward_link_list_iterator {
   // --- boilerplate code
   //  using difference_type = std::ptrdiff_t;
-  //  using value_type = T;
+  using value_type = typename List::value_type;
   using reference = typename List::reference;
 
   //  using pointer = T *;
@@ -748,6 +748,7 @@ struct forward_link_list_iterator {
 template <typename T>
 struct forward_link_list {
   using iterator = forward_link_list_iterator<forward_link_list>;
+  using value_type = T;
   using reference = T &;
 
   T value;
@@ -755,7 +756,7 @@ struct forward_link_list {
 
   // clang-format off
   iterator begin() { return iterator(this); }
-  //  iterator end()   { return iterator(this); }
+  iterator end()   { return iterator(nullptr); }
   // clang-format on  
 };
 
@@ -1304,6 +1305,7 @@ static void test_forward_iter() {
 }
 
 /**
+ * TODO
  * forward_link_list_iterator
  */
 static void test_forward_iter3() {
@@ -1311,10 +1313,15 @@ static void test_forward_iter3() {
   expect(__LINE__, true,
          is_category_of<std::forward_iterator_tag, iterator>());
 
-  forward_link_list<int> list1 = {1, nullptr};
+  forward_link_list<int> list2 = {2, nullptr};
+  forward_link_list<int> list1 = {1, &list2};
   forward_link_list<int> list0 = {0, &list1};
 
-  forward_link_list_iterator<int> iter(&list0), last(&list1);
+  forward_link_list_iterator<int> iter(&list0), last(list2.next);
+  std::vector<int> v(3);
+  std::copy(iter, last, std::begin(v));
+  expect(__LINE__, 0, v[0]);
+  expect(__LINE__, 2, v[2]);
 
   test_multipath_guarantee(iter);
   test_iterator_7(iter, last);
@@ -1322,9 +1329,11 @@ static void test_forward_iter3() {
 }
 
 /**
+ * TODO
  * ns::forward_link_list_iterator
  */
 static void test_forward_iter4() {
+  //  using namespace ns;
   // using iterator = forward_link_list_iterator<int>;
   // using iterator =
   // 	ns::forward_link_list_iterator<ns::forward_link_list<int>>;
@@ -1334,11 +1343,22 @@ static void test_forward_iter4() {
   //  expect(__LINE__, true,
   //	 is_category_of<std::forward_iterator_tag, iterator>());
 
-  ns::forward_link_list<int> list1 = {1, nullptr};
+  ns::forward_link_list<int> list2 = {2, nullptr};
+  ns::forward_link_list<int> list1 = {1, &list2};
   ns::forward_link_list<int> list0 = {0, &list1};
 
-  auto iter = list0.begin();
-  auto last = list1.begin();
+  //  ns::forward_link_list_iterator<int> iter
+  std::vector<int> v(3);
+  //  std::copy(std::begin(list0), std::end(list0), std::begin(v));
+  auto iter_v = std::begin(v);
+  for (auto iter = std::begin(list0); iter != std::end(list0);)
+    *iter_v++ = *iter++;
+  expect(__LINE__, 0, v[0]);
+  expect(__LINE__, 2, v[2]);
+
+  //
+  auto iter = std::begin(list0);
+  auto last = std::end(list0);
 
   test_multipath_guarantee(iter);
   test_iterator_7(iter, last);
