@@ -655,10 +655,13 @@ struct bidirectional_link_list {
     this->prev = prev;
     this->next = next;
   }
-  /* TODO:
+
+  /*
   void push_front(T value) {
-    bidirectional_link_list temp(this->value, this, this->next);
-    this->next = &temp;
+    bidirectional_link_list temp(value, nullptr, this);
+    this->prev = &temp;
+
+    this = &temp;
   }
   */
 };
@@ -1248,8 +1251,6 @@ static void test_bidirectional_iter2() {
   test_iterator_8(iter, 8);
 }
 
-// TODO: test  std::ostream_iterator<int>
-
 /**
  * bidirectional_link_list_iterator
  */
@@ -1305,7 +1306,6 @@ static void test_forward_iter() {
 }
 
 /**
- * TODO
  * forward_link_list_iterator
  */
 static void test_forward_iter3() {
@@ -1329,7 +1329,6 @@ static void test_forward_iter3() {
 }
 
 /**
- * TODO
  * ns::forward_link_list_iterator
  */
 static void test_forward_iter4() {
@@ -1544,15 +1543,12 @@ static void test_iota_iterator() {
   expect(__LINE__, 2, *++iter);
 
   iota_iterator first(0), last(10);
-  iter = last;
-
-  bool b = first == last;
-  expect(__LINE__, false, b);
-
-  std::for_each(first, last, [](auto i) { std::cout << i; });
+  expect(__LINE__, false, first == last);
 
   std::vector<int> v;
   std::copy(first, last, std::back_inserter(v));
+  expect(__LINE__, 10, v.size());
+  expect(__LINE__, 0, v[0]);
   expect(__LINE__, 9, v[9]);
 }
 
