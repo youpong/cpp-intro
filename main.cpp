@@ -686,10 +686,20 @@ struct bidirectional_link_list_iterator {
     ptr = ptr->next;
     return *this;
   }
+  iterator operator++(int) noexcept {
+    auto temp = *this;
+    ++*this;
+    return temp;
+  }
 
   iterator &operator--() noexcept {
     ptr = ptr->prev;
     return *this;
+  }
+  iterator operator--(int) noexcept {
+    auto temp = *this;
+    --*this;
+    return temp;
   }
 
   bool operator==(iterator const &r) const noexcept {
@@ -1063,7 +1073,10 @@ void test_iterator_3(RandomAccessIterator a, RandomAccessIterator b) {
 
 template <typename BidirectionalIterator>
 void test_iterator_5(BidirectionalIterator iter) {
-  static_cast<void>( --iter );
+  BidirectionalIterator temp = iter;
+  static_cast<void>( --temp );
+  temp = iter;
+  static_cast<void>( temp-- );  
 }
 
 template <typename ForwardIterator>
@@ -1254,20 +1267,17 @@ static void test_bidirectional_iter3() {
   expect(__LINE__, 0, list0.value);
   expect(__LINE__, 1, list0.next->value);
 
-  std::cout << "iter3\n"s;
-  std::ostream_iterator<int> out(std::cout);
+  bidirectional_link_list_iterator iter(&list0), last(list2.next);
+  std::vector<int> tmp(3);
 
-  bidirectional_link_list_iterator iter(&list0), end(list2.next);
-  for (; iter != end; ++iter)
-    std::cout << *iter << "\n"s;
-  std::cout << "iter3\n"s;
+  std::copy(iter, last, std::begin(tmp));
+  expect(__LINE__, 0, tmp[0]);
+  expect(__LINE__, 2, tmp[2]);
 
-  /*
   test_iterator_5(iter);
   test_multipath_guarantee(iter);
   test_iterator_7(iter, last);
   test_iterator_8(iter, 8);
-  */
 }
 
 /**
