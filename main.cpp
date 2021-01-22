@@ -655,10 +655,12 @@ struct bidirectional_link_list {
     this->prev = prev;
     this->next = next;
   }
-
+  /* TODO:
   void push_front(T value) {
     bidirectional_link_list temp(this->value, this, this->next);
+    this->next = &temp;
   }
+  */
 };
 
 template <typename T>
@@ -690,7 +692,9 @@ struct bidirectional_link_list_iterator {
     return *this;
   }
 
-  bool hasNext() noexcept { return ptr->next != nullptr; }
+  bool operator==(iterator const &r) const noexcept {
+    return ptr == r.ptr;
+  }
 };
 
 namespace ns {
@@ -1240,17 +1244,22 @@ static void test_bidirectional_iter3() {
   expect(__LINE__, true,
          is_category_of<std::bidirectional_iterator_tag, iterator>());
 
-  bidirectional_link_list<int> list(0, nullptr, nullptr);
-  list.push_front(0);
-  list.push_front(1);
-  list.push_front(2);
+  bidirectional_link_list<int> list0(0, nullptr, nullptr);
+  bidirectional_link_list<int> list1(1, &list0, nullptr);
+  bidirectional_link_list<int> list2(2, &list1, nullptr);
+  list0.next = &list1;
+  list1.next = &list2;
+
+  expect(__LINE__, nullptr, list0.prev);
+  expect(__LINE__, 0, list0.value);
+  expect(__LINE__, 1, list0.next->value);
 
   std::cout << "iter3\n"s;
   std::ostream_iterator<int> out(std::cout);
 
-  for (auto iter = bidirectional_link_list_iterator(&list);
-       iter.hasNext(); ++iter)
-    std::cout << *iter;
+  bidirectional_link_list_iterator iter(&list0), end(list2.next);
+  for (; iter != end; ++iter)
+    std::cout << *iter << "\n"s;
   std::cout << "iter3\n"s;
 
   /*
