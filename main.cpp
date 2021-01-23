@@ -71,6 +71,7 @@ struct array_iterator {
 
   reference operator*() const { return a[i]; }
 
+  // todo: std::size_t -> difference_type(can handle minus value)
   reference operator[](std::size_t n) const { return *(*this + n); }
 
   //
@@ -550,11 +551,11 @@ void print(InputIterator iter, InputIterator end_iter) {
 template <typename T>
 struct iota_iterator {
   // --- boilerplate code
-  using difference_type = std::ptrdiff_t;
+  using difference_type = long long;
   using value_type = T;
   using reference = T &;
   using pointer = T *;
-  using iterator_category = std::bidirectional_iterator_tag;
+  using iterator_category = std::random_access_iterator_tag;
   // --- boilerplate code
 
   T value;
@@ -563,6 +564,11 @@ struct iota_iterator {
   reference operator*() noexcept { return value; }
   // const reference operator*() const noexcept { return value; }
   reference operator*() const noexcept { return value; }
+  value_type operator[](difference_type n) const { return value + n; }
+
+  //
+  // inc/dec
+  //
 
   iota_iterator &operator++() noexcept {
     ++value;
@@ -586,14 +592,76 @@ struct iota_iterator {
     return temp;
   }
 
+  //
+  // assignment operators
+  //
+
+  iota_iterator &operator+=(difference_type n) { // original
+    value += n;
+    return *this;
+  }
+  iota_iterator &operator-=(difference_type n) { // original
+    value -= n;
+    return *this;
+  }
+
+  //
+  // arithmetic operators
+  //
+
+  iota_iterator operator+(difference_type n) const { // original
+    auto temp = *this;
+    temp += n;
+    return *this;
+  }
+
+  iota_iterator operator-(difference_type n) const { // original
+    auto temp = *this;
+    temp -= n;
+    return *this;
+  }
+
+  difference_type operator-(iota_iterator const &r) const {
+    return value - r;
+  }
+
+  //
+  // comparision operators
+  //
+
   bool operator==(iota_iterator<T> const &r) const noexcept {
     return value == r.value;
   }
-
   bool operator!=(iota_iterator<T> const &r) const noexcept {
     return !(*this == r);
   }
+  bool operator<(iota_iterator<T> const &r) const noexcept {
+    return value < r.value;
+  }
+  bool operator<=(iota_iterator<T> const &r) const noexcept {
+    return value <= r.value;
+  }
+  bool operator>(iota_iterator<T> const &r) const noexcept {
+    return value > r.value;
+  }
+  bool operator>=(iota_iterator<T> const &r) const noexcept {
+    return value >= r.value;
+  }
 };
+
+template <typename T>
+iota_iterator<T> operator+(typename iota_iterator<T>::difference_type n,
+                           iota_iterator<T> const &i) {
+  // TODO
+  return i;
+}
+
+template <typename T>
+typename iota_iterator<T>::difference_type
+operator-(typename iota_iterator<T>::difference_type n,
+          iota_iterator<T> const &i) {
+  return n - i.value;
+}
 
 template <typename T>
 struct forward_link_list {
@@ -1210,6 +1278,29 @@ static void test_random_access_iter3() {
 }
 
 /**
+ * iota_iterator
+ */
+static void test_random_access_iter4() {
+  using iterator = iota_iterator<int>;
+  expect(__LINE__, true,
+         is_category_of<std::random_access_iterator_tag, iterator>());
+
+  iota_iterator<int> iter, end_iter(10);
+
+  // TODO
+  //  expect(__LINE__, 1, *(iter + 1));
+
+  test_iterator_0(iter, 5);
+  test_iterator_1(iter, end_iter);
+  test_iterator_1(end_iter, iter);
+  test_iterator_3(iter, end_iter);
+  test_iterator_5(iter);
+  test_multipath_guarantee(iter);
+  test_iterator_7(iter, end_iter);
+  test_iterator_8(iter, 8);
+}
+
+/**
   Bidirectional iterator
   - std::list<T>
 */
@@ -1232,22 +1323,6 @@ static void test_bidirectional_iter() {
   test_iterator_5(iter);
   test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
-  test_iterator_8(iter, 8);
-}
-
-/**
- * iota_iterator
- */
-static void test_bidirectional_iter2() {
-  using iterator = iota_iterator<int>;
-  expect(__LINE__, true,
-         is_category_of<std::bidirectional_iterator_tag, iterator>());
-
-  iota_iterator<int> iter, last(10);
-
-  test_iterator_5(iter);
-  test_multipath_guarantee(iter);
-  test_iterator_7(iter, last);
   test_iterator_8(iter, 8);
 }
 
@@ -1640,9 +1715,10 @@ int main() {
   test_random_access_iter();
   test_random_access_iter2();
   test_random_access_iter3();
+  test_random_access_iter4();
 
   test_bidirectional_iter();
-  test_bidirectional_iter2();
+  //  test_bidirectional_iter2();
   test_bidirectional_iter3();
 
   test_forward_iter();
