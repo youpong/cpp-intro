@@ -609,20 +609,20 @@ struct iota_iterator {
   // arithmetic operators
   //
 
-  iota_iterator operator+(difference_type n) const { // original
+  iota_iterator operator+(difference_type n) const {
     auto temp = *this;
     temp += n;
-    return *this;
+    return temp;
   }
 
-  iota_iterator operator-(difference_type n) const { // original
+  iota_iterator operator-(difference_type n) const {
     auto temp = *this;
     temp -= n;
-    return *this;
+    return temp;
   }
 
   difference_type operator-(iota_iterator const &r) const {
-    return value - r;
+    return value - r.value;
   }
 
   //
@@ -649,19 +649,21 @@ struct iota_iterator {
   }
 };
 
-template <typename T>
-iota_iterator<T> operator+(typename iota_iterator<T>::difference_type n,
-                           iota_iterator<T> const &i) {
-  // TODO
-  return i;
+// clang-format off
+template <typename T> iota_iterator<T>
+operator+(typename iota_iterator<T>::difference_type n,
+	  iota_iterator<T> const &i) {
+  return i + n;
 }
 
-template <typename T>
-typename iota_iterator<T>::difference_type
+template <typename T> iota_iterator<T>
 operator-(typename iota_iterator<T>::difference_type n,
           iota_iterator<T> const &i) {
-  return n - i.value;
+  iota_iterator<T> temp(n);
+  
+  return temp - i;
 }
+// clang-format on
 
 template <typename T>
 struct forward_link_list {
@@ -1287,9 +1289,42 @@ static void test_random_access_iter4() {
 
   iota_iterator<int> iter, end_iter(10);
 
-  // TODO
-  //  expect(__LINE__, 1, *(iter + 1));
+  // clang-format off
+  expect(__LINE__,  0, *iter++);  
+  expect(__LINE__,  2, *++iter);
 
+  expect(__LINE__,  2, *iter--);
+  expect(__LINE__,  0, *--iter);
+
+  expect(__LINE__,  0, iter[0]);
+  expect(__LINE__,  1, iter[1]);
+
+  expect(__LINE__,  2, *(iter+=2));
+  expect(__LINE__,  0, *(iter-=2));
+
+  iter+=1;
+  expect(__LINE__,  4, *(iter + 3));
+  expect(__LINE__, -2, *(iter - 3));
+  expect(__LINE__,  9, end_iter - iter);
+
+  // iterator<T>::difference_type + iterator<T>
+  expect(__LINE__,  4, *(3 + iter));
+  // iterator<T>::difference_type - iterator<T>  
+  expect(__LINE__,  2, *(3 - iter));
+      
+  expect(__LINE__, false, iter == end_iter);
+  expect(__LINE__, true,  iter+9 == end_iter);
+  expect(__LINE__, true,  iter != end_iter);
+  
+  expect(__LINE__, true,  iter   <  iter+1 );
+  expect(__LINE__, false, iter   <  iter   );
+  expect(__LINE__, true,  iter   <= iter   );
+  expect(__LINE__, false, iter   <= iter-1 );
+  expect(__LINE__, true,  iter+1 >  iter   );
+  expect(__LINE__, false, iter   >  iter   );
+  expect(__LINE__, true,  iter   >= iter   );	 
+  expect(__LINE__, false, iter-1 >= iter   );	 
+  
   test_iterator_0(iter, 5);
   test_iterator_1(iter, end_iter);
   test_iterator_1(end_iter, iter);
@@ -1298,6 +1333,7 @@ static void test_random_access_iter4() {
   test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
   test_iterator_8(iter, 8);
+  // clang-format on
 }
 
 /**
