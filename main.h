@@ -1,5 +1,6 @@
-// define to reproduce issue #2
+// define to reproduce issues
 //#define ISSUE_2
+//#define ISSUE_3
 
 // ARRAY_ITERATOR:
 //   1: iterator class with index

@@ -783,10 +783,11 @@ struct bidirectional_link_list_iterator {
 };
 
 namespace ns {
+// ns::forward_link_list_iterator
 template <typename List>
 struct forward_link_list_iterator {
   // --- boilerplate code
-  //  using difference_type = std::ptrdiff_t;
+  using difference_type = std::ptrdiff_t;
   using value_type = typename List::value_type;
   using reference = typename List::reference;
 
@@ -820,6 +821,7 @@ struct forward_link_list_iterator {
   }
 };
 
+// ns::forward_link_list
 template <typename T>
 struct forward_link_list {
   // using iterator = forward_link_list_iterator<forward_link_list<T>>;
@@ -1225,6 +1227,7 @@ static void test_random_access_iter() {
 
   [[maybe_unused]] int n = 3;
 
+  // TODO: conditional compile
   // Issues #1
   //
   // clang++
@@ -1721,7 +1724,78 @@ static void test_forward_link_list_iterator() {
 }
 } // namespace ns
 
+// forward
+
+static void test_advance0() {
+  ns::forward_link_list<int> list4{4, nullptr};
+  ns::forward_link_list<int> list3{3, &list4};
+  ns::forward_link_list<int> list2{2, &list3};
+  ns::forward_link_list<int> list1{1, &list2};
+  ns::forward_link_list<int> list0{0, &list1};
+
+  [[maybe_unused]] auto iter = std::begin(list0);
+#ifdef ISSUE_3
+  expect(__LINE__, 0, *iter);
+  std::advance(iter, 1);
+  expect(__LINE__, 1, *iter);
+  std::advance(iter, 3);
+  expect(__LINE__, 4, *iter);
+
+  std::advance(iter, -2);
+  expect(__LINE__, 2, *iter);
+  std::advance(iter, 0);
+  expect(__LINE__, 2, *iter);
+#endif
+}
+
+// bidirectional
+static void test_advance1() {
+  bidirectional_link_list<int> list0(0, nullptr, nullptr);
+  bidirectional_link_list<int> list1(1, &list0, nullptr);
+  bidirectional_link_list<int> list2(2, &list1, nullptr);
+  bidirectional_link_list<int> list3(3, &list2, nullptr);
+  bidirectional_link_list<int> list4(4, &list3, nullptr);
+  list0.next = &list1;
+  list1.next = &list2;
+  list2.next = &list3;
+  list3.next = &list4;
+
+  bidirectional_link_list_iterator iter(&list0);
+
+  expect(__LINE__, 0, *iter);
+  std::advance(iter, 1);
+  expect(__LINE__, 1, *iter);
+  std::advance(iter, 3);
+  expect(__LINE__, 4, *iter);
+
+  std::advance(iter, -2);
+  expect(__LINE__, 2, *iter);
+  std::advance(iter, 0);
+  expect(__LINE__, 2, *iter);
+}
+
+// random_access
+static void test_advance2() {
+  array<int, 5> a = {0, 1, 2, 3, 4};
+  auto iter = std::begin(a);
+
+  expect(__LINE__, 0, *iter);
+  std::advance(iter, 1);
+  expect(__LINE__, 1, *iter);
+  std::advance(iter, 3);
+  expect(__LINE__, 4, *iter);
+
+  std::advance(iter, -2);
+  expect(__LINE__, 2, *iter);
+  std::advance(iter, 0);
+  expect(__LINE__, 2, *iter);
+}
+
 int main() {
+  test_advance2();
+  test_advance1();
+  test_advance0();
+
   ns::test_forward_link_list();
   ns::test_forward_link_list_iterator();
 
