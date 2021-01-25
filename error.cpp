@@ -1,3 +1,5 @@
+#include "main.h"
+
 static void throw_by(std::string ty) {
   // throw an instance of 'int'
   if ("int"s == ty) {

@@ -34,11 +34,11 @@ cloc:
 
 $(TARGET): $(OBJS)
 	$(CXX) $^ -o $@
-main.o: main.cpp all.h all.h.gch
+main.o: main.cpp all.h.gch main.h
 	$(CXX) $(CXXFLAGS) -include all.h -c $<
-error.o: error.cpp all.h all.h.gch
+error.o: error.cpp all.h.gch main.h
 	$(CXX) $(CXXFLAGS) -include all.h -c $<
-reference.o: reference.cpp all.h all.h.gch
+reference.o: reference.cpp all.h.gch main.h
 	$(CXX) $(CXXFLAGS) -include all.h -c $<
 all.h.gch: all.h
 	$(CXX) $(CXXFLAGS) -x c++-header -o $@ $<

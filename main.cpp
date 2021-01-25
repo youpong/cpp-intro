@@ -1,3 +1,5 @@
+#include "main.h"
+
 //
 // function declaration
 //
@@ -820,7 +822,12 @@ struct forward_link_list_iterator {
 
 template <typename T>
 struct forward_link_list {
+  // using iterator = forward_link_list_iterator<forward_link_list<T>>;
   using iterator = forward_link_list_iterator<forward_link_list>;
+
+  // error: use of class template 'forward_link_list_iterator' requires
+  // template arguments
+  //	using iterator = forward_link_list_iterator;
   using value_type = T;
   using reference = T &;
 
@@ -1444,14 +1451,16 @@ static void test_forward_iter3() {
  */
 static void test_forward_iter4() {
   //  using namespace ns;
-  // using iterator = forward_link_list_iterator<int>;
-  // using iterator =
-  // 	ns::forward_link_list_iterator<ns::forward_link_list<int>>;
-  // using iterator = ns::forward_link_list<int>::iterator;
 
-  // TODO
-  //  expect(__LINE__, true,
-  //	 is_category_of<std::forward_iterator_tag, iterator>());
+  // using iterator =
+  //    ns::forward_link_list_iterator<ns::forward_link_list<int>>;
+  using iterator = ns::forward_link_list<int>::iterator;
+
+// TODO:
+#ifdef ISSUE_2
+  expect(__LINE__, true,
+         is_category_of<std::forward_iterator_tag, iterator>());
+#endif
 
   ns::forward_link_list<int> list2 = {2, nullptr};
   ns::forward_link_list<int> list1 = {1, &list2};
@@ -1461,14 +1470,13 @@ static void test_forward_iter4() {
   std::vector<int> v(3);
   //  std::copy(std::begin(list0), std::end(list0), std::begin(v));
   auto iter_v = std::begin(v);
-  for (auto iter = std::begin(list0); iter != std::end(list0);)
+  for (iterator iter = std::begin(list0); iter != std::end(list0);)
     *iter_v++ = *iter++;
   expect(__LINE__, 0, v[0]);
   expect(__LINE__, 2, v[2]);
 
-  //
-  auto iter = std::begin(list0);
-  auto last = std::end(list0);
+  iterator iter = std::begin(list0);
+  iterator last = std::end(list0);
 
   test_multipath_guarantee(iter);
   test_iterator_7(iter, last);
