@@ -1124,8 +1124,10 @@ void test_iterator_0(RandomAccessIterator i, std::size_t n) {
   iter = i + n;
   iter = i - n;
   iter = n + i;
-  // comment out. refers to issue #1
-  // iter = n - i;
+
+  #ifdef ISSUE_1
+  iter = n - i;
+  #endif
 
   iter = i + (-n);
 
@@ -1224,22 +1226,6 @@ static void test_random_access_iter() {
   test_multipath_guarantee(iter);
   test_iterator_7(iter, end_iter);
   test_iterator_8(iter, 8);
-
-  [[maybe_unused]] int n = 3;
-
-  // TODO: conditional compile
-  // Issues #1
-  //
-  // clang++
-  // error: invalid operands to binary expression ('int' and
-  // '__gnu_cxx::__normal_iterator<int *, std::vector<int,
-  // std::allocator<int> > >')
-  //
-  // g++
-  // error: no match for ‘operator-’ (operand types are ‘int’ and
-  // ‘__gnu_cxx::__normal_iterator<int*, std::vector<int> >’)
-  //
-  // n - iter ;
 }
 
 /**
