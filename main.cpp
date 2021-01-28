@@ -1711,7 +1711,37 @@ static void test_forward_link_list_iterator() {
 } // namespace ns
 
 // forward_iterator
-static void test_advance0() {
+// std::forward_list<T>
+static void test_advance0_0() {
+  std::forward_list<int> list = {0, 1, 2, 3, 4};
+
+  auto begin = std::begin(list);
+  auto last = std::end(list);
+
+  expect(__LINE__, 1, *std::next(begin));
+  expect(__LINE__, 3, *std::next(begin, 3));
+
+  // forward_iterator_tag:
+  // below codes does not work.
+  //   	std::prev(++begin);
+  //	std::advance(++begin, -1);
+
+  auto iter = begin;
+  expect(__LINE__, 0, *iter);
+  std::advance(iter, 1);
+  expect(__LINE__, 1, *iter);
+  std::advance(iter, 3);
+  expect(__LINE__, 4, *iter);
+
+  std::advance(iter, 0);
+  expect(__LINE__, 4, *iter);
+
+  expect(__LINE__, 5, std::distance(begin, last));
+}
+
+// forward_iterator
+// ns::forward_link_list<T>
+static void test_advance0_1() {
   ns::forward_link_list<int> list4{4, nullptr};
   ns::forward_link_list<int> list3{3, &list4};
   ns::forward_link_list<int> list2{2, &list3};
@@ -1720,6 +1750,9 @@ static void test_advance0() {
 
   [[maybe_unused]] auto iter = std::begin(list0);
   [[maybe_unused]] auto last = std::end(list0);
+
+  // TODO
+  // auto iter2 = std::next(iter, 2);
 
 #ifdef ISSUE_3
   // forward_link_list_iterator::difference_type
@@ -1740,8 +1773,39 @@ static void test_advance0() {
 #endif
 }
 
-// bidirectional
-static void test_advance1() {
+// bidirectional_iterator
+// std::list<T>
+static void test_advance1_0() {
+  std::list<int> list = {0, 1, 2, 3, 4};
+
+  auto begin = std::begin(list);
+  auto end = std::end(list);
+
+  expect(__LINE__, 1, *std::next(begin));
+  expect(__LINE__, 3, *std::next(begin, 3));
+  // amazing.  the following code works.
+  expect(__LINE__, 4, *std::prev(end));
+  expect(__LINE__, 2, *std::prev(end, 3));
+
+  auto iter = begin;
+  expect(__LINE__, 0, *iter);
+  std::advance(iter, 1);
+  expect(__LINE__, 1, *iter);
+  std::advance(iter, 3);
+  expect(__LINE__, 4, *iter);
+
+  std::advance(iter, -2);
+  expect(__LINE__, 2, *iter);
+  std::advance(iter, 0);
+  expect(__LINE__, 2, *iter);
+
+  expect(__LINE__, 3, std::distance(iter, end));
+}
+
+/**
+ * bidirectional_iterator
+ */
+static void test_advance1_1() {
   bidirectional_link_list<int> list0(0, nullptr, nullptr);
   bidirectional_link_list<int> list1(1, &list0, nullptr);
   bidirectional_link_list<int> list2(2, &list1, nullptr);
@@ -1752,8 +1816,14 @@ static void test_advance1() {
   list2.next = &list3;
   list3.next = &list4;
 
-  bidirectional_link_list_iterator iter(&list0), last(list4.next);
+  bidirectional_link_list_iterator begin(&list0), end(list4.next);
 
+  expect(__LINE__, 1, *std::next(begin));
+  expect(__LINE__, 3, *std::next(begin, 3));
+  expect(__LINE__, 4, *std::prev(end));
+  expect(__LINE__, 2, *std::prev(end, 3));
+
+  /*
   expect(__LINE__, 0, *iter);
   std::advance(iter, 1);
   expect(__LINE__, 1, *iter);
@@ -1766,10 +1836,11 @@ static void test_advance1() {
   expect(__LINE__, 2, *iter);
 
   expect(__LINE__, 3, std::distance(iter, last));
+  */
 }
 
 // random_access
-static void test_advance2() {
+static void test_advance2_1() {
   array<int, 5> a = {0, 1, 2, 3, 4};
   auto iter = std::begin(a);
   auto last = std::end(a);
@@ -1789,9 +1860,12 @@ static void test_advance2() {
 }
 
 int main() {
-  test_advance2();
-  test_advance1();
-  test_advance0();
+  //  test_advance2_0();
+  test_advance2_1();
+  test_advance1_0();
+  test_advance1_1();
+  test_advance0_0();
+  test_advance0_1();
 
   ns::test_forward_link_list();
   ns::test_forward_link_list_iterator();
