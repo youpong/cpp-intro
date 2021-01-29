@@ -1,7 +1,15 @@
 #include "main.h"
 
-#ifdef FOO
+// Problem: use name before it define.
+// node
+// iterator -> list
+//          -> node
+// list     -> node
+//          -> iterator
+
+#ifdef LIST
 namespace ns {
+
 template <typename T>
 struct bidirectional_link_list_node {
   T value;
@@ -29,6 +37,8 @@ struct bidirectional_link_list_iterator {
   using iterator_category = std::bidirectional_iterator_tag;
   // --- boilerplate code
 
+  // use name before define.
+  //
   bidirectional_link_list<T> *list;
   bidirectional_link_list_node<T> *ptr;
 
@@ -78,13 +88,12 @@ struct bidirectional_link_list {
 } // namespace ns
 
 #endif
-
 /**
  * ns::bidirectional_iterator
  */
 static void test_advance1_1() {
 
-#ifdef FOO
+#ifdef LIST
   // clang-format off
   ns::bidirectional_link_list_node<int> node0( 0, nullptr, nullptr);
   ns::bidirectional_link_list_node<int> node1( 0, &node0, nullptr);

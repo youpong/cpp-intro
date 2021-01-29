@@ -1797,11 +1797,19 @@ static void test_advance1_0() {
 }
 
 // random_access
-static void test_advance2_1() {
-  array<int, 5> a = {0, 1, 2, 3, 4};
-  auto iter = std::begin(a);
-  auto last = std::end(a);
+// std::array
+static void test_advance2_0() {
+  std::array<int, 5> a = {0, 1, 2, 3, 4};
 
+  auto begin = std::begin(a);
+  auto end = std::end(a);
+  
+  expect(__LINE__, 1, *std::next(begin));
+  expect(__LINE__, 3, *std::next(begin, 3));
+  expect(__LINE__, 4, *std::prev(end));
+  expect(__LINE__, 2, *std::prev(end, 3));
+
+  auto iter = begin;
   expect(__LINE__, 0, *iter);
   std::advance(iter, 1);
   expect(__LINE__, 1, *iter);
@@ -1813,7 +1821,34 @@ static void test_advance2_1() {
   std::advance(iter, 0);
   expect(__LINE__, 2, *iter);
 
-  expect(__LINE__, 3, std::distance(iter, last));
+  expect(__LINE__, 3, std::distance(iter, end));
+}
+
+// random_access
+static void test_advance2_1() {
+  array<int, 5> a = {0, 1, 2, 3, 4};
+  
+  auto begin = std::begin(a);
+  auto end = std::end(a);
+
+  expect(__LINE__, 1, *std::next(begin));
+  expect(__LINE__, 3, *std::next(begin, 3));
+  expect(__LINE__, 4, *std::prev(end));
+  expect(__LINE__, 2, *std::prev(end, 3));
+
+  auto iter = begin;
+  expect(__LINE__, 0, *iter);
+  std::advance(iter, 1);
+  expect(__LINE__, 1, *iter);
+  std::advance(iter, 3);
+  expect(__LINE__, 4, *iter);
+
+  std::advance(iter, -2);
+  expect(__LINE__, 2, *iter);
+  std::advance(iter, 0);
+  expect(__LINE__, 2, *iter);
+
+  expect(__LINE__, 3, std::distance(iter, end));
 }
 
 int main() {
@@ -1821,7 +1856,7 @@ int main() {
   void test_all_reference();
   void test_all_list();
 
-  //  test_advance2_0();
+  test_advance2_0();
   test_advance2_1();
   test_advance1_0();
   test_advance0_0();
