@@ -1,13 +1,6 @@
 #include "main.h"
 
 //
-// function declaration
-//
-
-void test_all_error();
-void test_all_reference();
-
-//
 // global variable definition lambda
 //
 
@@ -842,6 +835,7 @@ struct forward_link_list {
   // clang-format on  
 };
 
+  
 } // namespace ns
 
 static void test_array() {
@@ -1802,43 +1796,6 @@ static void test_advance1_0() {
   expect(__LINE__, 3, std::distance(iter, end));
 }
 
-/**
- * bidirectional_iterator
- */
-static void test_advance1_1() {
-  bidirectional_link_list<int> list0(0, nullptr, nullptr);
-  bidirectional_link_list<int> list1(1, &list0, nullptr);
-  bidirectional_link_list<int> list2(2, &list1, nullptr);
-  bidirectional_link_list<int> list3(3, &list2, nullptr);
-  bidirectional_link_list<int> list4(4, &list3, nullptr);
-  list0.next = &list1;
-  list1.next = &list2;
-  list2.next = &list3;
-  list3.next = &list4;
-
-  bidirectional_link_list_iterator begin(&list0), end(list4.next);
-
-  expect(__LINE__, 1, *std::next(begin));
-  expect(__LINE__, 3, *std::next(begin, 3));
-  expect(__LINE__, 4, *std::prev(end));
-  expect(__LINE__, 2, *std::prev(end, 3));
-
-  /*
-  expect(__LINE__, 0, *iter);
-  std::advance(iter, 1);
-  expect(__LINE__, 1, *iter);
-  std::advance(iter, 3);
-  expect(__LINE__, 4, *iter);
-
-  std::advance(iter, -2);
-  expect(__LINE__, 2, *iter);
-  std::advance(iter, 0);
-  expect(__LINE__, 2, *iter);
-
-  expect(__LINE__, 3, std::distance(iter, last));
-  */
-}
-
 // random_access
 static void test_advance2_1() {
   array<int, 5> a = {0, 1, 2, 3, 4};
@@ -1860,10 +1817,13 @@ static void test_advance2_1() {
 }
 
 int main() {
+  void test_all_error();
+  void test_all_reference();
+  void test_all_list();
+
   //  test_advance2_0();
   test_advance2_1();
   test_advance1_0();
-  test_advance1_1();
   test_advance0_0();
   test_advance0_1();
 
@@ -1923,6 +1883,7 @@ int main() {
   test_output_iter3();
   test_output_iter4();
 
+  test_all_list();
   test_all_error();
   test_all_reference();
 
