@@ -1897,6 +1897,10 @@ static void test_reverse_iterator() {
   expect(__LINE__, 4, tmp[0]);
   expect(__LINE__, 0, tmp[4]);
 
+  // cannot compare return value of std::rbegin() and it of std::begin()
+  // because these type of object are not same.
+  // 	expect(__LINE__, true, std::rbegin(v) == std::begin(v));
+
   std::vector<int> tmp2(v.size());
   std::reverse_iterator riter{std::end(tmp2)};
   std::copy(std::begin(v), std::end(v), riter);
@@ -1921,12 +1925,22 @@ static void test_reverse_iterator3() {
   expect(__LINE__, 1916, tmp[0]);
 }
 
+static void test_reverse_iterator4() {
+  std::vector<int> v = {0, 1, 2, 3, 4};
+  std::vector<int> tmp(v.size());
+
+  std::copy(std::rbegin(v), std::rend(v), std::begin(tmp));
+  expect(__LINE__, 4, tmp[0]);
+  expect(__LINE__, 0, tmp[4]);
+}
+
 int main() {
 
   void test_all_error();
   void test_all_reference();
   void test_all_list();
 
+  test_reverse_iterator4();
   test_reverse_iterator3();
   test_reverse_iterator2();
   test_reverse_iterator();
