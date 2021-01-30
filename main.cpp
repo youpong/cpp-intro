@@ -1803,7 +1803,7 @@ static void test_advance2_0() {
 
   auto begin = std::begin(a);
   auto end = std::end(a);
-  
+
   expect(__LINE__, 1, *std::next(begin));
   expect(__LINE__, 3, *std::next(begin, 3));
   expect(__LINE__, 4, *std::prev(end));
@@ -1827,7 +1827,7 @@ static void test_advance2_0() {
 // random_access
 static void test_advance2_1() {
   array<int, 5> a = {0, 1, 2, 3, 4};
-  
+
   auto begin = std::begin(a);
   auto end = std::end(a);
 
@@ -1851,10 +1851,44 @@ static void test_advance2_1() {
   expect(__LINE__, 3, std::distance(iter, end));
 }
 
+template <typename Iterator>
+void reverse_print(Iterator first, Iterator last) {
+  auto iter = std::prev(last);
+  while (iter != first)
+    std::cout << *iter--;
+  std::cout << *iter;
+}
+
+template <typename InputIterator, typename OutputIterator>
+void reverse_copy(InputIterator first, InputIterator last,
+                  OutputIterator dest) {
+  auto iter = std::prev(last);
+  while (iter != first)
+    *dest++ = *iter--;
+  *dest = *iter;
+}
+
+static void test_reverse_print() {
+  std::vector<int> v = {0, 1, 2, 3, 4};
+  reverse_print(std::begin(v), std::end(v));
+  std::cout << "\n"s;
+
+  std::vector<int> v1 = {1876};
+  reverse_print(std::begin(v1), std::end(v1));
+  std::cout << "\n"s;
+
+  std::vector<int> v2 = {};
+  reverse_print(std::begin(v2), std::end(v2));
+  std::cout << "\n"s;
+}
+
 int main() {
+
   void test_all_error();
   void test_all_reference();
   void test_all_list();
+
+  test_reverse_print();
 
   test_advance2_0();
   test_advance2_1();
