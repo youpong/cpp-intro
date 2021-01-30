@@ -1900,9 +1900,25 @@ static void test_reverse_iterator() {
   std::vector<int> tmp2(v.size());
   std::reverse_iterator riter{std::end(tmp2)};
   std::copy(std::begin(v), std::end(v), riter);
-
   expect(__LINE__, 4, tmp2[0]);
   expect(__LINE__, 0, tmp2[4]);
+}
+
+static void test_reverse_iterator2() {
+  std::vector<int> v = {};
+  std::reverse_iterator first{std::end(v)};
+  std::reverse_iterator last{std::begin(v)};
+  std::vector<int> tmp(v.size());
+  std::copy(first, last, std::begin(tmp));
+}
+
+static void test_reverse_iterator3() {
+  std::vector<int> v = {1916};
+  std::reverse_iterator first{std::end(v)};
+  std::reverse_iterator last{std::begin(v)};
+  std::vector<int> tmp(v.size());
+  std::copy(first, last, std::begin(tmp));
+  expect(__LINE__, 1916, tmp[0]);
 }
 
 int main() {
@@ -1911,6 +1927,8 @@ int main() {
   void test_all_reference();
   void test_all_list();
 
+  test_reverse_iterator3();
+  test_reverse_iterator2();
   test_reverse_iterator();
   test_reverse_print();
 
