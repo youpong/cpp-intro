@@ -1851,49 +1851,58 @@ static void test_advance2_1() {
   expect(__LINE__, 3, std::distance(iter, end));
 }
 
-template <typename Iterator>
-void reverse_print(Iterator first, Iterator last) {
-  if ( first == last )
-    return; // nothing to print.
-    
-  auto iter = std::prev(last);
-  while (iter != first)
-    std::cout << *iter--;
-  std::cout << *iter;
-}
-
 namespace ns {
+// copy instead of print
 template <typename InputIterator, typename OutputIterator>
 void reverse_copy(InputIterator first, InputIterator last,
                   OutputIterator dest) {
-  if ( first == last )
-    return ; // nothing to copy.
-  
+  if (first == last)
+    return; // nothing to copy.
+
   auto iter = std::prev(last);
   while (iter != first)
     *dest++ = *iter--;
   *dest = *iter;
 }
-} // namespace ns  
+} // namespace ns
 
 static void test_reverse_print() {
   std::vector<int> tmp(5);
-  
+
   std::vector<int> v = {0, 1, 2, 3, 4};
   expect(__LINE__, false, std::begin(v) == std::end(v));
   ns::reverse_copy(std::begin(v), std::end(v), std::begin(tmp));
   expect(__LINE__, 4, tmp[0]);
-  expect(__LINE__, 0, tmp[4]); 
+  expect(__LINE__, 0, tmp[4]);
 
   std::vector<int> v1 = {1876};
-  expect(__LINE__, false, std::begin(v1) == std::end(v1));  
+  expect(__LINE__, false, std::begin(v1) == std::end(v1));
   ns::reverse_copy(std::begin(v1), std::end(v1), std::begin(tmp));
-  expect(__LINE__, 1876, tmp[0]);  
+  expect(__LINE__, 1876, tmp[0]);
 
   std::vector<int> v2 = {};
-  expect(__LINE__, true, std::begin(v2) == std::end(v2));  
+  expect(__LINE__, true, std::begin(v2) == std::end(v2));
   ns::reverse_copy(std::begin(v2), std::end(v2), std::begin(tmp));
   expect(__LINE__, 1876, tmp[0]);
+}
+
+static void test_reverse_iterator() {
+  std::vector<int> v = {0, 1, 2, 3, 4};
+
+  std::reverse_iterator first{std::end(v)};
+  std::reverse_iterator last{std::begin(v)};
+
+  std::vector<int> tmp(v.size());
+  std::copy(first, last, std::begin(tmp));
+  expect(__LINE__, 4, tmp[0]);
+  expect(__LINE__, 0, tmp[4]);
+
+  std::vector<int> tmp2(v.size());
+  std::reverse_iterator riter{std::end(tmp2)};
+  std::copy(std::begin(v), std::end(v), riter);
+
+  expect(__LINE__, 4, tmp2[0]);
+  expect(__LINE__, 0, tmp2[4]);
 }
 
 int main() {
@@ -1902,6 +1911,7 @@ int main() {
   void test_all_reference();
   void test_all_list();
 
+  test_reverse_iterator();
   test_reverse_print();
 
   test_advance2_0();
