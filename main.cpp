@@ -1936,9 +1936,12 @@ static void test_reverse_iterator4() {
 
 int main() {
 
+  void test_all_memory();
   void test_all_error();
   void test_all_reference();
   void test_all_list();
+
+  test_all_memory();
 
   test_reverse_iterator4();
   test_reverse_iterator3();
