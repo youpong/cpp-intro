@@ -1,5 +1,7 @@
 #include "main.h"
 
+bool quiet_mode;
+
 //
 // global variable definition lambda
 //
@@ -1941,7 +1943,7 @@ int main() {
   void test_all_reference();
   void test_all_list();
 
-  bool quiet_mode = true;
+  quiet_mode = true;
 
   test_all_memory();
 

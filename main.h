@@ -26,3 +26,5 @@ auto expect = [](auto line, auto expected, auto actual) {
             << actual << "\n";
   exit(1);
 };
+
+extern bool quiet_mode;
