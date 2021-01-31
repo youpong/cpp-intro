@@ -1941,6 +1941,8 @@ int main() {
   void test_all_reference();
   void test_all_list();
 
+  bool quiet_mode = true;
+
   test_all_memory();
 
   test_reverse_iterator4();
@@ -1962,11 +1964,16 @@ int main() {
   test_forward_link_list_iterator();
 
   test_iota_iterator();
-  test_print();
 
-  test_cin_iterator();
+  if (!quiet_mode) {
+    test_print();
+    test_cin_iterator();
+  }
+
   test_back_inserter();
-  test_cout_iterator();
+
+  if (!quiet_mode)
+    test_cout_iterator();
 
   test_output_iterator();
   test_output_iterator2();
@@ -1996,18 +2003,20 @@ int main() {
   test_random_access_iter4();
 
   test_bidirectional_iter();
-  //  test_bidirectional_iter2();
   test_bidirectional_iter3();
 
   test_forward_iter();
   test_forward_iter3();
   test_forward_iter4();
 
-  test_input_iter();
-  test_input_iter2();
+  if (!quiet_mode) {
+    test_input_iter();
+    test_input_iter2();
 
-  test_output_iter();
-  test_output_iter2();
+    test_output_iter();
+    test_output_iter2();
+  }
+
   test_output_iter3();
   test_output_iter4();
 
