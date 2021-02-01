@@ -1,14 +1,17 @@
 #include "main.h"
 
+template <typename T, std::size_t N>
+std::size_t array_length(const T (&array)[N]) {
+  return N;
+}
+
 struct Logger {
   std::string name;
 
-  Logger( std::string name ) : name (name) {
+  Logger(std::string name) : name(name) {
     std::cout << name << " is constructed.\n"s;
   }
-  ~Logger() {
-    std::cout << name << " is destructed.\n"s;
-  }
+  ~Logger() { std::cout << name << " is destructed.\n"s; }
 };
 
 static void test_vector() {
@@ -53,11 +56,11 @@ static void test_operator_new() {
 }
 
 static void test_Logger() {
-  void * raw_ptr = ::operator new ( sizeof(Logger) );
+  void *raw_ptr = ::operator new(sizeof(Logger));
   // new (RAW_PTR) TYPE NEW_INITIALIZER
   // NEW_INITIALIZER = ( params )
-  //                 = { params }   
-  Logger * logger_ptr = new (raw_ptr) Logger{"Alice"s};
+  //                 = { params }
+  Logger *logger_ptr = new (raw_ptr) Logger{"Alice"s};
   logger_ptr->~Logger();
   ::operator delete(raw_ptr);
 }
@@ -66,25 +69,30 @@ static void test_new() {
   int *int_ptr = new int{202};
   expect(__LINE__, 202, *int_ptr);
   delete int_ptr;
-  
-  
+
   std::vector<int> *vector_ptr = new std::vector<int>{203, 204};
   expect(__LINE__, 204, (*vector_ptr)[1]);
   delete vector_ptr;
 }
 
+static void test_array_length() {
+  int a[] = {0, 1, 2, 3, 4};
+
+  expect(__LINE__, 5, array_length(a));
+}
+
 static void test_new_array() {
   int int_array[] = {0, 1, 2, 3, 4};
-  int * int_array_ptr = new int[]{0, 1, 2, 3, 4};
-  
-  int * temp = new int[5];
-  
-  for(std::size_t i = 0; i != 5; i++)
+  int *int_array_ptr = new int[]{0, 1, 2, 3, 4};
+
+  int *temp = new int[5];
+
+  for (std::size_t i = 0; i != 5; i++)
     temp[i] = int_array_ptr[i];
-      
+
   expect(__LINE__, 0, temp[0]);
   expect(__LINE__, 4, temp[4]);
-  expect(__LINE__, 5, sizeof(int_array)/sizeof(int));
+  expect(__LINE__, 5, sizeof(int_array) / sizeof(int));
   // TODO: how to get size of array is pointerd by int_array_ptr.
   // 	sizeof(*int_array_ptr) == sizeof(int)
 
@@ -103,4 +111,5 @@ void test_all_memory() {
     test_Logger();
   test_new();
   test_new_array();
+  test_array_length();
 }
