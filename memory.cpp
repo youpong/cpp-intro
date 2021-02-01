@@ -93,6 +93,38 @@ static void test_new_array() {
   delete[] int_array_ptr;
 }
 
+template <typename T>
+static T total_array(T *ptr, std::size_t n) {
+  T total = 0;
+  for (std::size_t i = 0; i != n; ++i)
+    total += *ptr++;
+  return total;
+}
+
+static void dynamic_allocated_array(std::size_t n) {
+  int *ptr = new int[n];
+
+  for (std::size_t i = 0; i != n; ++i)
+    ptr[i] = i;
+
+  expect(__LINE__, n * (n - 1) / 2, total_array(ptr, n));
+
+  delete[] ptr;
+}
+
+static void test_dynamic_allocated_array() {
+  dynamic_allocated_array(5);
+  dynamic_allocated_array(1);
+  dynamic_allocated_array(0);
+}
+
+static void variable_length_array(std::size_t n) {
+  // Variable Length Array(vla) is a C99 feature.
+  //	int ptr[n];
+}
+
+static void test_vla() { variable_length_array(5); }
+
 void test_all_memory() {
   expect(__LINE__, 1, 1);
 
@@ -105,5 +137,7 @@ void test_all_memory() {
     test_Logger();
   test_new();
   test_new_array();
+  test_dynamic_allocated_array();
+  test_vla();
   test_array_length();
 }
