@@ -82,19 +82,13 @@ static void test_array_length() {
 }
 
 static void test_new_array() {
-  int int_array[] = {0, 1, 2, 3, 4};
   int *int_array_ptr = new int[]{0, 1, 2, 3, 4};
 
   int *temp = new int[5];
-
   for (std::size_t i = 0; i != 5; i++)
     temp[i] = int_array_ptr[i];
-
   expect(__LINE__, 0, temp[0]);
   expect(__LINE__, 4, temp[4]);
-  expect(__LINE__, 5, sizeof(int_array) / sizeof(int));
-  // TODO: how to get size of array is pointerd by int_array_ptr.
-  // 	sizeof(*int_array_ptr) == sizeof(int)
 
   delete[] int_array_ptr;
 }
