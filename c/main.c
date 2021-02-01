@@ -63,11 +63,56 @@ static void test_function_ptr() {
 }
 
 static void test_array_ptr() {
-  int a[5] = {1, 2, 3, 4, 5};
+  int a[] = {1, 2, 3, 4, 5}; // a is an array of int, len 5.
 
-  int(*ptr)[5] = &a; // ptr is a pointer to array of int, len 5.
+  {
+    int(*ptr)[5] = &a; // ptr is a pointer to array of int, len 5.
 
-  expect(__LINE__, 2, (*ptr)[1]); // !=  *ptr[1]
+    expect(__LINE__, 2, (*ptr)[1]); // !=  *ptr[1]
+    expect(__LINE__, 5, sizeof(*ptr) / sizeof(int));
+  }
+
+  {
+      /*
+       *  gcc:
+       * warning: initialization of ‘int (*)[4]’ from incompatible
+       * pointer type ‘int (*)[5]’ [-Wincompatible-pointer-types]
+       *
+       * clang:
+       * warning: incompatible pointer types initializing 'int (*)[4]'
+       * with an expression of type 'int (*)[5]'
+       * [-Wincompatible-pointer-types]
+       *
+       *            int (*ptr)[4] = &a;
+       */
+  }
+
+  {
+    // type conversion through casting void pointer
+    int(*ptr)[4] = (void *)&a;
+    expect(__LINE__, 16, sizeof(*ptr));
+  }
+
+  {
+    // type conversion
+    int(*ptr)[4] = (int(*)[4]) & a;
+
+    expect(__LINE__, 16, sizeof(*ptr));
+  }
+}
+
+#define ARRAY_LENGTH(array) (sizeof(array) / sizeof(array[0]))
+
+static void test_array_length() {
+  {
+    int a[] = {0, 1, 2, 3, 4};
+    expect(__LINE__, 5, ARRAY_LENGTH(a));
+  }
+
+  {
+    int a[] = {};
+    expect(__LINE__, 0, ARRAY_LENGTH(a));
+  }
 }
 
 int gl_v = 0;
@@ -76,5 +121,7 @@ int main(int argc, char **argv) {
   test_all_memcpy();
   test_function_ptr();
   test_array_ptr();
+  test_array_length();
+
   return EXIT_SUCCESS;
 }
