@@ -25,7 +25,23 @@ static void test_allocator() {
   traits::deallocate(a, p, 1);
 }
 
+static void test_allocators(std::size_t n) {
+  std::allocator<std::string> a;
+  using traits = std::allocator_traits<decltype(a)>;
+
+  std::string *p = traits::allocate(a, n);
+
+  for (std::size_t i = 0; i != n; ++i) {
+    std::string *s = new (p + i) std::string("hello");
+    expect(__LINE__, "hello"s, *s);
+    traits::destroy(a, s);
+  }
+
+  traits::deallocate(a, p, n);
+}
+
 void test_all_vector() {
   test_allocator();
-  expect(__LINE__, 0, 0);
+  test_allocators(0);
+  test_allocators(5);
 }
