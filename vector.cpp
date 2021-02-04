@@ -11,10 +11,13 @@ static void test_allocator() {
 
   std::string *p = traits::allocate(a, 1);
 
-  // vector.cpp:14:16: error: cannot initialize a variable of type
-  // 'std::string *' (aka 'basic_string<char> *') with an rvalue
-  // of type 'void'
+#ifdef ISSUE_4
+  // error: cannot initialize a variable of type 'std::string *'
+  // (aka 'basic_string<char> *') with an rvalue of type 'void'
   std::string *s = traits::construct(a, p, "hello");
+#else
+  std::string *s = new (p) std::string("hello");
+#endif
   expect(__LINE__, "hello"s, *s);
 
   traits::destroy(a, s);

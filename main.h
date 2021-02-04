@@ -4,6 +4,7 @@
 //#define ISSUE_1
 //#define ISSUE_2
 //#define ISSUE_3
+//#define ISSUE_4
 
 // ARRAY_ITERATOR:
 //   1: iterator class with index
