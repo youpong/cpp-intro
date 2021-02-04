@@ -1938,14 +1938,19 @@ static void test_reverse_iterator4() {
 
 int main() {
 
+  void test_all_vector();
   void test_all_memory();
   void test_all_error();
   void test_all_reference();
   void test_all_list();
 
-  quiet_mode = true;
-
+  test_all_vector();
+  test_all_list();
+  test_all_error();
+  test_all_reference();
   test_all_memory();
+
+  quiet_mode = true;
 
   test_reverse_iterator4();
   test_reverse_iterator3();
@@ -2021,10 +2026,6 @@ int main() {
 
   test_output_iter3();
   test_output_iter4();
-
-  test_all_list();
-  test_all_error();
-  test_all_reference();
 
   return EXIT_SUCCESS;
 }
