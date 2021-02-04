@@ -1,3 +1,5 @@
+#define QUIET_MODE
+
 // define to reproduce issues
 //#define ISSUE_1
 //#define ISSUE_2

@@ -126,8 +126,6 @@ static void variable_length_array(std::size_t n) {
 static void test_vla() { variable_length_array(5); }
 
 void test_all_memory() {
-  expect(__LINE__, 1, 1);
-
   if (!quiet_mode)
     test_vector();
 
@@ -136,6 +134,7 @@ void test_all_memory() {
   if (!quiet_mode)
     test_Logger();
   test_new();
+
   test_new_array();
   test_dynamic_allocated_array();
   test_vla();

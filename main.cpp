@@ -1944,13 +1944,13 @@ int main() {
   void test_all_reference();
   void test_all_list();
 
+  quiet_mode = true;
+
   test_all_vector();
   test_all_list();
   test_all_error();
   test_all_reference();
   test_all_memory();
-
-  quiet_mode = true;
 
   test_reverse_iterator4();
   test_reverse_iterator3();
