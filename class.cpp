@@ -12,12 +12,9 @@ class Cat {
   int age;
 
 public:
-  void set_age(int age) { this->age = age; }
+  Cat(int age, double weight) : age(age), weight(weight) {}
+
   int get_age() { return age; }
-  void set_weight(double weight) {
-    // can set before declare
-    this->weight = weight;
-  }
   double get_weight() { return weight; }
 
 private:
@@ -25,10 +22,9 @@ private:
 };
 
 static void test_access_modifier_class() {
-  Cat cat;
-  cat.set_age(77);
+  Cat cat(77, 7.8);
+
   expect(__LINE__, 77, cat.get_age());
-  cat.set_weight(7.8);
   expect(__LINE__, 7.8, cat.get_weight());
 #ifdef ACCESS_MOD
   // error: 'age' is a private member of 'Cat'
