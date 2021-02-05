@@ -1,5 +1,6 @@
 TARGET = prog
-SRCS = main.cpp error.cpp reference.cpp list.cpp memory.cpp vector.cpp
+SRCS = main.cpp error.cpp reference.cpp list.cpp memory.cpp vector.cpp \
+       class.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # C++ compiler
@@ -45,6 +46,8 @@ list.o: list.cpp all.h.gch main.h
 memory.o: memory.cpp all.h.gch main.h
 	$(CXX) $(CXXFLAGS) -include all.h -c $<
 vector.o: vector.cpp all.h.gch main.h
+	$(CXX) $(CXXFLAGS) -include all.h -c $<
+class.o: class.cpp all.h.gch main.h
 	$(CXX) $(CXXFLAGS) -include all.h -c $<
 
 all.h.gch: all.h

@@ -1,20 +1,20 @@
 #include "main.h"
 
-template < typename T, typename Allocator = std::allocator<T> >
+template <typename T, typename Allocator = std::allocator<T>>
 class vector {
-private :
+private:
 public:
   using value_type = T;
   // TODO:
   using iterator = T *;
-  
-  vector( std::size_t n = 0, Allocator a = Allocator() );
-  ~vector() ;
-  vector( const vector & x );
-  vector & operator =(const vector & x);
 
-  void push_back( const T & x );
-  T & operator [](std::size_t i ) noexcept;
+  vector(std::size_t n = 0, Allocator a = Allocator());
+  ~vector();
+  vector(const vector &x);
+  vector &operator=(const vector &x);
+
+  void push_back(const T &x);
+  T &operator[](std::size_t i) noexcept;
 
   iterator begin() noexcept;
   iterator end() noexcept;
@@ -60,8 +60,23 @@ static void test_allocators(std::size_t n) {
   traits::deallocate(a, p, n);
 }
 
+void test_vector() {
+  // vector<int> v(100);
+  std::vector<int> v(100);
+  for (auto i = 0; i != 100; ++i)
+    v[i] = i;
+
+  return;
+  std::for_each(std::begin(v), std::end(v),
+                [](auto x) { std::cout << x; });
+
+  std::copy(std::istream_iterator<int>(std::cin),
+            std::istream_iterator<int>(), std::back_inserter(v));
+}
+
 void test_all_vector() {
   test_allocator();
   test_allocators(0);
   test_allocators(5);
+  test_vector();
 }
