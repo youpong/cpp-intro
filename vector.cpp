@@ -60,7 +60,7 @@ static void test_allocators(std::size_t n) {
   traits::deallocate(a, p, n);
 }
 
-void test_vector() {
+static void test_vector() {
   // vector<int> v(100);
   std::vector<int> v(100);
   for (auto i = 0; i != 100; ++i)
@@ -74,9 +74,21 @@ void test_vector() {
             std::istream_iterator<int>(), std::back_inserter(v));
 }
 
+static void nested_typename() {
+  using vec = std::vector<int>;
+  // TODO using vec = vector<int>;
+  vec v = {0, 1, 2};
+
+  vec::value_type val = v[1];
+  expect(__LINE__, 1, val);
+  vec::iterator i = v.begin();
+  expect(__LINE__, 0, *i);
+}
+
 void test_all_vector() {
   test_allocator();
   test_allocators(0);
   test_allocators(5);
   test_vector();
+  nested_typename();
 }
