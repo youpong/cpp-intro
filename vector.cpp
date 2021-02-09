@@ -5,6 +5,12 @@ class vector {
 private:
 public:
   using value_type = T;
+  using pointer = T *;
+  using const_pointer = const pointer;
+  using reference = value_type &;
+  using const_reference = const value_type &;
+  using allocator_type = Allocator;
+  using size_type = std::size_t;
   // TODO:
   using iterator = T *;
 
@@ -74,7 +80,7 @@ static void test_vector() {
             std::istream_iterator<int>(), std::back_inserter(v));
 }
 
-static void nested_typename() {
+static void test_nested_typename() {
   using vec = std::vector<int>;
   // TODO using vec = vector<int>;
   vec v = {0, 1, 2};
@@ -83,12 +89,19 @@ static void nested_typename() {
   expect(__LINE__, 1, val);
   vec::iterator i = v.begin();
   expect(__LINE__, 0, *i);
+  vec::size_type s = v.size();
+  expect(__LINE__, 3, s);
 }
+
+/*
+void f(std::vector<int> &v) {
+  std::vector<int>
+*/
 
 void test_all_vector() {
   test_allocator();
   test_allocators(0);
   test_allocators(5);
   test_vector();
-  nested_typename();
+  test_nested_typename();
 }
