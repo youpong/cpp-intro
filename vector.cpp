@@ -4,15 +4,21 @@ template <typename T, typename Allocator = std::allocator<T>>
 class vector {
 private:
 public:
-  using value_type = T;
-  using pointer = T *;
-  using const_pointer = const pointer;
-  using reference = value_type &;
+  // clang-format off
+  using value_type      = T;
+  using pointer         = T *;
+  using const_pointer   = const pointer;
+  using reference       = value_type &;
   using const_reference = const value_type &;
-  using allocator_type = Allocator;
-  using size_type = std::size_t;
-  // TODO:
-  using iterator = T *;
+  using allocator_type  = Allocator;
+  using size_type       = std::size_t;
+  using difference_type = std::ptrdiff_t;
+
+  using iterator               = pointer;
+  using const_iterator         = const_pointer;
+  using reverse_iterator       = std::reverse_iterator<iterator>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+  // clang-format on
 
   vector(std::size_t n = 0, Allocator a = Allocator());
   ~vector();
@@ -82,7 +88,7 @@ static void test_vector() {
 
 static void test_nested_typename() {
   using vec = std::vector<int>;
-  // TODO using vec = vector<int>;
+  // using vec = vector<int>;
   vec v = {0, 1, 2};
 
   vec::value_type val = v[1];
@@ -91,12 +97,10 @@ static void test_nested_typename() {
   expect(__LINE__, 0, *i);
   vec::size_type s = v.size();
   expect(__LINE__, 3, s);
+  auto j = i + 3;
+  vec::difference_type d = j - i;
+  expect(__LINE__, 3, d);
 }
-
-/*
-void f(std::vector<int> &v) {
-  std::vector<int>
-*/
 
 void test_all_vector() {
   test_allocator();
