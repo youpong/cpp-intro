@@ -43,6 +43,8 @@ public:
   iterator end() noexcept { return last; }
   iterator begin() const noexcept { return first; }
   iterator end() const noexcept { return last; }
+  const_iterator cbegin() const noexcept { return first; }
+  const_iterator cend() const noexcept { return last; }
 };
 
 static void test_allocator() {
