@@ -39,12 +39,27 @@ public:
   void push_back(const T &x);
   T &operator[](std::size_t i) noexcept;
 
-  iterator begin() noexcept { return first; }
-  iterator end() noexcept { return last; }
-  iterator begin() const noexcept { return first; }
-  iterator end() const noexcept { return last; }
+  // clang-format off
+  iterator       begin()        noexcept { return first; }
+  iterator       end()          noexcept { return last;  }
+  iterator       begin()  const noexcept { return first; }
+  iterator       end()    const noexcept { return last;  }
   const_iterator cbegin() const noexcept { return first; }
-  const_iterator cend() const noexcept { return last; }
+  const_iterator cend()   const noexcept { return last;  }
+  
+  reverse_iterator       rbegin()        noexcept {
+    return reverse_iterator{last};
+  }
+  reverse_iterator       rend()          noexcept {
+    return reverse_iterator{first};
+  }
+  const_reverse_iterator crbegin() const noexcept {
+    return reverse_iterator{last};
+  }
+  const_reverse_iterator crend()   const noexcept {
+    return reverse_iterator{first};
+  }
+  // clang-format on
 };
 
 static void test_allocator() {
