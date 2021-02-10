@@ -2,7 +2,6 @@
 
 template <typename T, typename Allocator = std::allocator<T>>
 class vector {
-private:
 public:
   // clang-format off
   using value_type      = T;
@@ -19,7 +18,19 @@ public:
   using reverse_iterator       = std::reverse_iterator<iterator>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   // clang-format on
+private:
+  /*
+  pointer first = nullptr;
+  size_type valid_size = 0; // original = nullptr;
+  size_type allocated_size = 0; // original = nullptr;
+  allocator_type alloc;
+  */
+  pointer first = nullptr;
+  pointer last = nullptr;
+  pointer reserved_last = nullptr;
+  allocator_type alloc;
 
+public:
   vector(std::size_t n = 0, Allocator a = Allocator());
   ~vector();
   vector(const vector &x);
@@ -28,8 +39,10 @@ public:
   void push_back(const T &x);
   T &operator[](std::size_t i) noexcept;
 
-  iterator begin() noexcept;
-  iterator end() noexcept;
+  iterator begin() noexcept { return first; }
+  iterator end() noexcept { return last; }
+  iterator begin() const noexcept { return first; }
+  iterator end() const noexcept { return last; }
 };
 
 static void test_allocator() {
@@ -102,10 +115,32 @@ static void test_nested_typename() {
   expect(__LINE__, 3, d);
 }
 
+/*
+static void test_foo() {
+  //vector<int> vec = { 0, 1, 2 };
+  vector<int>::size_type s = 1;
+}
+*/
+
+static void test_foo() {
+  std::vector<int> v(1);
+  // std::vector<int>::iterator
+  auto i = v.begin();
+  *i = 0;
+
+  auto const &cv = v;
+  // std::vector<int>::const_iterator
+  [[maybe_unused]] auto ci = cv.begin();
+  // error
+  // can't assign pointed by const_iterator
+  //  *ci = 0;
+}
+
 void test_all_vector() {
   test_allocator();
   test_allocators(0);
   test_allocators(5);
   test_vector();
   test_nested_typename();
+  test_foo();
 }
