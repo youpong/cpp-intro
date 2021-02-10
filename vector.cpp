@@ -153,7 +153,19 @@ static void test_foo() {
   //  *ci = 0;
 }
 
+static void test_iterator() {
+  std::vector<int> v = {0, 1, 2, 3, 4};
+  // rbegin()
+  // check reverse iterator last -> first
+  // manipulate value via iterator
+
+  // crbegin()
+  // check reverse iterator last -> first
+  // cannot manipulate value via const_reverse_iterator
+}
+
 void test_all_vector() {
+  test_iterator();
   test_allocator();
   test_allocators(0);
   test_allocators(5);

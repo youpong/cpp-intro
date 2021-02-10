@@ -1944,6 +1944,7 @@ int main() {
   void test_all_reference();
   void test_all_list();
   void test_all_class();
+  void test_all_number();
 
   quiet_mode = true;
 
@@ -1953,6 +1954,7 @@ int main() {
   test_all_error();
   test_all_reference();
   test_all_memory();
+  test_all_number();
 
   test_reverse_iterator4();
   test_reverse_iterator3();
