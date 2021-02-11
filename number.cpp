@@ -45,6 +45,7 @@ static void test_print_number() {
 static void test_pi() { expect(__LINE__, 3.1415926, pi().num); }
 
 void test_all_number() {
-  test_print_number();
+  if (!quiet_mode)
+    test_print_number();
   test_pi();
 }

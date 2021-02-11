@@ -31,8 +31,12 @@ private:
   allocator_type alloc;
 
 public:
-  vector(std::size_t n = 0, Allocator a = Allocator());
-  ~vector();
+  //  vector(std::size_t n = 0, Allocator a = Allocator()); original
+  vector(std::size_t n = 0, Allocator alloc = Allocator())
+      : alloc(alloc) { // TODO
+  }
+  ~vector() { // TODO
+  }
   vector(const vector &x);
   vector &operator=(const vector &x);
 
@@ -103,7 +107,7 @@ static void test_allocators(std::size_t n) {
 }
 
 static void test_vector() {
-  // vector<int> v(100);
+  vector<int> v2(100);
   std::vector<int> v(100);
   for (auto i = 0; i != 100; ++i)
     v[i] = i;
@@ -164,7 +168,15 @@ static void test_iterator() {
   // cannot manipulate value via const_reverse_iterator
 }
 
+static void test_size() {
+  // vector<int> v2(0);
+  // vector<int, std::allocator<int>> v2(0);
+  // std::vector<int> v(0);
+  // std::vector<int, std::allocator<int>> v(0);
+}
+
 void test_all_vector() {
+  test_size();
   test_iterator();
   test_allocator();
   test_allocators(0);
@@ -173,3 +185,8 @@ void test_all_vector() {
   test_nested_typename();
   test_foo();
 }
+/*
+int main() {
+  test_all_vector();
+}
+*/
