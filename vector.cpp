@@ -32,12 +32,19 @@ private:
   pointer reserved_last = nullptr;
   allocator_type alloc;
 
+  //
+  // allocate/deallocate
+  //
+
   // allocates n bytes and returns a pointer to the allocated memory.
   pointer allocate(size_type n) { return traits::allocate(alloc, n); }
   // free pointer first.
   void deallocate() { traits::deallocate(alloc, first, capacity()); }
 
-  // construct
+  //
+  // construct/destroy
+  //
+
   void construct(pointer ptr) { traits::construct(alloc, ptr); }
   void construct(pointer ptr, const_reference value) {
     traits::construct(alloc, ptr, value);
@@ -46,6 +53,12 @@ private:
     traits::construct(alloc, ptr, std::move(value));
   }
   void destroy(pointer ptr) { traits::destroy(alloc, ptr); }
+  void destroy_until(reverse_iterator rend) {
+    for (auto riter = rbegin(); riter != rend; ++riter, --last) {
+      destroy(&*riter);
+    }
+  }
+  void clear() noexcept { destroy_until(rend()); }
 
 public:
   //
@@ -64,7 +77,9 @@ public:
     //    resize(size, value); TODO
   }
 
-  ~vector() { // TODO
+  ~vector() {
+    clear();
+    deallocate();
   }
   vector(const vector &x);
   vector &operator=(const vector &x);
