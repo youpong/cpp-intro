@@ -1,5 +1,8 @@
 #include "main.h"
 
+// support std::scope_exit()
+// #define SCOPE_EXIT
+
 template <typename T, typename Allocator = std::allocator<T>>
 class vector {
 public:
@@ -81,6 +84,41 @@ public:
     clear();
     deallocate();
   }
+
+  void reserve(size_type sz) {
+    if (sz <= capacity())
+      return;
+
+    auto ptr = allocate(sz);
+
+    auto old_first = first;
+    auto old_last = last;
+    auto old_capacity = capacity();
+
+    first = ptr;
+    last = first;
+    reserved_last = first + sz;
+#ifdef SCOPE_EXIT
+    std::scope_exit e(
+        [&] { traits::deallocate(alloc, old_first, old_capacity); });
+#endif
+    for (auto old_iter = old_first; old_iter != old_last;
+         ++old_iter, ++last) {
+      construct(last, std::move(*old_iter));
+    }
+
+    auto riter = reverse_iterator(old_last);
+    auto rend = reverse_iterator(old_first);
+    while (riter != rend) {
+      destroy(&*riter);
+      ++riter;
+    }
+
+#ifndef SCOPE_EXIT
+    traits::deallocate(alloc, old_first, old_capacity);
+#endif
+  }
+
   vector(const vector &x);
   vector &operator=(const vector &x);
 
