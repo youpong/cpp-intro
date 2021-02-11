@@ -25,16 +25,45 @@ private:
   size_type allocated_size = 0; // original = nullptr;
   allocator_type alloc;
   */
+  using traits = std::allocator_traits<allocator_type>;
+
   pointer first = nullptr;
   pointer last = nullptr;
   pointer reserved_last = nullptr;
   allocator_type alloc;
 
-public:
-  //  vector(std::size_t n = 0, Allocator a = Allocator()); original
-  vector(std::size_t n = 0, Allocator alloc = Allocator())
-      : alloc(alloc) { // TODO
+  // allocates n bytes and returns a pointer to the allocated memory.
+  pointer allocate(size_type n) { return traits::allocate(alloc, n); }
+  // free pointer first.
+  void deallocate() { traits::deallocate(alloc, first, capacity()); }
+
+  // construct
+  void construct(pointer ptr) { traits::construct(alloc, ptr); }
+  void construct(pointer ptr, const_reference value) {
+    traits::construct(alloc, ptr, value);
   }
+  void construct(pointer ptr, value_type &&value) {
+    traits::construct(alloc, ptr, std::move(value));
+  }
+  void destroy(pointer ptr) { traits::destroy(alloc, ptr); }
+
+public:
+  //
+  // constructors ...
+  //
+
+  //  vector(std::size_t n = 0, Allocator a = Allocator()); original
+  vector(size_type size = 0,
+         const allocator_type &alloc = allocator_type())
+      : alloc(alloc) {
+    //    resize(size); TODO
+  }
+  vector(size_type size, const_reference value,
+         const allocator_type &alloc = allocator_type())
+      : alloc(alloc) {
+    //    resize(size, value); TODO
+  }
+
   ~vector() { // TODO
   }
   vector(const vector &x);
@@ -218,4 +247,18 @@ void test_all_vector() {
 int main() {
   test_all_vector();
 }
+*/
+
+/*
+template <typename T, typename Allocator = std::allocator<T>>
+class S {
+  using allocator_type = Allocator;
+  using traits = std::allocator_traits<allocator_type>;
+  allocator_type alloc;
+
+  //  template < typename Allocator
+  void f() {
+    traits::allocate(alloc, 1);
+  }
+};
 */
