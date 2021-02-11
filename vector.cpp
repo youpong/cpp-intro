@@ -40,8 +40,25 @@ public:
   vector(const vector &x);
   vector &operator=(const vector &x);
 
-  void push_back(const T &x);
-  T &operator[](std::size_t i) noexcept;
+  void push_back(const_reference x);
+  reference operator[](size_type i) { return first[i]; }
+  const_reference operator[](size_type i) const { return first[i]; }
+  reference at(size_type i) {
+    if (i >= size())
+      throw std::out_of_range("index is out of range");
+    return first[i];
+  }
+  const_reference at(size_type i) const {
+    if (i >= size())
+      throw std::out_of_range("index is out of range");
+    return first[i];
+  }
+  reference front() { return first; }
+  const_reference front() const { return first; }
+  reference back() { return last - 1; }
+  const_reference back() const { return last - 1; }
+  pointer data() noexcept { return first; }
+  const_pointer data() const noexcept { return first; }
 
   // clang-format off
   iterator       begin()        noexcept { return first; }
@@ -64,6 +81,18 @@ public:
     return reverse_iterator{first};
   }
   // clang-format on
+
+  size_type size() const noexcept {
+    //    return end() - begin();
+    return std::distance(begin(), end());
+  }
+
+  size_type empty() const noexcept {
+    //    return begin() == end();
+    return size() == 0;
+  }
+
+  size_type capacity() const noexcept { return reserved_last - first; }
 };
 
 static void test_allocator() {
