@@ -1,4 +1,6 @@
 TARGET = prog
+DOCUMENT = docs
+
 SRCS = main.cpp error.cpp memory.cpp reference.cpp vector.cpp \
        list.cpp class.cpp number.cpp
 OBJS = $(SRCS:.cpp=.o)
@@ -16,7 +18,7 @@ CXX = clang++
 #CXXFLAGS =  -std=c++17 -Wall --pedantic-errors
 CXXFLAGS =  -std=c++2a -Wall --pedantic-errors
 
-.PHONY: run clean check format tags cloc list
+.PHONY: run clean check format tags cloc list doc
 
 list:
 	@sed -n 's/.PHONY:[[:space:]]*//p' Makefile
@@ -26,6 +28,10 @@ check: $(TARGET)
 	./$(TARGET)
 clean:
 	- rm -f $(TARGET) all.h.gch a.out *.o *~ TAGS
+	- rm -rf $(DOCUMENT)
+doc:
+	mkdir -p $(DOCUMENT)
+	doxygen Doxyfile
 format:
 	clang-format -i $(SRCS) *.h
 tags:
