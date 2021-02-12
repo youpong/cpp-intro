@@ -80,6 +80,8 @@ public:
     //    resize(size, value); TODO
   }
 
+  vector(const vector &x);
+
   ~vector() {
     clear();
     deallocate();
@@ -145,10 +147,16 @@ public:
     }
   }
 
-  vector(const vector &x);
   vector &operator=(const vector &x);
 
-  void push_back(const_reference x);
+  void push_back(const_reference value) {
+    if (size() + 1 > capacity()) {
+      reserve(capacity() + 10);
+    }
+    construct(last, value);
+    ++last;
+  }
+
   reference operator[](size_type i) { return first[i]; }
   const_reference operator[](size_type i) const { return first[i]; }
   reference at(size_type i) {
@@ -282,6 +290,8 @@ static void test_foo() {
 
 static void test_foo() {
   std::vector<int> v(1);
+  //  vector<int> v(1);
+
   // std::vector<int>::iterator
   auto i = v.begin();
   *i = 0;
@@ -312,7 +322,20 @@ static void test_size() {
   // std::vector<int, std::allocator<int>> v(0);
 }
 
+static void test_vector2() {
+  vector<int> v;
+  expect(__LINE__, 0, v.capacity());
+  expect(__LINE__, 0, v.size());
+
+  v.push_back(0);
+  expect(__LINE__, 0, v[0]);
+  v.push_back(1);
+  expect(__LINE__, 1, v[1]);
+  expect(__LINE__, 2, v.size());
+}
+
 void test_all_vector() {
+  test_vector2();
   test_size();
   test_iterator();
   test_allocator();
