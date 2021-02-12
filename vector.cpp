@@ -119,6 +119,32 @@ public:
 #endif
   }
 
+  void resize(size_type sz) {
+    if (sz < size()) {
+      auto diff = size() - sz;
+      destroy_until(rbegin() + diff);
+      last = first + sz;
+    } else if (sz > size()) {
+      reserve(sz);
+      for (; last != reserved_last; ++last) {
+        construct(last);
+      }
+    }
+  }
+
+  void resize(size_type sz, const_reference value) {
+    if (sz < size()) {
+      auto diff = size() - sz;
+      destroy_until(rbegin() + diff);
+      last = first + sz;
+    } else if (sz > size()) {
+      reserve(sz);
+      for (; last != reserved_last; ++last) {
+        construct(last, value);
+      }
+    }
+  }
+
   vector(const vector &x);
   vector &operator=(const vector &x);
 
