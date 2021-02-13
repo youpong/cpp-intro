@@ -147,6 +147,26 @@ public:
     }
   }
 
+  void shrink_to_fit() {
+    if (size() == capacity())
+      return;
+
+    auto current_size = size();
+    auto ptr = allocate(current_size);
+
+    for (auto raw_ptr = ptr, iter = begin(); iter != end();
+         ++iter, ++raw_ptr) {
+      construct(raw_ptr, *iter);
+    }
+
+    clear();
+    deallocate();
+
+    first = ptr;
+    last = ptr + current_size;
+    reserved_last = last;
+  }
+
   vector &operator=(const vector &x);
 
   void push_back(const_reference value) {
