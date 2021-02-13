@@ -72,12 +72,22 @@ public:
   vector(size_type size = 0,
          const allocator_type &alloc = allocator_type())
       : alloc(alloc) {
-    //    resize(size); TODO
+    resize(size);
   }
   vector(size_type size, const_reference value,
          const allocator_type &alloc = allocator_type())
       : alloc(alloc) {
-    //    resize(size, value); TODO
+    resize(size, value);
+  }
+
+  template <typename InputIterator>
+  vector(InputIterator first, InputIterator last,
+         const allocator_type &alloc = allocator_type())
+      : alloc(alloc) {
+    reserve(std::distance(first, last));
+    for (auto i = first; i != last; ++i) {
+      push_back(*i);
+    }
   }
 
   vector(const vector &x);
