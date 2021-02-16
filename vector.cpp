@@ -386,11 +386,19 @@ static void test_shrink_to_fit() {
   v.shrink_to_fit();
 }
 
+template <typename Vector>
+static void test_push_back() {
+  Vector v;
+  v.push_back(392);
+  expect(__LINE__, 392, v[0]);
+}
+
 void test_all_vector() {
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
   test_resize<vector<int>>();
-  test_shrink_to_fit<vector<int>>();  
+  test_shrink_to_fit<vector<int>>();
+  test_push_back<vector<int>>();
   test_vector2();
   test_size();
   test_iterator();
