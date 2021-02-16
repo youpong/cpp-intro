@@ -22,12 +22,6 @@ public:
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   // clang-format on
 private:
-  /*
-  pointer first = nullptr;
-  size_type valid_size = 0; // original = nullptr;
-  size_type allocated_size = 0; // original = nullptr;
-  allocator_type alloc;
-  */
   using traits = std::allocator_traits<allocator_type>;
 
   pointer first = nullptr;
@@ -89,6 +83,10 @@ public:
       push_back(*i);
     }
   }
+
+  vector(std::initializer_list<value_type> init,
+         const allocator_type &alloc = allocator_type())
+      : vector(std::begin(init), std::end(init), alloc) {}
 
   vector(const vector &x);
 
@@ -280,10 +278,16 @@ static void test_allocators(std::size_t n) {
 
   traits::deallocate(a, p, n);
 }
+/*
+template <typename Vector>
+static void test_bar() {
+  Vector v(100);
+}
+*/
 
+template <typename Vector>
 static void test_vector() {
-  vector<int> v2(100);
-  std::vector<int> v(100);
+  Vector v(100);
   for (auto i = 0; i != 100; ++i)
     v[i] = i;
 
@@ -364,14 +368,34 @@ static void test_vector2() {
   expect(__LINE__, 2, v.size());
 }
 
+template <typename Vector>
+static void test_reserve() {
+  Vector v;
+
+  auto old_size = v.capacity();
+  v.reserve(old_size + 1);
+
+  expect(__LINE__, true, v.capacity() >= old_size + 1);
+
+  //  expect(__LINE__, 0, v.size());
+  //  expect(__LINE__, true, v.capacity() >= 0);
+
+  int size = 65536;
+  v.reserve(size);
+  for (int i = 0; i != size; ++i)
+    v[i] = i;
+}
+
 void test_all_vector() {
+  //  test_bar<std::vector<int>>();
+  test_reserve<std::vector<int>>();
   test_vector2();
   test_size();
   test_iterator();
   test_allocator();
   test_allocators(0);
   test_allocators(5);
-  test_vector();
+  test_vector<std::vector<int>>();
   test_nested_typename();
   test_foo();
 }
