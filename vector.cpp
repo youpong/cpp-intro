@@ -374,9 +374,16 @@ static void test_reserve() {
   v.reserve(0);
 }
 
+template <typename Vector>
+static void test_resize() {
+  Vector v;
+  v.resize(0);
+}
+
 void test_all_vector() {
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
+  test_resize<vector<int>>();
   test_vector2();
   test_size();
   test_iterator();
