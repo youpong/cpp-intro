@@ -380,10 +380,17 @@ static void test_resize() {
   v.resize(0);
 }
 
+template <typename Vector>
+static void test_shrink_to_fit() {
+  Vector v;
+  v.shrink_to_fit();
+}
+
 void test_all_vector() {
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
   test_resize<vector<int>>();
+  test_shrink_to_fit<vector<int>>();  
   test_vector2();
   test_size();
   test_iterator();
