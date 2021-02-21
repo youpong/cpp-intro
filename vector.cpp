@@ -108,10 +108,12 @@ public:
     first = ptr;
     last = first;
     reserved_last = first + sz;
+
 #ifdef SCOPE_EXIT
     std::scope_exit e(
         [&] { traits::deallocate(alloc, old_first, old_capacity); });
 #endif
+
     for (auto old_iter = old_first; old_iter != old_last;
          ++old_iter, ++last) {
       construct(last, std::move(*old_iter));
@@ -239,45 +241,6 @@ public:
   size_type capacity() const noexcept { return reserved_last - first; }
 };
 
-static void test_allocator() {
-  std::allocator<std::string> a;
-  using traits = std::allocator_traits<decltype(a)>;
-
-#ifndef QUIET_MODE
-  // warning: ignoring return value of function declared with 'nodiscard'
-  a.allocate(1);
-#endif
-
-  std::string *p = traits::allocate(a, 1);
-
-#ifdef ISSUE_4
-  // error: cannot initialize a variable of type 'std::string *'
-  // (aka 'basic_string<char> *') with an rvalue of type 'void'
-  std::string *s = traits::construct(a, p, "hello");
-#else
-  std::string *s = new (p) std::string("hello");
-#endif
-  expect(__LINE__, "hello"s, *s);
-
-  traits::destroy(a, s);
-
-  traits::deallocate(a, p, 1);
-}
-
-static void test_allocators(std::size_t n) {
-  std::allocator<std::string> a;
-  using traits = std::allocator_traits<decltype(a)>;
-
-  std::string *p = traits::allocate(a, n);
-
-  for (std::size_t i = 0; i != n; ++i) {
-    std::string *s = new (p + i) std::string("hello");
-    expect(__LINE__, "hello"s, *s);
-    traits::destroy(a, s);
-  }
-
-  traits::deallocate(a, p, n);
-}
 /*
 template <typename Vector>
 static void test_bar() {
@@ -350,6 +313,7 @@ static void test_iterator() {
 }
 
 static void test_size() {
+  expect(__LINE__, 0, std::distance((int *)nullptr, (int *)nullptr));
   // vector<int> v2(0);
   // vector<int, std::allocator<int>> v2(0);
   // std::vector<int> v(0);
@@ -393,18 +357,38 @@ static void test_push_back() {
   expect(__LINE__, 392, v[0]);
 }
 
+template <typename Vector>
+static void test_index() {
+  Vector v = {0, 1, 2, 3, 4};
+  expect(__LINE__, 0, v[0]);
+  expect(__LINE__, 1, v.at(1));
+  v[2] = 5;
+  v.at(3) = 6;
+  expect(__LINE__, 5, v.at(2));
+  expect(__LINE__, 6, v[3]);
+
+  //  expect(__LINE__, 0,
+
+  const Vector v2 = {5, 6, 7, 8, 9};
+  expect(__LINE__, 7, v2[2]);
+  expect(__LINE__, 8, v2.at(3));
+}
+
+// static void test_size() {
+//
+//}
+
 void test_all_vector() {
+  //  test_size();
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
   test_resize<vector<int>>();
   test_shrink_to_fit<vector<int>>();
   test_push_back<vector<int>>();
+  test_index<vector<int>>();
   test_vector2();
   test_size();
   test_iterator();
-  test_allocator();
-  test_allocators(0);
-  test_allocators(5);
   test_vector<std::vector<int>>();
   test_nested_typename();
   test_foo();

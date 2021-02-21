@@ -2,7 +2,7 @@ TARGET = prog
 DOCUMENT = docs
 
 SRCS = main.cpp error.cpp memory.cpp reference.cpp vector.cpp \
-       list.cpp class.cpp number.cpp
+       list.cpp class.cpp number.cpp allocator.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # C++ compiler
@@ -46,6 +46,8 @@ main.o: main.cpp all.h.gch main.h
 error.o: error.cpp all.h.gch main.h
 	$(CXX) $(CXXFLAGS) -include all.h -c $<
 reference.o: reference.cpp all.h.gch main.h
+	$(CXX) $(CXXFLAGS) -include all.h -c $<
+allocator.o: allocator.cpp all.h.gch main.h
 	$(CXX) $(CXXFLAGS) -include all.h -c $<
 list.o: list.cpp all.h.gch main.h
 	$(CXX) $(CXXFLAGS) -include all.h -c $<

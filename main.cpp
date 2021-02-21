@@ -1945,9 +1945,11 @@ int main() {
   void test_all_list();
   void test_all_class();
   void test_all_number();
+  void test_all_allocator();
 
   quiet_mode = true;
 
+  test_all_allocator();
   test_all_class();
   test_all_vector();
   test_all_list();
