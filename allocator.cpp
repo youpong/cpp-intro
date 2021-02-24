@@ -1,5 +1,18 @@
 #include "main.h"
 
+static void test_allocate_size0() {
+  //  expect(__LINE__, 0, 1);
+  std::allocator<int> i;
+  int *p = i.allocate(0);
+  i.deallocate(p, 0);
+}
+
+static void test_deallocate_size0() {
+  //  expect(__LINE__, 0, 1);
+  std::allocator<int> i;
+  i.deallocate(nullptr, 0);
+}
+
 static void test_allocator() {
   std::allocator<std::string> a;
   using traits = std::allocator_traits<decltype(a)>;
@@ -49,6 +62,8 @@ static void test_allocate() {
 */
 
 void test_all_allocator() {
+  test_allocate_size0();
+  test_deallocate_size0();
   test_allocator();
   test_allocators(0);
   test_allocators(5);

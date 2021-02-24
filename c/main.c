@@ -1,8 +1,6 @@
 #include "util.h"
 #include <stdlib.h>
 
-void test_all_memcpy();
-
 extern int gl_v;
 
 /*
@@ -115,9 +113,13 @@ static void test_array_length() {
   }
 }
 
+void test_all_memcpy();
+void test_all_malloc();
+
 int gl_v = 0;
 
 int main(int argc, char **argv) {
+  test_all_malloc();
   test_all_memcpy();
   test_function_ptr();
   test_array_ptr();
