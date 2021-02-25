@@ -33,9 +33,15 @@ private:
   // allocate/deallocate
   //
 
-  // allocates n bytes and returns a pointer to the allocated memory.
+  /**
+   * @brief allocates n elements and returns a pointer to the allocated
+   * memory.
+   */
   pointer allocate(size_type n) { return traits::allocate(alloc, n); }
-  // free pointer first.
+
+  /**
+   * free pointer first.
+   */
   void deallocate() { traits::deallocate(alloc, first, capacity()); }
 
   //
@@ -199,33 +205,29 @@ public:
       throw std::out_of_range("index is out of range");
     return first[i];
   }
-  reference front() { return first; }
-  const_reference front() const { return first; }
-  reference back() { return last - 1; }
-  const_reference back() const { return last - 1; }
-  pointer data() noexcept { return first; }
-  const_pointer data() const noexcept { return first; }
 
   // clang-format off
-  iterator       begin()        noexcept { return first; }
-  iterator       end()          noexcept { return last;  }
-  iterator       begin()  const noexcept { return first; }
-  iterator       end()    const noexcept { return last;  }
-  const_iterator cbegin() const noexcept { return first; }
-  const_iterator cend()   const noexcept { return last;  }
+  reference        front()                 { return *first; }
+  const_reference  front()  const          { return *first; }  
+  reference        back()                  { return *(last - 1); }
+  const_reference  back()   const          { return *(last - 1); }
+
+  pointer          data()         noexcept { return first; }
+  const_pointer    data()   const noexcept { return first; }
+
+  iterator         begin()        noexcept { return first; }
+  iterator         end()          noexcept { return last;  }
+  iterator         begin()  const noexcept { return first; }  
+  iterator         end()    const noexcept { return last;  }
   
-  reverse_iterator       rbegin()        noexcept {
-    return reverse_iterator{last};
-  }
-  reverse_iterator       rend()          noexcept {
-    return reverse_iterator{first};
-  }
-  const_reverse_iterator crbegin() const noexcept {
-    return reverse_iterator{last};
-  }
-  const_reverse_iterator crend()   const noexcept {
-    return reverse_iterator{first};
-  }
+  const_iterator   cbegin() const noexcept { return first; }
+  const_iterator   cend()   const noexcept { return last;  }
+  reverse_iterator rbegin()       noexcept { return reverse_iterator{last};  }
+  reverse_iterator rend()         noexcept { return reverse_iterator{first}; }
+  const_reverse_iterator crbegin() const noexcept 
+                                           { return reverse_iterator{last};  }
+  const_reverse_iterator crend()   const noexcept
+                                           { return reverse_iterator{first}; }
   // clang-format on
 
   size_type size() const noexcept {
@@ -339,12 +341,6 @@ static void test_reserve() {
 }
 
 template <typename Vector>
-static void test_resize() {
-  Vector v;
-  v.resize(0);
-}
-
-template <typename Vector>
 static void test_shrink_to_fit() {
   Vector v;
   v.shrink_to_fit();
@@ -378,16 +374,44 @@ static void test_vector() {
   vector<int> v;
   expect(__LINE__, 0, v.size());
   expect(__LINE__, true, v.capacity() >= 0);
+}
 
-  vector<int> v2(0, std::allocator<int>());
+static void test_resize() {}
+
+static void test_front_back() {
+  vector<int> v = {0, 1, 2, 3, 4};
+  expect(__LINE__, 1, ++v.front());
+  expect(__LINE__, 5, ++v.back());
+}
+
+static void test_const_front_back() {
+  const vector<int> v = {0, 1, 2, 3, 4};
+  expect(__LINE__, 0, v.front());
+  expect(__LINE__, 4, v.back());
+}
+
+static void test_data() {
+  vector<int> v = {0, 1, 2, 3, 4};
+  expect(__LINE__, 0, *(v.data()));
+}
+
+static void test_const_data() {
+  const vector<int> v = {0, 1, 2, 3, 4};
+  expect(__LINE__, 0, *(v.data()));
 }
 
 void test_all_vector() {
   //  test_size();
+
   test_vector();
+  test_resize();
+  test_front_back();
+  test_const_front_back();
+  test_data();
+  test_const_data();
+
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
-  test_resize<vector<int>>();
   test_shrink_to_fit<vector<int>>();
   test_push_back<vector<int>>();
   test_index<vector<int>>();
