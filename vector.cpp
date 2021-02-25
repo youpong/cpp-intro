@@ -19,7 +19,7 @@ public:
   using iterator               = pointer;
   using const_iterator         = const_pointer;
   using reverse_iterator       = std::reverse_iterator<iterator>;
-  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+  using const_reverse_iterator = const std::reverse_iterator<iterator>;
   // clang-format on
 private:
   using traits = std::allocator_traits<allocator_type>;
@@ -400,6 +400,65 @@ static void test_const_data() {
   expect(__LINE__, 0, *(v.data()));
 }
 
+static void test_begin_end() {
+  vector<int> v = {0, 1, 2, 3, 4};
+
+  auto total = 0;
+  for (auto i = v.begin(); i != v.end(); ++i) {
+    total += ++*i;
+  }
+  expect(__LINE__, 15, total);
+}
+
+static void test_begin_end_const() {
+  const vector<int> v = {0, 1, 2, 3, 4};
+
+  auto total = 0;
+  for (auto i = v.begin(); i != v.end(); ++i) {
+    total += *i;
+  }
+  expect(__LINE__, 10, total);
+}
+
+static void test_cbegin_cend() {
+  vector<int> v = {0, 1, 2, 3, 4};
+
+  auto total = 0;
+  for (auto i = v.cbegin(); i != v.cend(); ++i) {
+    total += *i;
+  }
+  expect(__LINE__, 10, total);
+}
+
+static void test_rbegin_rend() {
+  vector<int> org = {0, 1, 2, 3, 4};
+  vector<int> tmp;
+  vector<int> trgt = {8, 6, 4, 2, 0};
+
+  for (auto ri = org.rbegin(); ri != org.rend(); ++ri) {
+    *ri *= 2;
+    tmp.push_back(*ri);
+  }
+
+  expect(__LINE__, true,
+         std::equal(std::begin(tmp), std::end(tmp), std::begin(trgt),
+                    std::end(trgt)));
+}
+
+// static
+void test_crbegin_crend() {
+  vector<int> v = {0, 2, 4, 6, 8};
+  vector<int> rv = {8, 6, 4, 2, 0};
+
+  //  v.crbegin();
+  auto i = rv.begin();
+  for (auto ri = v.crbegin(); ri != v.crend(); ++ri, ++i) {
+    expect(__LINE__, true, *ri == *i);
+    ++*ri;
+    std::cout << *ri << "\n"s;
+  }
+}
+
 void test_all_vector() {
   //  test_size();
 
@@ -409,6 +468,11 @@ void test_all_vector() {
   test_const_front_back();
   test_data();
   test_const_data();
+  test_begin_end();
+  test_begin_end_const();
+  test_cbegin_cend();
+  test_rbegin_rend();
+  //  test_crbegin_crend();
 
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
