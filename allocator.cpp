@@ -89,12 +89,13 @@ static void test_allocators(std::size_t n) {
 
   std::string *p = traits::allocate(a, n);
 
-  for (std::size_t i = 0; i != n; ++i) {
-    //    std::string *s = traits::construct(a, p + i, "hello");
-    traits::construct(a, p + i, "hello");
-    // std::string *s = new (p + i) std::string("hello");
-    // expect(__LINE__, "hello"s, *s);
-    traits::destroy(a, p + i);
+  for (auto i = p, last = p + n; i != last; ++i) {
+    traits::construct(a, i, "hello");
+    expect(__LINE__, "hello"s, *i);
+  }
+
+  for (auto i = p, last = p + n; i != last; ++i) {
+    traits::destroy(a, i);
   }
 
   traits::deallocate(a, p, n);
