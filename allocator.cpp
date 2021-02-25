@@ -75,16 +75,10 @@ static void test_allocator_traits() {
 
   std::string *p = traits::allocate(a, 1);
 
-#ifdef ISSUE_4
-  // error: cannot initialize a variable of type 'std::string *'
-  // (aka 'basic_string<char> *') with an rvalue of type 'void'
-  std::string *s = traits::construct(a, p, "hello");
-#else
-  std::string *s = new (p) std::string("hello");
-#endif
-  expect(__LINE__, "hello"s, *s);
+  traits::construct(a, p, "hello");
+  expect(__LINE__, "hello"s, *p);
 
-  traits::destroy(a, s);
+  traits::destroy(a, p);
 
   traits::deallocate(a, p, 1);
 }
@@ -96,9 +90,11 @@ static void test_allocators(std::size_t n) {
   std::string *p = traits::allocate(a, n);
 
   for (std::size_t i = 0; i != n; ++i) {
-    std::string *s = new (p + i) std::string("hello");
-    expect(__LINE__, "hello"s, *s);
-    traits::destroy(a, s);
+    //    std::string *s = traits::construct(a, p + i, "hello");
+    traits::construct(a, p + i, "hello");
+    // std::string *s = new (p + i) std::string("hello");
+    // expect(__LINE__, "hello"s, *s);
+    traits::destroy(a, p + i);
   }
 
   traits::deallocate(a, p, n);
