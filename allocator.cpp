@@ -1,10 +1,14 @@
 #include "main.h"
 
+template <class T>
+class allocator {};
+
 static void test_allocate_size0() {
   //  expect(__LINE__, 0, 1);
   std::allocator<int> i;
   int *p = i.allocate(0);
   i.deallocate(p, 0);
+  // i.deallocate(p, 0); valid if p is not NULL
 }
 
 static void test_deallocate_size0() {

@@ -374,12 +374,17 @@ static void test_index() {
   expect(__LINE__, 8, v2.at(3));
 }
 
-// static void test_size() {
-//
-//}
+static void test_vector() {
+  vector<int> v;
+  expect(__LINE__, 0, v.size());
+  expect(__LINE__, true, v.capacity() >= 0);
+
+  vector<int> v2(0, std::allocator<int>());
+}
 
 void test_all_vector() {
   //  test_size();
+  test_vector();
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
   test_resize<vector<int>>();
