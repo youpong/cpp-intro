@@ -187,8 +187,15 @@ public:
 
   void push_back(const_reference value) {
     if (size() + 1 > capacity()) {
-      reserve(capacity() + 10);
+      auto c = size();
+      if (c == 0)
+        c = 1;
+      else
+        c *= 2;
+
+      reserve(c);
     }
+
     construct(last, value);
     ++last;
   }
@@ -338,13 +345,6 @@ static void test_shrink_to_fit() {
   v.shrink_to_fit();
 }
 
-template <typename Vector>
-static void test_push_back() {
-  Vector v;
-  v.push_back(392);
-  expect(__LINE__, 392, v[0]);
-}
-
 static void test_vector() {
   vector<int> v;
   expect(__LINE__, 0, v.size());
@@ -466,13 +466,30 @@ static void test_index_const() {
   expect(__LINE__, 1, v.at(1));
 }
 
+template <typename Vector>
+static void test_push_back() {
+  Vector v;
+
+  v.resize(0);
+  expect(__LINE__, 0, v.capacity());
+  v.push_back(78);
+
+  v.shrink_to_fit();
+  expect(__LINE__, 1, v.capacity());
+  v.push_back(89);
+
+  expect(__LINE__, 78, v[0]);
+  expect(__LINE__, 89, v[1]);
+}
+
 void test_all_vector() {
-  //  test_size();
 
   test_vector();
   test_index();
   test_index_const();
   test_resize();
+  test_push_back<std::vector<int>>();
+  test_push_back<vector<int>>();
   test_front_back();
   test_const_front_back();
   test_data();
@@ -492,7 +509,7 @@ void test_all_vector() {
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
   test_shrink_to_fit<vector<int>>();
-  test_push_back<vector<int>>();
+
   test_vector2();
   test_size();
   test_iterator();
