@@ -19,7 +19,7 @@ public:
   using iterator               = pointer;
   using const_iterator         = const_pointer;
   using reverse_iterator       = std::reverse_iterator<iterator>;
-  using const_reverse_iterator = const std::reverse_iterator<iterator>;
+  using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   // clang-format on
 private:
   using traits = std::allocator_traits<allocator_type>;
@@ -445,17 +445,21 @@ static void test_rbegin_rend() {
                     std::end(trgt)));
 }
 
-// static
-void test_crbegin_crend() {
-  vector<int> v = {0, 2, 4, 6, 8};
-  vector<int> rv = {8, 6, 4, 2, 0};
+template <typename Vector>
+static void test_crbegin_crend() {
+  Vector v1 = {0, 2, 4, 6, 8};
+  Vector v2 = {8, 6, 4, 2, 0};
 
-  //  v.crbegin();
-  auto i = rv.begin();
-  for (auto ri = v.crbegin(); ri != v.crend(); ++ri, ++i) {
-    expect(__LINE__, true, *ri == *i);
-    ++*ri;
-    std::cout << *ri << "\n"s;
+  auto i2 = v2.begin();
+  auto i1 = v1.crbegin();
+  for (; i1 != v1.crend(); ++i1, ++i2) {
+    expect(__LINE__, true, *i1 == *i2);
+
+    // error: cannot assign to return value because function 'operator*'
+    // returns a const value
+    //    ++*i1;
+
+    // std::cout << *i1 << "\n"s;
   }
 }
 
@@ -472,7 +476,10 @@ void test_all_vector() {
   test_begin_end_const();
   test_cbegin_cend();
   test_rbegin_rend();
-  //  test_crbegin_crend();
+#ifdef ISSUE_5
+  test_crbegin_crend<vector<int>>();
+#endif
+  test_crbegin_crend<std::vector<int>>();
 
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
