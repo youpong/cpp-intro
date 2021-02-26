@@ -314,14 +314,6 @@ static void test_iterator() {
   // cannot manipulate value via const_reverse_iterator
 }
 
-static void test_size() {
-  expect(__LINE__, 0, std::distance((int *)nullptr, (int *)nullptr));
-  // vector<int> v2(0);
-  // vector<int, std::allocator<int>> v2(0);
-  // std::vector<int> v(0);
-  // std::vector<int, std::allocator<int>> v(0);
-}
-
 static void test_vector2() {
   vector<int> v;
   expect(__LINE__, 0, v.capacity());
@@ -351,23 +343,6 @@ static void test_push_back() {
   Vector v;
   v.push_back(392);
   expect(__LINE__, 392, v[0]);
-}
-
-template <typename Vector>
-static void test_index() {
-  Vector v = {0, 1, 2, 3, 4};
-  expect(__LINE__, 0, v[0]);
-  expect(__LINE__, 1, v.at(1));
-  v[2] = 5;
-  v.at(3) = 6;
-  expect(__LINE__, 5, v.at(2));
-  expect(__LINE__, 6, v[3]);
-
-  //  expect(__LINE__, 0,
-
-  const Vector v2 = {5, 6, 7, 8, 9};
-  expect(__LINE__, 7, v2[2]);
-  expect(__LINE__, 8, v2.at(3));
 }
 
 static void test_vector() {
@@ -463,10 +438,40 @@ static void test_crbegin_crend() {
   }
 }
 
+static void test_size() {
+  vector<int> v;
+  expect(__LINE__, 0, v.size());
+}
+
+static void test_empty() {
+  vector<int> v;
+  expect(__LINE__, true, v.empty());
+}
+
+static void test_capacity() {
+  vector<int> v;
+  expect(__LINE__, 0, v.capacity());
+}
+
+static void test_index() {
+  vector<int> v = {0, 1, 2, 3, 4};
+  expect(__LINE__, 0, v[0]++);
+  expect(__LINE__, 1, v.at(0)++);
+  expect(__LINE__, 2, v.front());
+}
+
+static void test_index_const() {
+  const vector<int> v = {0, 1, 2, 3, 4};
+  expect(__LINE__, 0, v[0]);
+  expect(__LINE__, 1, v.at(1));
+}
+
 void test_all_vector() {
   //  test_size();
 
   test_vector();
+  test_index();
+  test_index_const();
   test_resize();
   test_front_back();
   test_const_front_back();
@@ -480,12 +485,14 @@ void test_all_vector() {
   test_crbegin_crend<vector<int>>();
 #endif
   test_crbegin_crend<std::vector<int>>();
+  test_size();
+  test_empty();
+  test_capacity();
 
   test_reserve<std::vector<int>>();
   test_reserve<vector<int>>();
   test_shrink_to_fit<vector<int>>();
   test_push_back<vector<int>>();
-  test_index<vector<int>>();
   test_vector2();
   test_size();
   test_iterator();
