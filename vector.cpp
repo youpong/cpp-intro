@@ -183,6 +183,7 @@ public:
     reserved_last = last;
   }
 
+  // TODO
   vector &operator=(const vector &x);
 
   void push_back(const_reference value) {
@@ -237,6 +238,9 @@ public:
                                            { return reverse_iterator{first}; }
   // clang-format on
 
+  /**
+   * @return number of elements
+   */
   size_type size() const noexcept {
     //    return end() - begin();
     return std::distance(begin(), end());
@@ -310,17 +314,6 @@ static void test_foo() {
   //  *ci = 0;
 }
 
-static void test_iterator() {
-  std::vector<int> v = {0, 1, 2, 3, 4};
-  // rbegin()
-  // check reverse iterator last -> first
-  // manipulate value via iterator
-
-  // crbegin()
-  // check reverse iterator last -> first
-  // cannot manipulate value via const_reverse_iterator
-}
-
 static void test_vector2() {
   vector<int> v;
   expect(__LINE__, 0, v.capacity());
@@ -351,7 +344,33 @@ static void test_vector() {
   expect(__LINE__, true, v.capacity() >= 0);
 }
 
-static void test_resize() {}
+// case: sz < size()
+static void test_resize_lt() {
+  //  size == 1
+  vector<int> v = {0};
+
+  v.resize(0);
+  expect(__LINE__, 0, v.size());
+}
+
+// case: sz > size()
+static void test_resize_gt() {
+  // size == 1
+  vector<int> v = {0};
+
+  v.resize(2);
+  expect(__LINE__, 2, v.capacity());
+
+  v[1] = 65;
+  expect(__LINE__, 65, v[1]);
+}
+
+// case: sz == size()
+static void test_resize_eq() {
+  // size == 1
+  vector<int> v = {0};
+  v.resize(1);
+}
 
 static void test_front_back() {
   vector<int> v = {0, 1, 2, 3, 4};
@@ -487,7 +506,11 @@ void test_all_vector() {
   test_vector();
   test_index();
   test_index_const();
-  test_resize();
+
+  test_resize_lt();
+  test_resize_gt();
+  test_resize_eq();
+
   test_push_back<std::vector<int>>();
   test_push_back<vector<int>>();
   test_front_back();
@@ -512,7 +535,6 @@ void test_all_vector() {
 
   test_vector2();
   test_size();
-  test_iterator();
   test_vector<std::vector<int>>();
   test_nested_typename();
   test_foo();
