@@ -254,19 +254,14 @@ public:
   size_type capacity() const noexcept { return reserved_last - first; }
 };
 
-/*
-template <typename Vector>
-static void test_bar() {
-  Vector v(100);
-}
-*/
-
 template <typename Vector>
 static void test_vector() {
   Vector v(100);
   for (auto i = 0; i != 100; ++i)
     v[i] = i;
 
+  expect(__LINE__, 0, v[0]);
+  expect(__LINE__, 99, v[99]);
   return;
   std::for_each(std::begin(v), std::end(v),
                 [](auto x) { std::cout << x; });
