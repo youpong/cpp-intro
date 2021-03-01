@@ -250,20 +250,29 @@ public:
   size_type capacity() const noexcept { return reserved_last - first; }
 };
 
-template <typename Vector>
+//
+// test
+//
+
 static void test_vector() {
-  Vector v(100);
+  vector<int> v(100);
+
+  expect(__LINE__, 100, v.size());
+
   for (auto i = 0; i != 100; ++i)
     v[i] = i;
 
   expect(__LINE__, 0, v[0]);
   expect(__LINE__, 99, v[99]);
-  return;
-  std::for_each(std::begin(v), std::end(v),
-                [](auto x) { std::cout << x; });
+}
 
-  std::copy(std::istream_iterator<int>(std::cin),
-            std::istream_iterator<int>(), std::back_inserter(v));
+static void test_vector2() {
+  // TODO
+  //  vector<int> v(100, 270);
+  //  std::vector<int> v(100, 271);
+  //  vector<int> v;
+  //  v.resize(1, 273);
+  //  expect(__LINE__, 273, v[0]);
 }
 
 static void test_nested_typename() {
@@ -303,18 +312,6 @@ static void test_foo() {
   // error
   // can't assign pointed by const_iterator
   //  *ci = 0;
-}
-
-static void test_vector2() {
-  vector<int> v;
-  expect(__LINE__, 0, v.capacity());
-  expect(__LINE__, 0, v.size());
-
-  v.push_back(0);
-  expect(__LINE__, 0, v[0]);
-  v.push_back(1);
-  expect(__LINE__, 1, v[1]);
-  expect(__LINE__, 2, v.size());
 }
 
 // case: sz <= capacity()
@@ -369,12 +366,6 @@ static void test_shrink_to_fit_nq() {
   v.shrink_to_fit();
   expect(__LINE__, 0, v.capacity());
   expect(__LINE__, true, old_first != v.data());
-}
-
-static void test_vector() {
-  vector<int> v;
-  expect(__LINE__, 0, v.size());
-  expect(__LINE__, true, v.capacity() >= 0);
 }
 
 // case: sz < size()
@@ -537,6 +528,8 @@ static void test_push_back() {
 void test_all_vector() {
 
   test_vector();
+  test_vector2();
+
   test_index();
   test_index_const();
 
@@ -572,7 +565,6 @@ void test_all_vector() {
 
   test_vector2();
   test_size();
-  test_vector<std::vector<int>>();
   test_nested_typename();
   test_foo();
 }
