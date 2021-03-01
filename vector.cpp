@@ -121,16 +121,12 @@ public:
 #endif
 
     for (auto old_iter = old_first; old_iter != old_last;
-         ++old_iter, ++last) {
+         ++old_iter, ++last)
       construct(last, std::move(*old_iter));
-    }
 
-    auto riter = reverse_iterator(old_last);
-    auto rend = reverse_iterator(old_first);
-    while (riter != rend) {
+    for (auto riter = reverse_iterator(old_last);
+         riter != reverse_iterator(old_first); ++riter)
       destroy(&*riter);
-      ++riter;
-    }
 
 #ifndef SCOPE_EXIT
     traits::deallocate(alloc, old_first, old_capacity);
@@ -321,10 +317,34 @@ static void test_vector2() {
   expect(__LINE__, 2, v.size());
 }
 
+// case: sz <= capacity()
+static void test_reserve_le() {
+  vector<int> v;
+  v.reserve(0);
+}
+
+// case: sz > capacity()
+static void test_reserve_gt() {
+  vector<int> v;
+  v.reserve(1);
+}
+
 template <typename Vector>
 static void test_reserve() {
   Vector v;
-  v.reserve(0);
+
+  v.reserve(5);
+  expect(__LINE__, true, v.capacity() >= 5);
+
+  // no reallocation
+  auto old_first = v.data();
+  for (int i = 0; i < v.capacity(); ++i)
+    v.push_back(i);
+  expect(__LINE__, true, old_first == v.data());
+
+  // reallocation
+  v.push_back(346);
+  expect(__LINE__, false, old_first == v.data());
 }
 
 template <typename Vector>
@@ -506,6 +526,11 @@ void test_all_vector() {
   test_resize_gt();
   test_resize_eq();
 
+  test_reserve<vector<int>>();
+  test_reserve<std::vector<int>>();
+  test_reserve_le();
+  test_reserve_gt();
+
   test_push_back<std::vector<int>>();
   test_push_back<vector<int>>();
   test_front_back();
@@ -523,9 +548,6 @@ void test_all_vector() {
   test_size();
   test_empty();
   test_capacity();
-
-  test_reserve<std::vector<int>>();
-  test_reserve<vector<int>>();
   test_shrink_to_fit<vector<int>>();
 
   test_vector2();
