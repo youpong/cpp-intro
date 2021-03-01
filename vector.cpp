@@ -56,10 +56,10 @@ private:
     traits::construct(alloc, ptr, std::move(value));
   }
   void destroy(pointer ptr) { traits::destroy(alloc, ptr); }
+  // TEST
   void destroy_until(reverse_iterator rend) {
-    for (auto riter = rbegin(); riter != rend; ++riter, --last) {
+    for (auto riter = rbegin(); riter != rend; ++riter, --last)
       destroy(&*riter);
-    }
   }
   void clear() noexcept { destroy_until(rend()); }
 
@@ -74,6 +74,7 @@ public:
       : alloc(alloc) {
     resize(size);
   }
+
   vector(size_type size, const_reference value,
          const allocator_type &alloc = allocator_type())
       : alloc(alloc) {
@@ -85,9 +86,8 @@ public:
          const allocator_type &alloc = allocator_type())
       : alloc(alloc) {
     reserve(std::distance(first, last));
-    for (auto i = first; i != last; ++i) {
+    for (auto i = first; i != last; ++i)
       push_back(*i);
-    }
   }
 
   vector(std::initializer_list<value_type> init,
@@ -347,10 +347,28 @@ static void test_reserve() {
   expect(__LINE__, false, old_first == v.data());
 }
 
-template <typename Vector>
-static void test_shrink_to_fit() {
-  Vector v;
+static void test_shrink_to_fit_eq() {
+  vector<int> v;
+
+  auto old_first = v.data();
+  expect(__LINE__, 0, v.size());
+  expect(__LINE__, 0, v.capacity());
+
   v.shrink_to_fit();
+  expect(__LINE__, true, old_first == v.data());
+}
+
+static void test_shrink_to_fit_nq() {
+  vector<int> v;
+  v.reserve(1);
+
+  auto old_first = v.data();
+  expect(__LINE__, 0, v.size());
+  expect(__LINE__, 1, v.capacity());
+
+  v.shrink_to_fit();
+  expect(__LINE__, 0, v.capacity());
+  expect(__LINE__, true, old_first != v.data());
 }
 
 static void test_vector() {
@@ -531,6 +549,9 @@ void test_all_vector() {
   test_reserve_le();
   test_reserve_gt();
 
+  test_shrink_to_fit_eq();
+  test_shrink_to_fit_nq();
+
   test_push_back<std::vector<int>>();
   test_push_back<vector<int>>();
   test_front_back();
@@ -548,7 +569,6 @@ void test_all_vector() {
   test_size();
   test_empty();
   test_capacity();
-  test_shrink_to_fit<vector<int>>();
 
   test_vector2();
   test_size();
