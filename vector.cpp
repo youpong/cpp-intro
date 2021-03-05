@@ -30,23 +30,23 @@ private:
   allocator_type alloc;
 
   //
-  // allocate/deallocate
+  // allocate/deallocagte memory to store the elements.
   //
 
   /**
-   * @brief allocates n elements and returns a pointer to the allocated
-   * memory.
+   * @brief allocates memory space to store n elements
+   * @returns a pointer to the allocated memory.
    */
   pointer allocate(size_type n) { return traits::allocate(alloc, n); }
 
   /**
-   * free pointer first.
+   * @brief free the memory space to store elements.
    */
   void deallocate() { traits::deallocate(alloc, first, capacity()); }
 
   //
-  // construct/destroy
-  //
+  // construct/destroy the element.
+  // TODO: test from here
 
   void construct(pointer ptr) { traits::construct(alloc, ptr); }
   void construct(pointer ptr, const_reference value) {
@@ -56,7 +56,6 @@ private:
     traits::construct(alloc, ptr, std::move(value));
   }
   void destroy(pointer ptr) { traits::destroy(alloc, ptr); }
-  // TEST
   void destroy_until(reverse_iterator rend) {
     for (auto riter = rbegin(); riter != rend; ++riter, --last)
       destroy(&*riter);
@@ -266,9 +265,14 @@ static void test_vector() {
   expect(__LINE__, 99, v[99]);
 }
 
+/**
+ * @brief test vector(size_type, const_reference, const allocator_type)
+ *
+ */
 static void test_vector2() {
-  // TODO
-  //  vector<int> v(100, 270);
+#ifdef ISSUE_6
+  vector<int> v(100, 270);
+#endif
   //  std::vector<int> v(100, 271);
   //  vector<int> v;
   //  v.resize(1, 273);
