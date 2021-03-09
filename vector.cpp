@@ -306,17 +306,23 @@ static void test_vector_with_destructor() {
   Vector v;
 }
 
+static void test_ISSUE_8() {
+  vector<int> log;
+
+  vector<Destructor> v;
+  v.reserve(2);
+  expect(__LINE__, 0, log.size());
+
+  v.push_back(Destructor(&log, 5));
+  expect(__LINE__, 1, v.size());
+#ifdef ISSUE_8
+  expect(__LINE__, 0, log.size());
+#endif
+}
+
 // display when called destroy method
 static void test_destroy_until() {
   vector<int> log;
-
-  {
-    vector<Destructor> v;
-    v.reserve(2);
-    v.push_back(Destructor(&log, 5));
-    expect(__LINE__, 1, v.size());
-    expect(__LINE__, 0, log.size());
-  }
 
   /* vector v(2): size 1/2 */
   //  {
@@ -601,6 +607,8 @@ static void test_push_back() {
 }
 
 void test_all_vector() {
+  test_ISSUE_8();
+
   test_destructor();
 
   test_destroy_until();
