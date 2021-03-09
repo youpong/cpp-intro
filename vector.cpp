@@ -310,18 +310,25 @@ static void test_vector_with_destructor() {
 static void test_destroy_until() {
   vector<int> log;
 
-  /* vector v(2): size 1/2 */
   {
-    vector<Destructor> v = {Destructor(&log, 8), Destructor(&log, 9)};
-    //    expect(__LINE__, 2, v.size());
-    //    v.resize(1);
+    vector<Destructor> v;
+    v.reserve(2);
+    v.push_back(Destructor(&log, 5));
+    expect(__LINE__, 1, v.size());
+    expect(__LINE__, 0, log.size());
   }
 
-  // expect(__LINE__, v0.size());  {
+  /* vector v(2): size 1/2 */
+  //  {
+  //    vector<Destructor> v;
+  //    v.resize(1);
+  //  }
 
-  // vector v(2): size 0/2
-  //  vector<int> v1(2);
-  //  v0.resize(0);
+  /* vector v(2): size 0/2 */
+  //  {
+  //    vector<Destructor> v;
+  //    v.resize(0);
+  //  }
 }
 
 static void test_vector() {
