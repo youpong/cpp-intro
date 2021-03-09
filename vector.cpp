@@ -265,13 +265,23 @@ public:
 // test
 //
 
-class Destructor {
-  vector<int> *v;
-  int serial;
+// int serial_counter = 0;
 
-public:
-  Destructor(vector<int> *v, int serial) : v(v), serial(serial) {}
-  ~Destructor() { v->push_back(serial); }
+struct Destructor {
+  int serial;
+  vector<int> *logger = nullptr;
+
+  Destructor() { serial = -1; }
+  Destructor(vector<int> *logger, int serial)
+      : serial(serial), logger(logger) {}
+  ~Destructor() {
+    if (logger == nullptr) {
+      std::cout << "Error: Destructor.log is not initialized\n"s;
+      std::terminate();
+    }
+
+    logger->push_back(serial);
+  }
 };
 
 static void test_destructor() {
@@ -280,6 +290,15 @@ static void test_destructor() {
 
   { Destructor(&v, 28); }
   expect(__LINE__, 28, v[0]);
+
+  {
+    Destructor d;
+    d.logger = &v;
+  }
+  expect(__LINE__, 2, v.capacity());
+
+  /* uncomment to test destructor */
+  //  { Destructor(); }
 }
 
 template <class Vector>
@@ -289,14 +308,15 @@ static void test_vector_with_destructor() {
 
 // display when called destroy method
 static void test_destroy_until() {
-  vector<int> v;
+  vector<int> log;
 
-  // vector v(2): size 1/2
-  vector<Destructor> v0 = {Destructor(&v, 8), Destructor(&v, 9)};
+  /* vector v(2): size 1/2 */
+  {
+    vector<Destructor> v = {Destructor(&log, 8), Destructor(&log, 9)};
+    //    expect(__LINE__, 2, v.size());
+    //    v.resize(1);
+  }
 
-  std::vector<Destructor> v1;
-
-  //  v0.resize(1);
   // expect(__LINE__, v0.size());  {
 
   // vector v(2): size 0/2
