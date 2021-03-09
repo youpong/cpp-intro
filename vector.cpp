@@ -56,6 +56,7 @@ private:
     traits::construct(alloc, ptr, std::move(value));
   }
   void destroy(pointer ptr) { traits::destroy(alloc, ptr); }
+  // todo: test
   void destroy_until(reverse_iterator rend) {
     for (auto riter = rbegin(); riter != rend; ++riter, --last)
       destroy(&*riter);
@@ -247,11 +248,51 @@ public:
   }
 
   size_type capacity() const noexcept { return reserved_last - first; }
+
+  //
+  // test
+  //
+
+  /*
+  void test_destroy_until() {
+    destroy_until();
+    destroy_until();
+  }
+  */
 };
 
 //
 // test
 //
+
+class Destructor {
+  vector<int> *v;
+  int serial;
+
+public:
+  Destructor(vector<int> *v, int serial) : v(v), serial(serial) {}
+  ~Destructor() { v->push_back(serial); }
+};
+
+static void test_destroy() {
+  vector<int> v;
+  expect(__LINE__, 0, v.capacity());
+
+  { Destructor(&v, 28); }
+  expect(__LINE__, 28, v[0]);
+}
+
+// display when called destroy method
+static void test_destroy_until() {
+  // vector v(2): size 1/2
+  vector<int> v0(2);
+  v0.resize(1);
+  // expect(__LINE__, v0.size());
+
+  // vector v(2): size 0/2
+  vector<int> v1(2);
+  v0.resize(0);
+}
 
 static void test_vector() {
   vector<int> v(100);
@@ -294,13 +335,6 @@ static void test_nested_typename() {
   vec::difference_type d = j - i;
   expect(__LINE__, 3, d);
 }
-
-/*
-static void test_foo() {
-  //vector<int> vec = { 0, 1, 2 };
-  vector<int>::size_type s = 1;
-}
-*/
 
 static void test_foo() {
   std::vector<int> v(1);
@@ -530,6 +564,9 @@ static void test_push_back() {
 }
 
 void test_all_vector() {
+  test_destroy();
+
+  test_destroy_until();
 
   test_vector();
   test_vector2();
