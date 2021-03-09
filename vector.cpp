@@ -274,7 +274,7 @@ public:
   ~Destructor() { v->push_back(serial); }
 };
 
-static void test_destroy() {
+static void test_destructor() {
   vector<int> v;
   expect(__LINE__, 0, v.capacity());
 
@@ -282,16 +282,26 @@ static void test_destroy() {
   expect(__LINE__, 28, v[0]);
 }
 
+template <class Vector>
+static void test_vector_with_destructor() {
+  Vector v;
+}
+
 // display when called destroy method
 static void test_destroy_until() {
+  vector<int> v;
+
   // vector v(2): size 1/2
-  vector<int> v0(2);
-  v0.resize(1);
-  // expect(__LINE__, v0.size());
+  vector<Destructor> v0 = {Destructor(&v, 8), Destructor(&v, 9)};
+
+  std::vector<Destructor> v1;
+
+  //  v0.resize(1);
+  // expect(__LINE__, v0.size());  {
 
   // vector v(2): size 0/2
-  vector<int> v1(2);
-  v0.resize(0);
+  //  vector<int> v1(2);
+  //  v0.resize(0);
 }
 
 static void test_vector() {
@@ -564,10 +574,14 @@ static void test_push_back() {
 }
 
 void test_all_vector() {
-  test_destroy();
+  test_destructor();
 
   test_destroy_until();
 
+  test_vector_with_destructor<std::vector<Destructor>>();
+#ifdef ISSUE_7
+  test_vector_with_destructor<vector<Destructor>>();
+#endif
   test_vector();
   test_vector2();
 
