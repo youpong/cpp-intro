@@ -23,9 +23,9 @@ static void testS() {
   S s;
 
   *s.ptr() = 2030;
-  ++s.ref();
+  s.ref() = *s.ptr() + 2;
 
-  expect(__LINE__, 2031, s.data);
+  expect(__LINE__, 2032, s.ref());
 }
 
 static void testS2() {
