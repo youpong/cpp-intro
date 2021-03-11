@@ -432,7 +432,31 @@ static void test_mem_ptr2() {
   expect(__LINE__, 1'610'008'202, *z);
 }
 
+/*
+ * @brief returns address of stack memory
+ */
+static int *ptr_to_invalid_object() {
+  int variable = 43;
+
+  return &variable;
+}
+
+/*
+ * @brief returns reference to stack memory
+ */
+static int &ref_to_invalid_object() {
+  int variable = 44;
+
+  return variable;
+}
+
+static void test_refer_to_invalid_object() {
+  [[maybe_unused]] int *ptr = ptr_to_invalid_object();
+  [[maybe_unused]] int &var = ref_to_invalid_object();
+}
+
 void test_all_reference() {
+  test_refer_to_invalid_object();
   testS();
   testS2();
   test_this();
