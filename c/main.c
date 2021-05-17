@@ -115,12 +115,15 @@ static void test_array_length() {
 
 void test_all_memcpy();
 void test_all_malloc();
+void test_all_setjmp();
 
 int gl_v = 0;
 
 int main(int argc, char **argv) {
   test_all_malloc();
   test_all_memcpy();
+  test_all_setjmp();
+  
   test_function_ptr();
   test_array_ptr();
   test_array_length();
