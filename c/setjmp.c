@@ -1,9 +1,8 @@
 #include "util.h"
 #include <setjmp.h>
-//#include <stdio.h>
 
-jmp_buf g_env;
-int g = 100;
+static jmp_buf g_env;
+static int g = 100;
 
 static void func() {
   g++;
