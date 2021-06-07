@@ -5,12 +5,14 @@
 void test_all_memcpy();
 void test_all_malloc();
 void test_all_setjmp();
+void test_all_setjmp2();
 void test_all_ptr();
 
 int main(int argc, char **argv) {
   test_all_malloc();
   test_all_memcpy();
   test_all_setjmp();
+  test_all_setjmp2();  
   test_all_ptr();
 
   fputs("okay\n", stdout);
