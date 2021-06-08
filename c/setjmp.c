@@ -1,8 +1,11 @@
 #include "util.h"
 #include <setjmp.h>
 
-static jmp_buf g_env;
 static int g;
+
+/* use global jmp_buf */
+
+static jmp_buf g_env;
 
 static void func() {
   ++g;
@@ -13,12 +16,12 @@ static void func_caller() {
   int x = 10;
   volatile int y = 20;
   g = 100;
-  
+
   switch (setjmp(g_env)) {
   case 0:
     ++y;
     ++g;
-    func();    
+    func();
     break;
   case 1:
     expect(__LINE__, 10, x);
@@ -30,7 +33,7 @@ static void func_caller() {
 
 static void func_caller1() {
   g = 100;
-  
+
   switch (setjmp(g_env)) {
   case 0:
     func();
@@ -50,7 +53,29 @@ static void func_caller1() {
   }
 }
 
+/* use local jmp_buf */
+
+static void lfunc(jmp_buf env) {
+  ++g;
+  longjmp(env, 42);
+}
+
+static void lfunc_caller() {
+  jmp_buf l_env;
+
+  g = 65;
+  switch (setjmp(l_env)) {
+  case 0:
+    lfunc(l_env);
+    break;
+  case 42:
+    expect(__LINE__, 66, g);
+    break;
+  }
+}
+
 void test_all_setjmp() {
   func_caller();
   func_caller1();
+  lfunc_caller();
 }
