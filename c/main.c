@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
   test_all_malloc();
   test_all_memcpy();
   test_all_setjmp();
-  test_all_setjmp2();  
+  test_all_setjmp2();
   test_all_ptr();
 
   fputs("okay\n", stdout);
