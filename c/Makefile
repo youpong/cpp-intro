@@ -13,7 +13,7 @@ run: $(TARGET)
 check: $(TARGET)
 	./$(TARGET) 
 clean:
-	- rm -f $(TARGET) $(OBJS) a.out *~ TAGS
+	- rm -f $(TARGET) *.o a.out *~ TAGS
 format:
 	clang-format -i $(SRCS) *.h
 tags:
