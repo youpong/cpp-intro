@@ -3,7 +3,7 @@
 
 CFLAGS = -g -Wall -std=c17 -D_POSIX_C_SOURCE=200809L -D_DEFAULT_SOURCE
 TARGET = prog
-SRCS = main.c util.c memcpy.c malloc.c setjmp.c setjmp2.c ptr.c
+SRCS = main.c util.c memcpy.c malloc.c setjmp.c setjmp2.c typedef.c ptr.c
 OBJS = $(SRCS:.c=.o)
 
 .PHONY: run clean check format tags
@@ -28,4 +28,5 @@ memcpy.o: memcpy.c util.h
 malloc.o: malloc.c util.h
 setjmp.o: setjmp.c util.h
 setjmp2.o: setjmp2.c util.h
+typedef.o: typedef.c util.h
 ptr.o: ptr.c util.h
