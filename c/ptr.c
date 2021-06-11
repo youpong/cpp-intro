@@ -1,7 +1,7 @@
 #include "util.h"
 #include <stdlib.h>
 
-extern int gl_v;
+static int gl_v;
 
 /*
  * compile below type to golang
@@ -43,18 +43,27 @@ static int f(int x) {
 }
 
 static f_ptr g(f_ptr p) {
-  p(0);
+  (*p)(0);
   return p;
 }
 
-static void test_function_ptr() {
+static void test_function_ptr0() {
+  f_ptr func_ptr = &f;
+
+  // next 2 lines is the same.
+  expect(__LINE__, 42, (*func_ptr)(42));
+  expect(__LINE__, 43, func_ptr(43));
+}
+
+static void test_function_ptr1() {
   // form1
   int (*(*ptr0)(int (*)(int)))(int) = &g;
 
   // form2: typedef
   f_ptr (*ptr1)(f_ptr) = &g;
 
-  (*ptr0)(&f);
+  gl_v = 1;
+
   ptr0(&f);
   ptr1(&f);
   expect(__LINE__, 3, gl_v);
@@ -113,10 +122,9 @@ static void test_array_length() {
   }
 }
 
-int gl_v = 0;
-
 void test_all_ptr() {
-  test_function_ptr();
+  test_function_ptr0();
+  test_function_ptr1();
   test_array_ptr();
   test_array_length();
 }
